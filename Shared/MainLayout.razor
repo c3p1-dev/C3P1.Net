@@ -1,0 +1,38 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>C3P1.Net</PageTitle>
+@*
+    <div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+*@
+
+<Layout Sider="true">
+    <LayoutSider>
+        <LayoutSiderContent>
+            <SideMenu />
+        </LayoutSiderContent>
+    </LayoutSider>
+
+    <Layout>
+        <LayoutHeader Fixed="true">
+            <TopMenu />
+        </LayoutHeader>
+        <LayoutContent Padding="Padding.Is2.OnX" Background=Background.Dark TextColor=TextColor.Dark>
+            @Body
+        </LayoutContent>
+    </Layout>
+</Layout>
+

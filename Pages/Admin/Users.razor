@@ -1,0 +1,182 @@
+﻿@page "/admin/users"
+
+@using C3P1.Net.Data.Services.Admin
+@using C3P1.Net.Identity.Data
+
+@inject IUsersAdminService usersAdminService
+<AuthorizeView Roles="Administrator">
+    <Authorized>
+        <h3>Manage users</h3>
+        <br />
+
+        <h4>Administrators</h4>
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    <TableRowCell Style="width:100%">Email</TableRowCell>
+                    <TableRowCell Style="min-width:120px">Action</TableRowCell>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                @if (Administrators is not null)
+                {
+                    foreach (C3P1User user in Administrators)
+                    {
+                        <TableRow>
+                            <TableRowCell>@user.Email</TableRowCell>
+                            <TableRowCell>
+                                @if (user.Email == "mat.clot@gmail.com")
+                                {
+                                    <Button Size="Size.Small" Disabled="true" Color="Color.Primary">
+                                        <span class="oi oi-chevron-bottom" />
+                                    </Button>
+                                    <Button Size="Size.Small" Disabled="true" Color="Color.Danger">
+                                        <span class="oi oi-ban" />
+                                    </Button>
+                                }
+                                else
+                                {
+                                    <Tooltip Text="Make regular">
+                                        <Button Size="Size.Small" Clicked="@(async () => await MakeRegular(user))" Color="Color.Primary">
+                                            <span class="oi oi-chevron-bottom" />
+                                        </Button>
+                                    </Tooltip>
+                                    <Tooltip Text="Delete user">
+                                        <Button Size="Size.Small" Clicked="@(() => ShowModal(user))" Color="Color.Danger">
+                                            <span class="oi oi-ban" />
+                                        </Button>
+                                    </Tooltip>
+                                }
+                            </TableRowCell>
+                        </TableRow>
+                    }
+                }
+            </TableBody>
+        </Table>
+
+        <h4>Regular users</h4>
+        @if (RegularUsers is not null)
+        {
+            if (RegularUsers.Count > 0)
+            { 
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableRowCell Style="width:100%">Email</TableRowCell>
+                            <TableRowCell Style="min-width:120px">Action</TableRowCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        @foreach (C3P1User user in RegularUsers)
+                        {
+                            <TableRow>
+                                <TableRowCell>@user.Email</TableRowCell>
+                                <TableRowCell>
+                                    <Tooltip Text="Make admin">
+                                        <Button Size="Size.Small" Clicked="@(async () => await MakeAdmin(user))" Color="Color.Primary">
+                                            <span class="oi oi-chevron-top" />
+                                        </Button>
+                                    </Tooltip>
+                                    <Tooltip Text="Delete user">
+                                        <Button Size="Size.Small" Clicked="@(() => ShowModal(user))" Color="Color.Danger">
+                                            <span class="oi oi-ban" />
+                                        </Button>
+                                    </Tooltip>
+                                </TableRowCell>
+                            </TableRow>
+                        }
+                    </TableBody>
+                </Table>
+            }
+            else
+            {
+                <p>There are no regular users</p>
+            }
+        }
+        <Modal @ref="modalRef">
+            <ModalContent Centered="true">
+                <ModalHeader>
+                    <ModalTitle>Confirm delete</ModalTitle>
+                    <CloseButton Clicked="@HideModal" />
+                </ModalHeader>
+                <ModalBody>
+                    <Paragraph>
+                        Are you sure you want to delete <strong>@selectedUser.Email</strong> registration ? 
+                    </Paragraph>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Secondary" Clicked="@HideModal">Cancel</Button>
+                    <Button Color="Color.Primary" Clicked="@(async () => await DeleteUser(selectedUser))">Confirm</Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+
+    </Authorized>
+    <NotAuthorized>
+        <p>You must be admin.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    // Lists of admin users and regular users (filled in OnInitializedAsync() )
+    private List<C3P1User>? Administrators;
+    private List<C3P1User>? RegularUsers;
+
+    private C3P1User selectedUser = new C3P1User();
+    private Modal? modalRef;
+
+    #region Confirm delete modal section
+    private void ShowModal(C3P1User user)
+    {
+        selectedUser = user;
+    
+        if (modalRef is not null)
+        {
+            modalRef.Show();
+        }
+    }
+
+    private void HideModal()
+    {
+        selectedUser = new C3P1User();
+        if (modalRef is not null)
+        {
+            modalRef.Hide();
+        }
+    }
+
+    private async Task DeleteUser(C3P1User user)
+    {
+        await usersAdminService.DeleteUserAsync(user);
+        await DataChanged();
+        HideModal();
+    }
+    #endregion
+
+    #region Page events
+    protected override async Task OnInitializedAsync()
+    {
+        await DataChanged();
+    }
+
+    private async Task DataChanged()
+    {
+        Administrators = await usersAdminService.GetAdminUsersAsync();
+        RegularUsers = await usersAdminService.GetRegularUsersAsync();
+    }
+    #endregion
+
+    #region Make admin or regular section
+    private async Task MakeAdmin(C3P1User user)
+    {
+        await usersAdminService.MakeAdminAsync(user);
+        await DataChanged();
+    }
+
+    private async Task MakeRegular(C3P1User user)
+    {
+        await usersAdminService.MakeRegularAsync(user);
+        await DataChanged();
+    }
+    #endregion
+}

@@ -1,0 +1,100 @@
+﻿<Bar @bind-Visible="sidebarVisible" Breakpoint="Breakpoint.Desktop" NavigationBreakpoint="Breakpoint.Tablet" ThemeContrast="ThemeContrast.Dark"
+     Mode="BarMode.VerticalInline" CollapseMode="BarCollapseMode.Small">
+    <BarToggler />
+    <BarBrand>
+        <BarItem>
+            <BarLink To="">
+                <BarIcon IconName="customIcon" />
+                C3P1.net
+            </BarLink>
+        </BarItem>
+    </BarBrand>
+    <BarMenu>
+        <BarStart>
+            <BarItem>
+                <BarLink To="">
+                    <BarIcon IconName="IconName.Dashboard" /> Dashboard
+                </BarLink>
+            </BarItem>
+
+            @* describe account sidebar section *@
+        <AuthorizeView>
+            <Authorized>
+                <BarItem>
+                    <BarDropdown>
+                        <BarDropdownToggle>
+                            <BarIcon IconName="IconName.UserCircle" /> Identity
+                        </BarDropdownToggle>
+                        <BarDropdownMenu>
+                            <BarDropdownItem To="identity/account/manage">
+                                <BarIcon IconName="IconName.ChevronRight" />Account
+                            </BarDropdownItem>
+                            <BarDropdownItem To="identity/account/blazorlogout">
+                                <BarIcon IconName="IconName.ChevronRight" />Logout
+                            </BarDropdownItem>
+                        </BarDropdownMenu>
+                    </BarDropdown>
+                </BarItem>
+            </Authorized>
+            <NotAuthorized>
+                <BarItem>
+                    <BarDropdown>
+                        <BarDropdownToggle>
+                            <BarIcon IconName="IconName.UserCircle" /> Identity
+                        </BarDropdownToggle>
+                        <BarDropdownMenu>
+                            <BarDropdownItem To="identity/account/register">
+                                <BarIcon IconName="IconName.ChevronRight" />Register
+                            </BarDropdownItem>
+                            <BarDropdownItem To="identity/account/login">
+                                <BarIcon IconName="IconName.ChevronRight" />Login
+                            </BarDropdownItem>
+                        </BarDropdownMenu>
+                    </BarDropdown>
+                </BarItem>
+            </NotAuthorized>
+        </AuthorizeView>
+            <BarItem>
+                <BarDropdown>
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.CameraRetro" /> Photo
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="https://pix.c3p1.net">
+                            <BarIcon IconName="IconName.ChevronRight" />C3P1 Pix
+                        </BarDropdownItem>
+                        <BarDropdownItem To="https://fuji.c3p1.net">
+                            <BarIcon IconName="IconName.ChevronRight" />Fuji
+                        </BarDropdownItem>
+                        <BarDropdownItem To="photo">
+                            <BarIcon IconName="IconName.ChevronRight" />About
+                        </BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+            <BarItem>
+                <BarDropdown>
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.Flask" /> Apps
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="https://paste.c3p1.net">
+                            <BarIcon IconName="IconName.StickyNote" /> Paste
+                        </BarDropdownItem>
+                        <AuthorizeView>
+                            <BarDropdownItem To="/tasklist">
+                                <BarIcon IconName="IconName.ChevronRight" />Tasklist
+                            </BarDropdownItem>
+                        </AuthorizeView>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+        </BarStart>
+    </BarMenu>
+</Bar>
+
+@code
+{
+            private bool sidebarVisible = true;
+            RenderFragment customIcon =@<img src="/pix/c3p1.png" style="width:32px; height: 32px" />;
+}

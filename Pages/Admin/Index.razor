@@ -1,0 +1,17 @@
+﻿@page "/admin"
+
+<AuthorizeView Roles="Administrator">
+    <Authorized>
+        <div class="text-center">
+            <h3>Welcome on the Administration board</h3>
+            <img class="main-logo" src="/pix/icons/admin.png" />
+            <p>
+                The administration board allows you to manage service database
+            </p>
+            <a class="btn btn-primary" href="/admin/users">Manage users</a>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        You must be admin.
+    </NotAuthorized>
+</AuthorizeView>
