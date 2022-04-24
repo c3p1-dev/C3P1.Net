@@ -30,9 +30,15 @@ namespace C3P1.Net.Services.API.Tools
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItem>>> Get()
         {
-            var usr = _context.Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
-            var userId = _userManager.GetUserId(User);
-            var currentUserId = Guid.Parse(_userManager.GetUserId(User));
+            var name = User.Identity?.Name;
+            var user = _context.Users.Where(x => x.UserName == name).FirstOrDefault();
+            if (user is null)
+            {
+                // should not happen
+                return BadRequest();
+            }
+
+            var currentUserId = Guid.Parse(user.Id);
             var result = await _tasklistService.GetTasklistAsync(currentUserId);
 
             if (result is null)
