@@ -11,10 +11,10 @@
     <PackageReference Include="Blazorise.Components" Version="1.0.4" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.0.4" />
     <PackageReference Include="Blazorise.SpinKit" Version="1.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

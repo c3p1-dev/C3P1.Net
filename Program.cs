@@ -2,14 +2,19 @@ using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using C3P1.Net.Data;
-using C3P1.Net.Services.Tools;
-using C3P1.Net.Services.Admin;
 using C3P1.Net.Identity.Data;
+using C3P1.Net.Services.Admin;
+using C3P1.Net.Services.Tools;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("C3P1ContextConnection"); ;
+var connectionString = builder.Configuration.GetConnectionString("C3P1ContextConnection");
+var configuration = builder.Configuration;
 
 // Add DataContext on the main database
 builder.Services.AddDbContext<C3P1Context>(options =>
@@ -18,7 +23,43 @@ builder.Services.AddDbContext<C3P1Context>(options =>
 // Add Identity support
 builder.Services.AddDefaultIdentity<C3P1User>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<C3P1Context>();
+    .AddEntityFrameworkStores<C3P1Context>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication().AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidAudience = configuration["JWT:ValidAudience"],
+        ValidIssuer = configuration["JWT:ValidIssuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
+    };
+});
+
+// Add API Token authentication support
+// Adding Authentication
+/*builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+ {
+     options.SaveToken = true;
+     options.RequireHttpsMetadata = false;
+     options.TokenValidationParameters = new TokenValidationParameters()
+     {
+         ValidateIssuer = true,
+         ValidateAudience = true,
+         ValidAudience = configuration["JWT:ValidAudience"],
+         ValidIssuer = configuration["JWT:ValidIssuer"],
+         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
+     };
+ });*/
 
 // Add services to the container.
 builder.Services.AddControllers();
