@@ -3,8 +3,8 @@ using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using C3P1.Net.Data;
 using C3P1.Net.Data.Services;
-using C3P1.Net.Identity.Data;
 using C3P1.Net.Data.Services.Admin;
+using C3P1.Net.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,8 +35,8 @@ builder.Services
     .AddFontAwesomeIcons();
 
 // Register services
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddTransient<IUsersAdminService, UsersAdminService>();
+builder.Services.AddTransient<ITasklistService, TasklistService>();
 
 var app = builder.Build();
 

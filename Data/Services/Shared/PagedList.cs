@@ -8,12 +8,9 @@ namespace C3P1.Net.Data.Services.Shared
 
         public int PageIndex { get; set; }
         public int TotalPages { get; set; }
-        public List<T>? Items { get; set; }
+        public List<T> Items { get; set; }
 
         #region Constructors
-        public PagedList()
-        {
-        }
         public PagedList(List<T> items, int count, int pageIndex, int pageSize)
         {
             PageIndex = pageIndex;

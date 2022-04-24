@@ -20,7 +20,7 @@ namespace C3P1.Net.Identity.Data
             // Create Admin Role
             bool alreadyExists = await roleManager.RoleExistsAsync("Admin");
             if (!alreadyExists)
-            { 
+            {
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
             }
 

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C3P1.Net.Migrations
 {
     [DbContext(typeof(C3P1Context))]
-    [Migration("20220420212323_CreateTasklistSchema")]
+    [Migration("20220423145008_CreateTasklistSchema")]
     partial class CreateTasklistSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

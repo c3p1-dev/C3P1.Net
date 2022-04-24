@@ -1,103 +1,89 @@
-﻿@*
-<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-    </Found>
-    <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
-*@
-
-<Blazorise.ThemeProvider Theme="@theme">
+﻿<Blazorise.ThemeProvider Theme="@theme">
     <CascadingAuthenticationState>
-
-            @*
-            <Router AppAssembly="typeof(App).Assembly" PreferExactMatches="@true">
-                <Found Context="routeData">
-                    <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
-                </Found>
-                <NotFound>
-                    <p>Sorry, there's nothing at this address.</p>
-                </NotFound>
-            </Router>
-            *@
             <Router AppAssembly="@typeof(App).Assembly">
                 <Found Context="routeData">
                     <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
                     <FocusOnNavigate RouteData="@routeData" Selector="h1" />
                 </Found>
                 <NotFound>
-                    <PageTitle>Not found</PageTitle>
+                    @* Err 404 custom setup *@
                     <LayoutView Layout="@typeof(MainLayout)">
-                        <p role="alert">Sorry, there's nothing at this address.</p>
+                        <Div TextAlignment="TextAlignment.Center">
+                            <Image Source="/pix/icons/404.png" Class="main-logo" />
+                            <Paragraph TextColor="TextColor.Danger">
+                                There is nothing here!
+                            </Paragraph>
+                            <Paragraph>
+                                <Link Class="btn btn-danger" href="/">Go back</Link>
+                            </Paragraph>
+                        </Div>
                     </LayoutView>
                 </NotFound>
             </Router>
-
         <MessageAlert />
         <NotificationAlert />
         <PageProgressAlert />
     </CascadingAuthenticationState>
 </Blazorise.ThemeProvider>
+
 @code{
     private Theme theme = new()
-            {
-                BarOptions = new()
-                {
-                    HorizontalHeight = "72px"
-                },
-                BreakpointOptions = new()
-                {
-                },
-                ColorOptions = new()
-                {
+    {
+        BarOptions = new()
+        {
+            HorizontalHeight = "72px",
+        },
+        BreakpointOptions = new()
+        {
+        },
+        ColorOptions = new()
+        {
+            //Primary = "#0288D1",
+            //Secondary = "#A65529",
+            //Success = "#23C02E",
+            //Info = "#9BD8FE",
+            //Warning = "#F8B86C",
+            //Danger = "#F95741",
+            //Light = "#F0F0F0",
+            //Dark = "#535353",
+        },
+        BackgroundOptions = new()
+        {
+            //Primary = "#598195",
+            //Primary = "#0288D1",
+            Primary = "#4F718F",
+            Light = "#B3C8D5"
+        },
+        TextColorOptions = new()
+        {
+            //Dark = "#FFFFFF"
+        },
+        //ButtonOptions = new ThemeButtonOptions { },
+        //DropdownOptions = new ThemeDropdownOptions { },
+        InputOptions = new()
+        {
+            CheckColor = "#0288D1",
+        },
 
-                    Primary = "#0288D1",
-                    //Secondary = "#A65529",
-                    //Success = "#23C02E",
-                    //Info = "#9BD8FE",
-                    //Warning = "#F8B86C",
-                    //Danger = "#F95741",
-                    //Light = "#F0F0F0",
-                    //Dark = "#535353",
-                },
-                BackgroundOptions = new()
-                {
-                    Primary = "#598195",
-                    //Primary = "#0288D1",
-                },
-                TextColorOptions = new()
-                {
-                    Dark = "#FFFFFF"
-                },
-                //ButtonOptions = new ThemeButtonOptions { },
-                //DropdownOptions = new ThemeDropdownOptions { },
-                InputOptions = new()
-                {
-                    CheckColor = "#0288D1",
-                },
+        IsGradient = true,
+        IsRounded = true,
 
-                IsGradient = true,
-                IsRounded = true,
-                
-                //CardOptions = new ThemeCardOptions { },
-                //ModalOptions = new ThemeModalOptions { },
-                //TabsOptions = new ThemeTabsOptions { },
-                //ProgressOptions = new ThemeProgressOptions { },
-                //AlertOptions = new ThemeAlertOptions { },
-                //BreadcrumbOptions = new ThemeBreadcrumbOptions { },
-                //BadgeOptions = new ThemeBadgeOptions { },
-                //PaginationOptions = new ThemePaginationOptions { },
-                //TooltipOptions = new ThemeTooltipOptions
-                //{
-                //    BackgroundColor = "#22c8ce",
-                //    BackgroundOpacity = .7f,
-                //    Color = "#ff0000",
-                //},
-            }; 
+        //CardOptions = new ThemeCardOptions { },
+        //ModalOptions = new ThemeModalOptions { },
+        //TabsOptions = new ThemeTabsOptions { },
+        ProgressOptions = new ThemeProgressOptions
+        {
+        PageProgressDefaultColor = "#535353"    
+        },
+        //AlertOptions = new ThemeAlertOptions { },
+        //BreadcrumbOptions = new ThemeBreadcrumbOptions { },
+        //BadgeOptions = new ThemeBadgeOptions { },
+        //PaginationOptions = new ThemePaginationOptions { },
+        TooltipOptions = new ThemeTooltipOptions
+        {
+            BackgroundColor = "#535353",
+            Color = "#F0F0F0",
+            //BackgroundOpacity = .7f,
+        },
+    }; 
 }

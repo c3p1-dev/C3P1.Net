@@ -1,4 +1,7 @@
-﻿using C3P1.Net.Identity.Data;
+﻿// Disable nullable warnings
+
+using C3P1.Net.Data.Models;
+using C3P1.Net.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +12,6 @@ public class C3P1Context : IdentityDbContext<C3P1User>
     public C3P1Context(DbContextOptions<C3P1Context> options)
         : base(options)
     {
-        
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -19,4 +21,14 @@ public class C3P1Context : IdentityDbContext<C3P1User>
         // For example, you can rename the ASP.NET Identity table names and more.
         // Add your customizations after calling base.OnModelCreating(builder);
     }
+
+    protected override void OnConfiguring(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder optionsBuilder)
+    {
+#if DEBUG
+        optionsBuilder.EnableSensitiveDataLogging();
+#endif
+    }
+
+    // Set Tables in database
+    public DbSet<TodoItem> Tasklist => Set<TodoItem>();
 }

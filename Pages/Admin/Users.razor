@@ -4,13 +4,13 @@
 @using C3P1.Net.Identity.Data
 
 @inject IUsersAdminService usersAdminService
-<AuthorizeView Roles="Administrator">
+<AuthorizeView Roles="Admin">
     <Authorized>
         <h3>Manage users</h3>
         <br />
 
         <h4>Administrators</h4>
-        <Table>
+        <Table TextColor="TextColor.Light" Hoverable="true" Borderless="true">
             <TableHeader>
                 <TableRow>
                     <TableRowCell Style="width:100%">Email</TableRowCell>
@@ -59,7 +59,7 @@
         {
             if (RegularUsers.Count > 0)
             { 
-                <Table>
+                <Table TextColor="TextColor.Light" Hoverable="true" Borderless="true">
                     <TableHeader>
                         <TableRow>
                             <TableRowCell Style="width:100%">Email</TableRowCell>

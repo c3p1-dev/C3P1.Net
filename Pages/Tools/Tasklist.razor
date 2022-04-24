@@ -1,0 +1,723 @@
+﻿@page "/tools/tasklist"
+
+@using C3P1.Net.Identity.Data
+@using C3P1.Net.Data.Services
+@using C3P1.Net.Data.Services.Shared
+@using C3P1.Net.Data.Models
+@using Microsoft.AspNetCore.Identity
+
+@inject ITasklistService tasklistService
+@inject UserManager<C3P1User> userManager
+@inject AuthenticationStateProvider authStateProvider
+
+<AuthorizeView>
+    <Authorized>
+        <PageTitle>C3P1.Net Tasklist</PageTitle>
+        <Row>
+            <Column>
+                <Card Background="Background.Secondary" Margin="Margin.Is1.FromTop">
+                    <CardHeader Padding="Padding.Is1.FromBottom">
+                        <Heading Size="HeadingSize.Is4">
+                            <Buttons>
+                                <Button Size="Size.Small" Color="Color.Info" Clicked="@(async () => await SetFilter(Filter.Todo))" Active="@(filter == Filter.Todo)">Todo</Button>
+                                <Button Size="Size.Small" Color="Color.Info" Clicked="@(async () => await SetFilter(Filter.Completed))" Active="@(filter == Filter.Completed)">Completed</Button>
+                                <Button Size="Size.Small" Color="Color.Info" Clicked="@(async () => await SetFilter(Filter.All))" Active="@(filter == Filter.All)">All</Button>
+                            </Buttons>
+
+                            <Buttons>
+                                @if ((filter != Filter.Todo) && (AnyDoneItems()))
+                                {
+                                    <Button Color="Color.Danger" Size="Size.Small" Clicked="@ShowDeleteDoneTasksModal">
+                                        <span class="oi oi-ban" />
+                                    </Button>
+                                }
+                                <Button Size="Size.Small" Color="Color.Info" Clicked="@ShowSortTasksModal">
+                                    <span class="oi oi-magnifying-glass" />
+                                </Button>
+                                <Button Size="Size.Small" Color="Color.Primary" Clicked="@ShowAddTaskModal">
+                                    <span class="oi oi-plus" />
+                                </Button>
+                            </Buttons>
+                        </Heading>
+                    </CardHeader>
+                    <CardBody Background="Background.Light" Padding="Padding.Is1.OnY.Is1.FromStart.Is1.FromEnd">
+                        @if (tasklist == null)
+                        {
+                            <Alert Visible="true" Color="Color.Info">Loading tasklist...</Alert>
+                        }
+                        else if (tasklist.Items.Count == 0)
+                        {
+                            if (filter == Filter.All)
+                            {
+                                <Alert Visible="true" Color="Color.Info">
+                                    There are no tasks in your tasklist
+                                </Alert>
+                            }
+                            else if (filter == Filter.Todo)
+                            {
+                                <Alert Visible="true" Color="Color.Info">
+                                    There are no tasks todo
+                                </Alert>
+                            }
+                            else
+                            {
+                                <Alert Visible="true" Color="Color.Info">
+                                    There are no completed tasks
+                                </Alert>
+                            }
+                        }
+                        else // tasklist exists and is not empty
+                        {
+                            <Table Hoverable="true" Borderless="true" TextColor="TextColor.Dark">
+                                <TableBody>
+                                    @foreach (TodoItem item in tasklist.Items)
+                                    {
+                                        <TableRow>
+                                            <TableRowCell Style="width:40px">
+                                                <Button Clicked="@(() => InvertCompletedState(item))" Color="Color.Primary" Size="Size.Small" Outline="@(item.Completed == false)">
+                                                    <span class="oi oi-check" />
+                                                </Button>
+                                            </TableRowCell>
+                                            <TableRowCell>
+                                                <Inline>
+                                                    @if (item.Completed == false)
+                                                    {
+                                                        <Tooltip Text="@($"Created on {item.CreationTime}")">
+                                                            @item.Title
+                                                        </Tooltip>
+                                                    }
+                                                    else
+                                                    {
+                                                        <Tooltip Text="@($"Created on {item.CreationTime}\nCompleted on {item.CompletedTime}")">
+                                                            @item.Title
+                                                        </Tooltip>
+                                                    }
+                                                </Inline>
+                                            </TableRowCell>
+                                            <TableRowCell Style="width:65px">
+                                                <Buttons>
+                                                    <Button Clicked="@(() => ShowEditTaskModal(item))" Color="Color.Primary" Size="Size.Small">
+                                                        <span class="oi oi-document" />
+                                                    </Button>
+                                                    <Button Clicked="@(() =>ShowDeleteTaskModal(item))" Color="Color.Danger" Size="Size.Small">
+                                                        <span class="oi oi-ban" />
+                                                    </Button>
+                                                </Buttons>
+                                            </TableRowCell>
+                                        </TableRow>
+                                    }
+                                </TableBody>
+                            </Table>
+                        }
+                    </CardBody>
+
+                    @if (tasklist is not null && tasklist.TotalPages > 1)
+                    { 
+                        <CardFooter Padding="Padding.Is0.FromBottom">
+                            <Pagination Size="Size.Small">
+                                <PaginationItem Disabled="@(pageNumber == 1)">
+                                    <PaginationLink Clicked="@GoPreviousPage" Border="Border.Primary" Background="Background.Dark" TextColor="TextColor.Light">
+                                        <span aria-hidden="true">«</span>
+                                    </PaginationLink>
+                                </PaginationItem>
+
+                                <PaginationItem Disabled="@(pageNumber == tasklist.TotalPages)">
+                                    <PaginationLink Clicked="@GoNextPage" Border="Border.Primary" Background="Background.Dark" TextColor="TextColor.Light">
+                                        <span aria-hidden="true">»</span>
+                                    </PaginationLink>
+                                </PaginationItem>
+
+                                <Select TValue="int" Border="Border.Primary" Background="Background.Dark" TextColor="TextColor.Light" SelectedValue="@pageNumber" Size="Size.Small" Style="max-width:200px" Margin="Margin.Is2.FromStart" SelectedValueChanged="@GoToSelectedPage">
+                                    @for (int i = 0; i < tasklist.TotalPages; i++)
+                                    {
+                                        int n = i + 1;
+                                        <SelectItem Value="@n">Page @n</SelectItem>
+                                    }
+                                </Select>
+                            </Pagination>
+                        </CardFooter>
+                    }
+                </Card>
+            </Column>
+        </Row>
+    </Authorized>
+    <NotAuthorized>
+        <Paragraph>You must <a href="identity/account/login">log in</a></Paragraph>
+    </NotAuthorized>
+</AuthorizeView>
+
+@* Modals description section *@
+@* AddTaskModal *@
+<Modal @ref="addTaskModal" TextColor="TextColor.Dark">
+    <ModalContent Centered=true>
+        <ModalHeader>
+            <ModalTitle>Add a new task</ModalTitle>
+            <CloseButton Clicked="@HideAddTaskModal" />
+        </ModalHeader>
+        <ModalBody>
+            <Paragraph>
+                <Field>
+                    <FieldLabel>Title</FieldLabel>
+                    <TextEdit @bind-Text=newItem.Title Placeholder="Enter task title ..." />
+                </Field>
+                <Field>
+                    <FieldLabel>Due Time</FieldLabel>
+                    <DateTimeEdit @bind-Value=newItem.DueTime />
+                </Field>
+            </Paragraph>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked=HideAddTaskModal>Cancel</Button>
+            <Button Color="Color.Primary" Clicked=AddTask>Add</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@* EditTaskModal *@
+<Modal @ref="editTaskModal" TextColor="TextColor.Dark">
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>Edit task</ModalTitle>
+            <CloseButton Clicked="@HideEditTaskModal" />
+        </ModalHeader>
+        <ModalBody>
+            <Paragraph>
+                <Field>
+                    <FieldLabel>Title</FieldLabel>
+                    <TextEdit @bind-Text="@selectedItemTitle" />
+                </Field>
+                <Field>
+                    <FieldLabel>
+                        Due Time
+                    </FieldLabel>
+                    <Paragraph>
+                        <DateTimeEdit @bind-Value="@selectedItemDueTime" />
+                    </Paragraph>
+                    <Paragraph>
+                        <Tooltip Text="@ProgressTooltip(selectedItem)">
+                            <Progress Size="Size.Large">
+                                <ProgressBar Background="@ProgressBackground(selectedItem)" Value="@ProgressValue(selectedItem)">@ProgressValue(selectedItem) %</ProgressBar>
+                            </Progress>
+                        </Tooltip>
+                    </Paragraph>
+                </Field>
+                <Paragraph>
+                    <Inline>
+                        <Check @bind-Checked="@selectedItemCompleted" />
+                        Completed
+                    </Inline>
+                </Paragraph>
+            </Paragraph>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideEditTaskModal">Cancel</Button>
+            <Button Color="Color.Primary" Clicked="@EditTask">Update</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@* DeleteTaskModal *@
+<Modal @ref="deleteTaskModal" TextColor=TextColor.Dark>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>Delete task</ModalTitle>
+            <CloseButton Clicked="@HideDeleteTaskModal" />
+        </ModalHeader>
+        <ModalBody>
+            <Paragraph>
+                <Field>
+                    <FieldLabel>Title</FieldLabel>
+                    <TextEdit @bind-Text="@selectedItemTitle" ReadOnly="true"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Due Time</FieldLabel>
+                    <Paragraph>
+                        <DateTimeEdit @bind-Value="@selectedItemDueTime" />
+                    </Paragraph>
+                    <Paragraph>
+                        <Tooltip Text="@ProgressTooltip(selectedItem)">
+                            <Progress Size="Size.Large">
+                                <ProgressBar Background="@ProgressBackground(selectedItem)" Value="@ProgressValue(selectedItem)"></ProgressBar>
+                            </Progress>
+                        </Tooltip>
+                    </Paragraph>
+                </Field>
+                <Paragraph>
+                    <Inline>
+                        <Check @bind-Checked="@selectedItem.Completed" Disabled="true" />
+                        Completed
+                    </Inline>
+                </Paragraph>
+            </Paragraph>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideDeleteTaskModal">Cancel</Button>
+            <Button Color="Color.Danger" Clicked="@DeleteTask">Delete</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@* SortTasksModal *@
+<Modal @ref="sortTasksModal" TextColor=TextColor.Dark>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>Sort tasks</ModalTitle>
+            <CloseButton Clicked="@HideSortTasksModal" />
+        </ModalHeader>
+        <ModalBody>
+            <Row>
+                <Column>
+                    <Paragraph>
+                        Sort tasks by
+                    </Paragraph>
+                    <Paragraph>
+                        <RadioGroup TValue="string" Name="SortByGroup" @bind-CheckedValue="@sortField">
+                            <Radio TValue="string" Value="@("Title")">Title</Radio>
+                            <Radio TValue="string" Value="@("DueTime")">Due time</Radio>
+                            <Radio TValue="string" Value="@("CreationTime")">Creation time</Radio>
+                        </RadioGroup>
+                    </Paragraph>
+                </Column>
+                <Column>
+                    <Paragraph>
+                        Select sort order
+                    </Paragraph>
+                    <Paragraph>
+                        <Buttons>
+                            <Button Color="Color.Secondary" Active="@(sortOrder == "ASC")" Clicked="SortAsc">
+                                <span class="oi oi-sort-ascending" />Ascending
+                            </Button>
+                            <Button Color="Color.Secondary" Active="@(sortOrder == "DSC")" Clicked="SortDesc">
+                                <span class="oi oi-sort-descending" />Descending
+                            </Button>
+                        </Buttons>
+                    </Paragraph>
+                </Column>
+            </Row>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideSortTasksModal">Cancel</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@* DeleteDoneTasks Modal *@
+<Modal @ref="@deleteDoneTasksModal" TextColor=TextColor.Dark>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>Delete all done tasks</ModalTitle>
+            <CloseButton Clicked="@HideDeleteDoneTasksModal" />
+        </ModalHeader>
+        <ModalBody>
+            <Paragraph>
+                Are you sure you want to delete all done tasks ?
+            </Paragraph>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideDeleteDoneTasksModal">Cancel</Button>
+            <Button Color="Color.Danger" Clicked="@DeleteDoneTasks">Yes</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code
+{
+    #region Members and accessors
+    // Filters num
+    enum Filter
+    {
+        All,
+        Todo,
+        Completed,
+    }
+    // members and accessors
+    PagedList<TodoItem>? tasklist;
+    int pageNumber = 1;
+    int pageSize = 8;
+    string sortField = "CreationTime";
+    string sortOrder = "ASC";
+
+    Filter filter = Filter.Todo;
+
+    async Task SetFilter(Filter filter)
+    {
+        this.filter = filter;
+        pageNumber = 1;
+        await GetData();
+
+    }
+    #endregion
+
+    #region Page events
+    protected override async Task OnInitializedAsync()
+    {
+        // load data if user is authenticated
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            await GetData();
+        }
+    }
+    #endregion
+
+    #region Functions
+    async Task GetData()
+    {
+        // check if user is connected
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUserId = Guid.Parse(userManager.GetUserId(user));
+
+        if (filter == Filter.All)
+        {
+            tasklist = await tasklistService.GetTasklistPagedAsync(currentUserId, pageNumber, pageSize, sortField, sortOrder);
+        }
+        else if (filter == Filter.Todo)
+        {
+            tasklist = await tasklistService.GetTodoTasklistPagedAsync(currentUserId, pageNumber, pageSize, sortField, sortOrder);
+        }
+        else
+        {
+            tasklist = await tasklistService.GetDoneTasklistPagedAsync(currentUserId, pageNumber, pageSize, sortField, sortOrder);
+        }
+    }
+
+    bool AnyDoneItems()
+    {
+        // check if user is connected
+        var authState = authStateProvider.GetAuthenticationStateAsync().Result;
+        var user = authState.User;
+        var currentUserId = Guid.Parse(userManager.GetUserId(user));
+
+        return (tasklistService.GetDoneTasklistAsync(currentUserId).Result.Count > 0);
+    }
+
+    async Task InvertCompletedState(TodoItem item)
+    {
+        // check if user is connected
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUserId = await userManager.GetUserAsync(user);
+
+        if (item.Completed == false)
+        {
+            item.CompletedTime = DateTime.Now;
+            item.Completed = true;
+        }
+        else
+        {
+            item.CompletedTime = null;
+            item.Completed = false;
+        }
+
+        await tasklistService.UpdateTodoItemAsync(item);
+        await GetData();
+
+    }
+
+    int CalculateProgress(TodoItem item)
+    {
+        double totalseconds = (item.DueTime.GetValueOrDefault() - item.CreationTime).TotalSeconds;
+        double remaningseconds = (item.DueTime.GetValueOrDefault() - DateTime.Now).TotalSeconds;
+        DateTime now = DateTime.Now;
+        DateTime creation = item.CreationTime;
+        DateTime dueat = item.DueTime.GetValueOrDefault();
+
+
+        if (remaningseconds < 0)
+            return -1;
+        else
+        {
+            double i = ((totalseconds - remaningseconds) / totalseconds) * 100;
+            return Convert.ToInt32(i);
+        }
+    }
+
+    long CalculateRemainingTime(TodoItem item)
+    {
+        double totalseconds = (item.DueTime.GetValueOrDefault() - item.CreationTime).TotalSeconds;
+        double remaningseconds = (item.DueTime.GetValueOrDefault() - DateTime.Now).TotalSeconds;
+
+        if (remaningseconds < 0)
+            return -1;
+        else
+            return Convert.ToInt64(remaningseconds);
+    }
+
+
+    Background ProgressBackground(TodoItem item)
+    {
+        if (item.Completed) // if completed
+        {
+            if (item.DueTime != null)
+            {
+                if (item.CompletedTime <= item.DueTime)
+                    return Background.Success;
+                else if (item.CompletedTime > item.DueTime)
+                    return Background.Danger;
+            }
+            else
+            {
+                return Background.Success;
+            }
+        }
+        else    // if Not completed
+        {
+            if (item.DueTime != null)
+            {
+                if (CalculateProgress(item) < 1)
+                    return Background.Danger;
+                else if (CalculateProgress(item) < 50)
+                    return Background.Primary;
+                else if (CalculateProgress(item) < 80)
+                    return Background.Warning;
+                else
+                    return Background.Danger;
+            }
+            else
+            {
+                return Background.Light;
+            }
+        }
+
+        // should not happen
+        return Background.Default;
+    }
+
+    int ProgressValue(TodoItem item)
+    {
+        if (item.Completed)
+        {
+            return 100;
+        }
+        else
+        {
+            if (CalculateProgress(item) == -1)
+                return 100;
+            else
+                return CalculateProgress(item);
+        }
+    }
+
+    string ProgressTooltip(TodoItem item)
+    {
+        if (item.DueTime == null)
+        {
+            return "No due time";
+        }
+        else
+        {
+            if (item.Completed)
+                return "Due time  " + item.DueTime.ToString() + "\nCompleted on " + item.CompletedTime.ToString();
+            else
+            {
+                if (CalculateRemainingTime(item) > 0)
+                {
+                    return "Due time " + item.DueTime.ToString() +
+                        "\nRemaining time " + TimeSpan.FromSeconds(CalculateRemainingTime(item)).ToString();
+                }
+                else
+                    return "Due time " + item.DueTime.ToString() + "\nTime exceeded";
+            }
+        }
+    }
+#endregion
+
+#region AddTask modal code
+    Modal addTaskModal = new Modal();
+
+    TodoItem newItem = new TodoItem();
+
+    void HideAddTaskModal()
+    {
+        newItem = new TodoItem();
+        addTaskModal.Hide();
+    }
+
+    void ShowAddTaskModal()
+    {
+        addTaskModal.Show();
+    }
+
+    async Task AddTask()
+    {
+        // check if user is connected
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUserId = Guid.Parse(userManager.GetUserId(user));
+
+        // check item validity
+        // add new task in database
+        if (!string.IsNullOrEmpty(newItem.Title))
+        {
+            await tasklistService.AddTodoItemAsync(currentUserId, newItem);
+            await GetData();
+        }
+
+        // hide modal dialog
+        HideAddTaskModal();
+    }
+#endregion
+
+#region EditTask & Delete modal code
+    Modal editTaskModal = new Modal();
+    Modal deleteTaskModal = new Modal();
+
+    TodoItem selectedItem = new TodoItem();
+    string selectedItemTitle = string.Empty;
+    DateTime? selectedItemDueTime;
+    bool selectedItemCompleted;
+
+    void ShowEditTaskModal(TodoItem item)
+    {
+        selectedItem = item;
+        selectedItemTitle = selectedItem.Title;
+        selectedItemDueTime = selectedItem.DueTime;
+        selectedItemCompleted = selectedItem.Completed;
+        editTaskModal.Show();
+    }
+
+    void HideEditTaskModal()
+    {
+        selectedItem = new TodoItem();
+        editTaskModal.Hide();
+    }
+
+    async Task EditTask()
+    {
+        // check if user is connected
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUser = await userManager.GetUserAsync(user);
+
+        // update task
+        selectedItem.Title = selectedItemTitle;
+        selectedItem.DueTime = selectedItemDueTime;
+
+        if (selectedItem.Completed == false && selectedItemCompleted == true)
+        {
+            selectedItem.CompletedTime = DateTime.Now;
+        }
+        selectedItem.Completed = selectedItemCompleted;
+
+        await tasklistService.UpdateTodoItemAsync(selectedItem);
+        await GetData();
+
+        // hide modal dialog
+        HideEditTaskModal();
+    }
+
+    void ShowDeleteTaskModal(TodoItem item)
+    {
+        selectedItem = item;
+        selectedItemTitle = selectedItem.Title;
+        selectedItemDueTime = selectedItem.DueTime;
+        selectedItemCompleted = selectedItem.Completed;
+
+        deleteTaskModal.Show();
+    }
+
+    void HideDeleteTaskModal()
+    {
+        selectedItem = new TodoItem();
+        deleteTaskModal.Hide();
+    }
+
+    async Task DeleteTask()
+    {
+        // check if user is connected
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUserId = Guid.Parse(userManager.GetUserId(user));
+
+        // delete task
+        await tasklistService.DeleteTodoItemAsync(currentUserId, selectedItem.Id);
+        await GetData();
+
+        // Hide modal dialog
+        HideDeleteTaskModal();
+    }
+#endregion
+
+#region Sort & Pagination
+    Modal sortTasksModal = new Modal();
+    async Task GoNextPage()
+    {
+        if (tasklist is not null && pageNumber < tasklist.TotalPages)
+        {
+            pageNumber++;
+            await GetData();
+        }
+    }
+
+    async Task GoPreviousPage()
+    {
+        if (pageNumber > 1)
+        {
+            pageNumber--;
+            await GetData();
+        }
+    }
+
+    async Task GoToSelectedPage(int value)
+    {
+        pageNumber = value;
+        await GetData();
+    }
+
+    void ShowSortTasksModal()
+    {
+        sortTasksModal.Show();
+    }
+    void HideSortTasksModal()
+    {
+        sortTasksModal.Hide();
+    }
+
+    async Task SortAsc()
+    {
+        HideSortTasksModal();
+        sortOrder = "ASC";
+        pageNumber = 1;
+        await GetData();
+        //StateHasChanged();
+    }
+    async Task SortDesc()
+    {
+        HideSortTasksModal();
+        sortOrder = "DSC";
+        pageNumber = 1;
+        await GetData();
+        //StateHasChanged();
+    }
+#endregion
+
+#region DeleteDoneTasks modal
+    Modal deleteDoneTasksModal = new Modal();
+
+    void ShowDeleteDoneTasksModal()
+    {
+        deleteDoneTasksModal.Show();
+    }
+
+    void HideDeleteDoneTasksModal()
+    {
+        deleteDoneTasksModal.Hide();
+    }
+
+    async Task DeleteDoneTasks()
+    {
+        await deleteDoneTasksModal.Hide();
+        // check if user is connected
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUserId = Guid.Parse(userManager.GetUserId(user));
+
+        // delete all done tasks
+        await tasklistService.DeleteDoneTasklistAsync(currentUserId);
+        await GetData();
+    }
+#endregion
+}
