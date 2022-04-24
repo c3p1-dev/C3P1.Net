@@ -93,7 +93,7 @@
                 <p>There are no regular users</p>
             }
         }
-        <Modal @ref="modalRef">
+        <Modal @ref="modalRef" TextColor="TextColor.Dark">
             <ModalContent Centered="true">
                 <ModalHeader>
                     <ModalTitle>Confirm delete</ModalTitle>
@@ -106,7 +106,7 @@
                 </ModalBody>
                 <ModalFooter>
                     <Button Color="Color.Secondary" Clicked="@HideModal">Cancel</Button>
-                    <Button Color="Color.Primary" Clicked="@(async () => await DeleteUser(selectedUser))">Confirm</Button>
+                    <Button Color="Color.Danger" Clicked="@(async () => await DeleteUser(selectedUser))">Confirm</Button>
                 </ModalFooter>
             </ModalContent>
         </Modal>
