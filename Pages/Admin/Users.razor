@@ -1,6 +1,6 @@
 ﻿@page "/admin/users"
 
-@using C3P1.Net.Data.Services.Admin
+@using C3P1.Net.Services.Admin
 @using C3P1.Net.Identity.Data
 
 @inject IUsersAdminService usersAdminService
@@ -113,7 +113,7 @@
 
     </Authorized>
     <NotAuthorized>
-        <p>You must be admin.</p>
+        <ErrAuth ErrorMessage="ErrAuth.ErrorType.MustBeAdmin"/>
     </NotAuthorized>
 </AuthorizeView>
 

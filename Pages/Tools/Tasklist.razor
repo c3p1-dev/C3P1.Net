@@ -1,8 +1,8 @@
 ﻿@page "/tools/tasklist"
 
 @using C3P1.Net.Identity.Data
-@using C3P1.Net.Data.Services
-@using C3P1.Net.Data.Services.Shared
+@using C3P1.Net.Services.Tools
+@using C3P1.Net.Services.Shared
 @using C3P1.Net.Data.Models
 @using Microsoft.AspNetCore.Identity
 
@@ -20,7 +20,7 @@
                         <Heading Size="HeadingSize.Is4">
                             <Buttons>
                                 <Button Size="Size.Small" Color="Color.Info" Clicked="@(async () => await SetFilter(Filter.Todo))" Active="@(filter == Filter.Todo)">Todo</Button>
-                                <Button Size="Size.Small" Color="Color.Info" Clicked="@(async () => await SetFilter(Filter.Completed))" Active="@(filter == Filter.Completed)">Completed</Button>
+                                <Button Size="Size.Small" Color="Color.Info" Clicked="@(async () => await SetFilter(Filter.Completed))" Active="@(filter == Filter.Completed)">Done</Button>
                                 <Button Size="Size.Small" Color="Color.Info" Clicked="@(async () => await SetFilter(Filter.All))" Active="@(filter == Filter.All)">All</Button>
                             </Buttons>
 
@@ -49,19 +49,19 @@
                         {
                             if (filter == Filter.All)
                             {
-                                <Alert Visible="true" Color="Color.Info">
+                                <Alert Visible="true" Color="Color.Success">
                                     There are no tasks in your tasklist
                                 </Alert>
                             }
                             else if (filter == Filter.Todo)
                             {
-                                <Alert Visible="true" Color="Color.Info">
+                                <Alert Visible="true" Color="Color.Success">
                                     There are no tasks todo
                                 </Alert>
                             }
                             else
                             {
-                                <Alert Visible="true" Color="Color.Info">
+                                <Alert Visible="true" Color="Color.Success">
                                     There are no completed tasks
                                 </Alert>
                             }
@@ -78,7 +78,7 @@
                                                     <span class="oi oi-check" />
                                                 </Button>
                                             </TableRowCell>
-                                            <TableRowCell>
+                                            <TableRowCell Clicked="@(() => ShowEditTaskModal(item))">
                                                 <Inline>
                                                     @if (item.Completed == false)
                                                     {
@@ -93,16 +93,6 @@
                                                         </Tooltip>
                                                     }
                                                 </Inline>
-                                            </TableRowCell>
-                                            <TableRowCell Style="width:65px">
-                                                <Buttons>
-                                                    <Button Clicked="@(() => ShowEditTaskModal(item))" Color="Color.Primary" Size="Size.Small">
-                                                        <span class="oi oi-document" />
-                                                    </Button>
-                                                    <Button Clicked="@(() =>ShowDeleteTaskModal(item))" Color="Color.Danger" Size="Size.Small">
-                                                        <span class="oi oi-ban" />
-                                                    </Button>
-                                                </Buttons>
                                             </TableRowCell>
                                         </TableRow>
                                     }
@@ -142,7 +132,7 @@
         </Row>
     </Authorized>
     <NotAuthorized>
-        <Paragraph>You must <a href="identity/account/login">log in</a></Paragraph>
+        <ErrAuth ErrorMessage="ErrAuth.ErrorType.MustBeLogged"/>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -210,49 +200,9 @@
             </Paragraph>
         </ModalBody>
         <ModalFooter>
+            <Button Color="Color.Danger" Clicked="@DeleteTask">Delete</Button>
             <Button Color="Color.Secondary" Clicked="@HideEditTaskModal">Cancel</Button>
             <Button Color="Color.Primary" Clicked="@EditTask">Update</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
-
-@* DeleteTaskModal *@
-<Modal @ref="deleteTaskModal" TextColor=TextColor.Dark>
-    <ModalContent Centered="true">
-        <ModalHeader>
-            <ModalTitle>Delete task</ModalTitle>
-            <CloseButton Clicked="@HideDeleteTaskModal" />
-        </ModalHeader>
-        <ModalBody>
-            <Paragraph>
-                <Field>
-                    <FieldLabel>Title</FieldLabel>
-                    <TextEdit @bind-Text="@selectedItemTitle" ReadOnly="true"/>
-                </Field>
-                <Field>
-                    <FieldLabel>Due Time</FieldLabel>
-                    <Paragraph>
-                        <DateTimeEdit @bind-Value="@selectedItemDueTime" />
-                    </Paragraph>
-                    <Paragraph>
-                        <Tooltip Text="@ProgressTooltip(selectedItem)">
-                            <Progress Size="Size.Large">
-                                <ProgressBar Background="@ProgressBackground(selectedItem)" Value="@ProgressValue(selectedItem)"></ProgressBar>
-                            </Progress>
-                        </Tooltip>
-                    </Paragraph>
-                </Field>
-                <Paragraph>
-                    <Inline>
-                        <Check @bind-Checked="@selectedItem.Completed" Disabled="true" />
-                        Completed
-                    </Inline>
-                </Paragraph>
-            </Paragraph>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Secondary" Clicked="@HideDeleteTaskModal">Cancel</Button>
-            <Button Color="Color.Danger" Clicked="@DeleteTask">Delete</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
@@ -322,8 +272,7 @@
 
 @code
 {
-    #region Members and accessors
-    // Filters num
+    // filters num
     enum Filter
     {
         All,
@@ -346,9 +295,8 @@
         await GetData();
 
     }
-    #endregion
 
-    #region Page events
+    // page events
     protected override async Task OnInitializedAsync()
     {
         // load data if user is authenticated
@@ -360,9 +308,8 @@
             await GetData();
         }
     }
-    #endregion
 
-    #region Functions
+    // local functions
     async Task GetData()
     {
         // check if user is connected
@@ -523,9 +470,8 @@
             }
         }
     }
-#endregion
 
-#region AddTask modal code
+    // AddTask modal code
     Modal addTaskModal = new Modal();
 
     TodoItem newItem = new TodoItem();
@@ -543,13 +489,12 @@
 
     async Task AddTask()
     {
-        // check if user is connected
+        // get logged in user data
         var authState = await authStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         var currentUserId = Guid.Parse(userManager.GetUserId(user));
 
-        // check item validity
-        // add new task in database
+        // check item validity before adding a new task in database
         if (!string.IsNullOrEmpty(newItem.Title))
         {
             await tasklistService.AddTodoItemAsync(currentUserId, newItem);
@@ -559,9 +504,8 @@
         // hide modal dialog
         HideAddTaskModal();
     }
-#endregion
 
-#region EditTask & Delete modal code
+    // Edit/Delete modal code
     Modal editTaskModal = new Modal();
     Modal deleteTaskModal = new Modal();
 
@@ -587,7 +531,7 @@
 
     async Task EditTask()
     {
-        // check if user is connected
+        // get logged in user data
         var authState = await authStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         var currentUser = await userManager.GetUserAsync(user);
@@ -609,22 +553,6 @@
         HideEditTaskModal();
     }
 
-    void ShowDeleteTaskModal(TodoItem item)
-    {
-        selectedItem = item;
-        selectedItemTitle = selectedItem.Title;
-        selectedItemDueTime = selectedItem.DueTime;
-        selectedItemCompleted = selectedItem.Completed;
-
-        deleteTaskModal.Show();
-    }
-
-    void HideDeleteTaskModal()
-    {
-        selectedItem = new TodoItem();
-        deleteTaskModal.Hide();
-    }
-
     async Task DeleteTask()
     {
         // check if user is connected
@@ -637,11 +565,10 @@
         await GetData();
 
         // Hide modal dialog
-        HideDeleteTaskModal();
+        HideEditTaskModal();
     }
-#endregion
 
-#region Sort & Pagination
+    // SortTasks modal code
     Modal sortTasksModal = new Modal();
     async Task GoNextPage()
     {
@@ -682,7 +609,6 @@
         sortOrder = "ASC";
         pageNumber = 1;
         await GetData();
-        //StateHasChanged();
     }
     async Task SortDesc()
     {
@@ -690,11 +616,9 @@
         sortOrder = "DSC";
         pageNumber = 1;
         await GetData();
-        //StateHasChanged();
     }
-#endregion
 
-#region DeleteDoneTasks modal
+    // DeleteDoneTasks modal code
     Modal deleteDoneTasksModal = new Modal();
 
     void ShowDeleteDoneTasksModal()
@@ -719,5 +643,4 @@
         await tasklistService.DeleteDoneTasklistAsync(currentUserId);
         await GetData();
     }
-#endregion
 }

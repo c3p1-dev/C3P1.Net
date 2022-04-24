@@ -5,8 +5,8 @@
 <h1>Counter</h1>
 
 <p role="status">Current count: @currentCount</p>
-<Button Color=Color.Primary Clicked=IncrementCount>Click me</Button>
-<Button Color=Color.Secondary Clicked=DecrementCount>Unclick me</Button>
+<Button Color="Color.Primary" Clicked="@IncrementCount">Click me</Button>
+<Button Color="Color.Secondary" Clicked="@DecrementCount">Unclick me</Button>
 
 @code {
     private uint currentCount = 0;

@@ -1,7 +1,7 @@
 ﻿using C3P1.Net.Data.Models;
-using C3P1.Net.Data.Services.Shared;
+using C3P1.Net.Services.Shared;
 
-namespace C3P1.Net.Data.Services
+namespace C3P1.Net.Services.Tools
 {
     public interface ITasklistService
     {

@@ -8,15 +8,7 @@
                 <NotFound>
                     @* Err 404 custom setup *@
                     <LayoutView Layout="@typeof(MainLayout)">
-                        <Div TextAlignment="TextAlignment.Center">
-                            <Image Source="/pix/icons/404.png" Class="main-logo" />
-                            <Paragraph TextColor="TextColor.Danger">
-                                There is nothing here!
-                            </Paragraph>
-                            <Paragraph>
-                                <Link Class="btn btn-danger" href="/">Go back</Link>
-                            </Paragraph>
-                        </Div>
+                        <Err404 />
                     </LayoutView>
                 </NotFound>
             </Router>

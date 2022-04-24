@@ -1,8 +1,9 @@
-﻿using C3P1.Net.Data.Models;
-using C3P1.Net.Data.Services.Shared;
+﻿using C3P1.Net.Data;
+using C3P1.Net.Data.Models;
+using C3P1.Net.Services.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace C3P1.Net.Data.Services
+namespace C3P1.Net.Services.Tools
 {
     public class TasklistService : ITasklistService
     {

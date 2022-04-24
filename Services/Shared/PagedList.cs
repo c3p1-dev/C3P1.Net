@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace C3P1.Net.Data.Services.Shared
+namespace C3P1.Net.Services.Shared
 {
     public class PagedList<T>
     {

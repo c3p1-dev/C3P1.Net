@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace C3P1.Net.Data.Services.Admin
+namespace C3P1.Net.Services.Admin
 {
     public class UsersAdminService : IUsersAdminService
     {

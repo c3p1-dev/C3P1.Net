@@ -1,6 +1,6 @@
 ﻿using C3P1.Net.Identity.Data;
 
-namespace C3P1.Net.Data.Services.Admin
+namespace C3P1.Net.Services.Admin
 {
     public interface IUsersAdminService
     {
