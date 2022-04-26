@@ -5,8 +5,6 @@ using C3P1.Net.Data;
 using C3P1.Net.Identity.Data;
 using C3P1.Net.Services.Admin;
 using C3P1.Net.Services.Tools;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

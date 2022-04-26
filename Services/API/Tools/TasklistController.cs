@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace C3P1.Net.Services.API.Tools
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -70,7 +69,15 @@ namespace C3P1.Net.Services.API.Tools
         [HttpGet("done")]
         public async Task<ActionResult<IEnumerable<TodoItem>>> GetDone()
         {
-            var currentUserId = Guid.Parse(_userManager.GetUserId(User));
+            var name = User.Identity?.Name;
+            var user = _context.Users.Where(x => x.UserName == name).FirstOrDefault();
+            if (user is null)
+            {
+                // should not happen
+                return BadRequest();
+            }
+
+            var currentUserId = Guid.Parse(user.Id);
             var result = await _tasklistService.GetDoneTasklistAsync(currentUserId);
 
             if (result is not null)
@@ -87,7 +94,15 @@ namespace C3P1.Net.Services.API.Tools
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItem>> Get(Guid id)
         {
-            var currentUserId = Guid.Parse(_userManager.GetUserId(User));
+            var name = User.Identity?.Name;
+            var user = _context.Users.Where(x => x.UserName == name).FirstOrDefault();
+            if (user is null)
+            {
+                // should not happen
+                return BadRequest();
+            }
+
+            var currentUserId = Guid.Parse(user.Id);
             var result = await _tasklistService.GetTodoItemAsync(currentUserId, id);
 
             if (result is not null)
@@ -104,7 +119,15 @@ namespace C3P1.Net.Services.API.Tools
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] TodoItem item)
         {
-            var currentUserId = Guid.Parse(_userManager.GetUserId(User));
+            var name = User.Identity?.Name;
+            var user = _context.Users.Where(x => x.UserName == name).FirstOrDefault();
+            if (user is null)
+            {
+                // should not happen
+                return BadRequest();
+            }
+
+            var currentUserId = Guid.Parse(user.Id);
 
             var todoItem = new TodoItem
             {
@@ -115,32 +138,74 @@ namespace C3P1.Net.Services.API.Tools
 
             await _tasklistService.AddTodoItemAsync(currentUserId, todoItem);
 
-            return CreatedAtAction(
+            /*return CreatedAtAction(
                 nameof(TodoItem),
                 new { id = todoItem.Id },
-                ItemToDTO(todoItem));
+                ItemToDTO(todoItem));*/
+
+            return Ok(todoItem);
         }
 
         // PUT api/<TasklistController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut/*("{id}")*/]
+        public async Task<IActionResult> Put([FromBody] TodoItem item)
         {
+            var name = User.Identity?.Name;
+            var user = _context.Users.Where(x => x.UserName == name).FirstOrDefault();
+            if (user is null)
+            {
+                // auth failed, should not happen
+                return BadRequest();
+            }
+
+            var currentUserId = Guid.Parse(user.Id);
+
+            try
+            {
+                var todoItem = await _tasklistService.UpdateTodoItemAsync(item);
+                return Ok(todoItem);
+            }
+            catch
+            {
+                // item does not exist
+                return BadRequest();
+            }
         }
 
         // DELETE api/<TasklistController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
+            var name = User.Identity?.Name;
+            var user = _context.Users.Where(x => x.UserName == name).FirstOrDefault();
+            if (user is null)
+            {
+                // auth failed, should not happen
+                return BadRequest();
+            }
+
+            var currentUserId = Guid.Parse(user.Id);
+
+            try
+            {
+                var todoItem = await _tasklistService.DeleteTodoItemAsync(currentUserId, id);
+                return Ok(todoItem);
+            }
+            catch
+            {
+                // item does not exist
+                return BadRequest();
+            }
         }
 
         // DTO protecting from overposting
-        private static TodoItem ItemToDTO(TodoItem todoItem) => new TodoItem
+        /*private static TodoItem ItemToDTO(TodoItem todoItem) => new TodoItem
         {
             Id = todoItem.Id,
             Title = todoItem.Title,
             Completed = todoItem.Completed,
             CreationTime = todoItem.CreationTime,
             DueTime = todoItem.DueTime
-        };
+        };*/
     }
 }
