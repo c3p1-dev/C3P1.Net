@@ -1,0 +1,40 @@
+﻿<Div TextAlignment="TextAlignment.Center" TextColor="TextColor.Danger">
+    <Image Source="/pix/error/auth.png" Class="main-logo" />
+    @if (ErrorMessage is ErrorType.MustBeLogged)
+    {
+        <Paragraph>
+            This content is for logged in users only!
+        </Paragraph>
+        <Paragraph>
+            <a class="btn btn-danger" href="/Account/Login">Login</a>
+        </Paragraph>
+    }
+    else if (ErrorMessage is ErrorType.MustBeAdmin)
+    {
+        <Paragraph>
+            This content is for logged in admin only!
+        </Paragraph>
+        <Paragraph>
+            <a class="btn btn-danger" href="/Account/Login">Login</a>
+        </Paragraph>
+    }
+</Div>
+
+@code {
+    public enum ErrorType
+    {
+        MustBeLogged,
+        MustBeAdmin
+    }
+
+    private ErrorType _errorType = ErrorType.MustBeLogged;
+    [Parameter]
+    public ErrorType ErrorMessage
+    {
+        get => _errorType;
+        set
+        {
+            _errorType = value;
+        }
+    }
+}

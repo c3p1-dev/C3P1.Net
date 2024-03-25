@@ -4,6 +4,11 @@ using C3P1.Net.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Blazorise;
+using Blazorise.Bootstrap5;
+using Blazorise.Icons.FontAwesome;
+using C3P1.Net.Services.Admin;
+using C3P1.Net.Services.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +41,19 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
+// Register Blazorise related services
+builder.Services
+    .AddBlazorise(options =>
+    {
+        options.Immediate = true;
+    })
+    .AddBootstrap5Providers()
+    .AddFontAwesomeIcons();
+
+// Register services
+builder.Services.AddTransient<IUsersAdminService, UsersAdminService>();
+builder.Services.AddTransient<ITasklistService, TasklistService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -61,6 +79,9 @@ app.MapRazorComponents<App>()
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
+
+// Manage 404
+app.UseStatusCodePagesWithReExecute("/error/404", "?statusCode={0}").UseAntiforgery();
 
 // Create and seed database on first run
 using IServiceScope scope = app.Services.CreateScope();

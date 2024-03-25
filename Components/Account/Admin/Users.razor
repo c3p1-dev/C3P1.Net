@@ -1,0 +1,205 @@
+﻿@page "/admin/users"
+@using C3P1.Net.Services.Admin
+@using C3P1.Net.Data
+@using C3P1.Net.Components.Error
+
+@rendermode InteractiveServer
+
+@inject IUsersAdminService usersAdminService
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        <PageTitle>C3P1.Net/Admin/Users</PageTitle>
+        <h3>Manage users</h3>
+        <br />
+        <Row>
+            <Column>
+                <Card Background="Background.Secondary" Margin="Margin.Is1.FromTop">
+                    <CardHeader Padding="Padding.Is1.FromBottom">
+                        <Heading Size="HeadingSize.Is3">
+                            Administrators
+                        </Heading>
+                    </CardHeader>
+                    <CardBody Background="Background.Light" Padding="Padding.Is1.OnY.Is1.FromStart.Is1.FromEnd">
+                        <Table TextColor="TextColor.Dark" Hoverable="true" Borderless="true">
+                            <TableHeader>
+                                <TableRow>
+                                    <TableRowCell Style="width:100%">Email</TableRowCell>
+                                    <TableRowCell Style="min-width:120px">Action</TableRowCell>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                @if (Administrators is not null)
+                                {
+                                    foreach (ApplicationUser user in Administrators)
+                                    {
+                                        <TableRow>
+                                            <TableRowCell>@user.Email</TableRowCell>
+                                            <TableRowCell>
+                                                @if (user.Email == "mat.clot@gmail.com")
+                                                {
+                                                    <Button Size="Size.Small" Disabled="true" Color="Color.Primary">
+                                                        <Icon Name="IconName.ChevronDown" />
+                                                    </Button>
+                                                    <Button Size="Size.Small" Disabled="true" Color="Color.Danger">
+                                                        <Icon Name="IconName.Ban" />
+                                                    </Button>
+                                                }
+                                                else
+                                                {
+                                                    <Tooltip Text="Make regular">
+                                                        <Button Size="Size.Small" Clicked="@(async () => await MakeRegular(user))" Color="Color.Primary">
+                                                            <Icon Name="IconName.ChevronDown" />
+                                                        </Button>
+                                                    </Tooltip>
+                                                    <Tooltip Text="Delete user">
+                                                        <Button Size="Size.Small" Clicked="@(() => ShowModal(user))" Color="Color.Danger">
+                                                            <Icon Name="IconName.Ban" />
+                                                        </Button>
+                                                    </Tooltip>
+                                                }
+                                            </TableRowCell>
+                                        </TableRow>
+                                    }
+                                }
+                            </TableBody>
+                        </Table>
+                    </CardBody>
+                </Card>
+                <Card Background="Background.Secondary" Margin="Margin.Is4.FromTop">
+                   <CardHeader Padding="Padding.Is1.FromBottom">
+                        <Heading Size="HeadingSize.Is3">
+                            Regular users
+                        </Heading>
+                   </CardHeader>
+                   <CardBody Background="Background.Light" Padding="Padding.Is1.OnY.Is1.FromStart.Is1.FromEnd">
+                        @if (RegularUsers is not null)
+                        {
+                            if (RegularUsers.Count > 0)
+                            {
+                                <Table TextColor="TextColor.Dark" Hoverable="true" Borderless="true">
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableRowCell Style="width:100%">Email</TableRowCell>
+                                            <TableRowCell Style="min-width:120px">Action</TableRowCell>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        @foreach (ApplicationUser user in RegularUsers)
+                                        {
+                                            <TableRow>
+                                                <TableRowCell>@user.Email</TableRowCell>
+                                                <TableRowCell>
+                                                    <Tooltip Text="Make admin">
+                                                        <Button Size="Size.Small" Clicked="@(async () => await MakeAdmin(user))" Color="Color.Primary">
+                                                            <Icon Name="IconName.ChevronUp" />
+                                                        </Button>
+                                                    </Tooltip>
+                                                    <Tooltip Text="Delete user">
+                                                        <Button Size="Size.Small" Clicked="@(() => ShowModal(user))" Color="Color.Danger">
+                                                            <Icon Name="IconName.Ban" />
+                                                        </Button>
+                                                    </Tooltip>
+                                                </TableRowCell>
+                                            </TableRow>
+                                        }
+                                    </TableBody>
+                                </Table>
+                            }
+                            else
+                            {
+                                <Paragraph TextColor="TextColor.Dark">There are no regular users</Paragraph>
+                            }
+                        }
+                   </CardBody>
+                </Card>
+            </Column>
+        </Row>
+
+        <Modal @ref="modalRef" TextColor="TextColor.Dark">
+            <ModalContent Centered="true">
+                <ModalHeader>
+                    <ModalTitle>Confirm delete</ModalTitle>
+                    <CloseButton Clicked="@HideModal" />
+                </ModalHeader>
+                <ModalBody>
+                    <Paragraph>
+                        Are you sure you want to delete <strong>@selectedUser.Email</strong> registration ? 
+                    </Paragraph>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Secondary" Clicked="@HideModal">Cancel</Button>
+                    <Button Color="Color.Danger" Clicked="@(async () => await DeleteUser(selectedUser))">Confirm</Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+
+    </Authorized>
+    <NotAuthorized>
+        <ErrAuth ErrorMessage="ErrAuth.ErrorType.MustBeAdmin"/>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    // Lists of admin users and regular users (filled in OnInitializedAsync() )
+    private List<ApplicationUser>? Administrators;
+    private List<ApplicationUser>? RegularUsers;
+
+    private ApplicationUser selectedUser = new ApplicationUser();
+    private Modal? modalRef;
+
+    #region Confirm delete modal section
+    private void ShowModal(ApplicationUser user)
+    {
+        selectedUser = user;
+    
+        if (modalRef is not null)
+        {
+            modalRef.Show();
+        }
+    }
+
+    private void HideModal()
+    {
+        selectedUser = new ApplicationUser();
+        if (modalRef is not null)
+        {
+            modalRef.Hide();
+        }
+    }
+
+    private async Task DeleteUser(ApplicationUser user)
+    {
+        await usersAdminService.DeleteUserAsync(user);
+        await DataChanged();
+        HideModal();
+    }
+    #endregion
+
+    #region Page events
+    protected override async Task OnInitializedAsync()
+    {
+        await DataChanged();
+    }
+
+    private async Task DataChanged()
+    {
+        Administrators = await usersAdminService.GetAdminUsersAsync();
+        RegularUsers = await usersAdminService.GetRegularUsersAsync();
+    }
+    #endregion
+
+    #region Make admin or regular section
+    private async Task MakeAdmin(ApplicationUser user)
+    {
+        await usersAdminService.MakeAdminAsync(user);
+        await DataChanged();
+    }
+
+    private async Task MakeRegular(ApplicationUser user)
+    {
+        await usersAdminService.MakeRegularAsync(user);
+        await DataChanged();
+    }
+    #endregion
+}

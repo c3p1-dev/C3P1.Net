@@ -1,12 +1,81 @@
 ﻿@using C3P1.Net.Components.Account.Shared
+@using C3P1.Net.Components.Error
 
-<Router AppAssembly="typeof(Program).Assembly">
-    <Found Context="routeData">
-        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
-            <NotAuthorized>
-                <RedirectToLogin />
-            </NotAuthorized>
-        </AuthorizeRouteView>
-        <FocusOnNavigate RouteData="routeData" Selector="h1" />
-    </Found>
-</Router>
+@inject NavigationManager Navigation
+
+@*<ThemeProvider Theme="@theme">*@
+    <Router AppAssembly="typeof(Program).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+                <NotAuthorized>
+                    <RedirectToLogin />
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        </Found>
+    </Router>
+@*</ThemeProvider>*@
+
+@code{
+    /*
+    private Blazorise.Theme theme = new()
+        {
+            BarOptions = new()
+            {
+                HorizontalHeight = "72px",
+            },
+            BreakpointOptions = new()
+            {
+            },
+            ColorOptions = new()
+            {
+                //Primary = "#0288D1",
+                //Secondary = "#A65529",
+                //Success = "#23C02E",
+                //Info = "#9BD8FE",
+                //Warning = "#F8B86C",
+                //Danger = "#F95741",
+                //Light = "#F0F0F0",
+                //Dark = "#535353",
+            },
+            BackgroundOptions = new()
+            {
+                //Primary = "#598195",
+                //Primary = "#0288D1",
+                Primary = "#4F718F",
+                Light = "#B3C8D5"
+            },
+            TextColorOptions = new()
+            {
+                //Dark = "#FFFFFF"
+            },
+            //ButtonOptions = new ThemeButtonOptions { },
+            //DropdownOptions = new ThemeDropdownOptions { },
+            InputOptions = new()
+            {
+                CheckColor = "#0288D1",
+            },
+
+            IsGradient = true,
+            IsRounded = true,
+
+            //CardOptions = new ThemeCardOptions { },
+            //ModalOptions = new ThemeModalOptions { },
+            //TabsOptions = new ThemeTabsOptions { },
+            ProgressOptions = new ThemeProgressOptions
+            {
+                PageProgressDefaultColor = "#535353"
+            },
+            //AlertOptions = new ThemeAlertOptions { },
+            //BreadcrumbOptions = new ThemeBreadcrumbOptions { },
+            //BadgeOptions = new ThemeBadgeOptions { },
+            //PaginationOptions = new ThemePaginationOptions { },
+            TooltipOptions = new ThemeTooltipOptions
+            {
+                BackgroundColor = "#535353",
+                Color = "#F0F0F0",
+                //BackgroundOpacity = .7f,
+            },
+        };
+    */
+}

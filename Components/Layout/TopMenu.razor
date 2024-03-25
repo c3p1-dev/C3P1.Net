@@ -1,0 +1,147 @@
+﻿@using Blazorise.Localization
+
+<Bar Style="height: 64px" @bind-Visible="@topbarVisible" Padding="Padding.Is3.OnX" Breakpoint="Breakpoint.Desktop" Background="Background.Primary" ThemeContrast="ThemeContrast.Dark" Alignment="Alignment.Center">
+    <BarBrand>
+        <BarItem>
+            <h3>C3P1.Net</h3>
+        </BarItem>
+    </BarBrand>
+
+    @*<BarToggler />
+    <BarMenu>
+    <BarStart>
+    </BarStart>
+    @*<BarEnd>
+    Region selector
+    <BarItem>
+    <BarDropdown>
+    <BarDropdownToggle><Icon Name="IconName.Language" /></BarDropdownToggle>
+    <BarDropdownMenu RightAligned="true">
+    @foreach ( var cultureInfo in LocalizationService.AvailableCultures )
+    {
+    <BarDropdownItem @key="@cultureInfo.Name" Clicked="@(()=>SelectCulture(cultureInfo.Name))">
+    @if ( cultureInfo.IsNeutralCulture )
+    {
+    @cultureInfo.EnglishName;
+    }
+    else
+    {
+    @cultureInfo.Parent.EnglishName;
+    }
+    </BarDropdownItem>
+    }
+    </BarDropdownMenu>
+    </BarDropdown>
+    </BarItem> *
+    <BarItem>
+    <BarDropdown>
+    <BarDropdownToggle><Icon Name="IconName.Tint" /> Theme</BarDropdownToggle>
+    <BarDropdownMenu Style="padding: 15px; min-width:350px;" RightAligned="true">
+    <Row>
+    <Column Margin="Margin.Is2.FromBottom">
+    <Field>
+    <Switch TValue="bool" Checked="@(Theme?.Enabled == true)" CheckedChanged="@ThemeEnabledChanged">Theme enabled</Switch>
+    </Field>
+    </Column>
+    </Row>
+    <Row>
+    <Column Margin="Margin.Is2.FromBottom">
+    <Field>
+    <Check TValue="bool" Checked="@(Theme?.IsGradient == true)" CheckedChanged="@ThemeGradientChanged">Gradient colors</Check>
+    </Field>
+    <Field>
+    <Check TValue="bool" Checked="@(Theme?.IsRounded == true)" CheckedChanged="@ThemeRoundedChanged">Rounded elements</Check>
+    </Field>
+    </Column>
+    </Row>
+    @* Theme color selector
+    <Row>
+    <Column>
+    <Container Fluid="true">
+    <ThemeColorSelector Value="@(Theme?.ColorOptions?.Primary)" ValueChanged="@ThemeColorChanged"></ThemeColorSelector>
+    </Container>
+    </Column>
+    </Row>*
+    </BarDropdownMenu>
+    </BarDropdown>
+    </BarItem>
+    <AuthorizeView>
+    <Authorized>
+    <BarItem>
+    <BarDropdown>
+    <BarDropdownToggle>
+    <Icon Name="IconName.User" /> Identity
+    </BarDropdownToggle>
+    <BarDropdownMenu>
+    <BarDropdownItem To="identity/account/blazorlogout">
+    Logout
+    </BarDropdownItem>
+    <BarDropdownItem To="identity/account/manage">Account</BarDropdownItem>
+    </BarDropdownMenu>
+    </BarDropdown>
+    </BarItem>
+    </Authorized>
+    <NotAuthorized>
+    <BarItem>
+    <BarDropdown>
+    <BarDropdownToggle>
+    <Icon Name="IconName.User" /> Identity
+    </BarDropdownToggle>
+    <BarDropdownMenu>
+    <BarDropdownItem To="identity/account/login">Login</BarDropdownItem>
+    <BarDropdownItem To="identity/account/register">Register</BarDropdownItem>
+    </BarDropdownMenu>
+    </BarDropdown>
+    </BarItem>
+    </NotAuthorized>
+    </AuthorizeView>
+    </BarEnd>
+    </BarMenu>*@
+</Bar>
+
+@code {
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+    private string? username = null;
+    protected override async Task OnInitializedAsync()
+    {
+        // select locale
+        await SelectCulture("en-US");
+
+        // get username
+        var user = (await authenticationStateTask).User;
+        if (user.Identity is not null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                username = user.Identity.Name;
+            }
+        }
+
+        // finish init
+        await base.OnInitializedAsync();
+    }
+
+    Task SelectCulture(string name)
+    {
+        if (LocalizationService is not null)
+        {
+            LocalizationService.ChangeLanguage(name);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private bool topbarVisible = false;
+
+    [Parameter] public EventCallback<bool> ThemeEnabledChanged { get; set; }
+
+    [Parameter] public EventCallback<bool> ThemeGradientChanged { get; set; }
+
+    [Parameter] public EventCallback<bool> ThemeRoundedChanged { get; set; }
+
+    [Parameter] public EventCallback<string> ThemeColorChanged { get; set; }
+
+    [Inject] protected ITextLocalizerService? LocalizationService { get; set; }
+
+    [CascadingParameter] protected Theme? Theme { get; set; }
+}

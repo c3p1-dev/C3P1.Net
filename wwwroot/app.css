@@ -49,3 +49,10 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+/* Personnal rules*/
+.main-logo {
+    height: 300px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
