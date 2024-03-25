@@ -10,11 +10,11 @@
   <ItemGroup>
     <PackageReference Include="Blazorise.Bootstrap5" Version="1.5.0" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.5.0" />
+    <PackageReference Include="Blazorise.QRCode" Version="1.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.3" />
-    <PackageReference Include="QRCoder.Core" Version="1.0.2" />
   </ItemGroup>
 
 </Project>
