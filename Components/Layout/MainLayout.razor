@@ -1,24 +1,94 @@
 ﻿@inherits LayoutComponentBase
 
-<Layout Sider="true">
-    <LayoutSider>
-        <LayoutSiderContent>
-            <SideMenu />
-        </LayoutSiderContent>
-    </LayoutSider>
+<ThemeProvider Theme="@theme">
+    <Layout Sider="true">
+        <LayoutSider>
+            <LayoutSiderContent>
+                <SideMenu />
+            </LayoutSiderContent>
+        </LayoutSider>
 
-    <Layout>
-        <LayoutHeader Fixed="true">
-            <TopMenu />
-        </LayoutHeader>
-        <LayoutContent Padding="Padding.Is3.OnX.Is3.OnY" Background=Background.Dark TextColor=TextColor.Light>
-            @Body
-        </LayoutContent>
+        <Layout>
+            <LayoutHeader Fixed="true">
+                <TopMenu />
+            </LayoutHeader>
+            <LayoutContent Padding="Padding.Is3.OnX.Is3.OnY" Background=Background.Dark TextColor=TextColor.Light>
+                @Body
+            </LayoutContent>
+            <LayoutFooter>
+                <div id="blazor-error-ui" class="aaa">
+                    An unhandled error has occurred.
+                    <a href="" class="reload">Reload</a>
+                    <a class="dismiss">🗙</a>
+                </div>
+            </LayoutFooter>
+        </Layout>
     </Layout>
-</Layout>
+</ThemeProvider>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
+@code {
+    private Blazorise.Theme theme = new();
+
+    /*
+    private Blazorise.Theme theme = new();
+        {
+            BarOptions = new()
+                {
+                HorizontalHeight = "72px",
+            },
+            BreakpointOptions = new()
+            {
+            },
+            ColorOptions = new()
+                {
+                //Primary = "#0288D1",
+                //Secondary = "#A65529",
+                //Success = "#23C02E",
+                //Info = "#9BD8FE",
+                //Warning = "#F8B86C",
+                //Danger = "#F95741",
+                //Light = "#F0F0F0",
+                //Dark = "#535353",
+            },
+            BackgroundOptions = new()
+                {
+                //Primary = "#598195",
+                //Primary = "#0288D1",
+                Primary = "#4F718F",
+                Light = "#B3C8D5"
+            },
+            TextColorOptions = new()
+                {
+                //Dark = "#FFFFFF"
+            },
+            //ButtonOptions = new ThemeButtonOptions { },
+            //DropdownOptions = new ThemeDropdownOptions { },
+            InputOptions = new()
+                {
+                CheckColor = "#0288D1",
+            },
+
+            IsGradient = true,
+            IsRounded = true,
+
+            //CardOptions = new ThemeCardOptions { },
+            //ModalOptions = new ThemeModalOptions { },
+            //TabsOptions = new ThemeTabsOptions { },
+            ProgressOptions = new ThemeProgressOptions
+                {
+                PageProgressDefaultColor = "#535353"
+            },
+            //AlertOptions = new ThemeAlertOptions { },
+            //BreadcrumbOptions = new ThemeBreadcrumbOptions { },
+            //BadgeOptions = new ThemeBadgeOptions { },
+            //PaginationOptions = new ThemePaginationOptions { },
+            TooltipOptions = new ThemeTooltipOptions
+                {
+                BackgroundColor = "#535353",
+                Color = "#F0F0F0",
+                //BackgroundOpacity = .7f,
+        },
+    };
+    */
+    
+}

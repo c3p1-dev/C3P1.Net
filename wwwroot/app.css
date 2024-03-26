@@ -56,3 +56,7 @@ h1:focus {
     margin-top: 25px;
     margin-bottom: 25px;
 }
+
+#blazor-error-ui{
+    position:sticky!important;
+}
