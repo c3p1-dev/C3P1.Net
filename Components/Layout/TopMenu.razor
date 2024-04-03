@@ -1,0 +1,119 @@
+﻿@inject IAppParamService appParamsService
+@inject IJSRuntime JS
+
+@rendermode InteractiveServer
+
+<Bar @bind-Visible="@topbarVisible" Breakpoint="Breakpoint.Desktop" Background="Background.Primary" Shadow="Shadow.Default" ThemeContrast="ThemeContrast.Dark" Padding="Padding.Is2">
+    <BarBrand Margin="Margin.Is1">
+        <BarItem>
+            <BarLink To="" TextAlignment="TextAlignment.Center">
+                <BarIcon IconName="IconName.Dashboard" />
+                C3P1.Net
+            </BarLink>
+        </BarItem>
+    </BarBrand>
+    <AuthorizeView>
+        <BarToggler />
+        <BarMenu>
+            <BarStart>
+
+            </BarStart>
+            <BarEnd>
+                <BarItem>
+                    <BarDropdown RightAligned>
+                        <BarDropdownToggle><Icon Name="IconName.Palette" /> Theme</BarDropdownToggle>
+                        <BarDropdownMenu Style="padding: 15px; min-width:250px;" >
+                            @if(themeMode == "light")
+                            {
+                                <BarDropdownItem Background="Background.Primary">
+                                    <BarLink TextColor="TextColor.Light" Clicked="LightMode">Light mode</BarLink>
+                                </BarDropdownItem>
+                                <BarDropdownItem>
+                                    <BarLink TextColor="TextColor.Primary" Clicked="DarkMode">Dark mode</BarLink>
+                                </BarDropdownItem>
+                            }
+                            else if (themeMode == "dark")
+                            {
+                                <BarDropdownItem>
+                                    <BarLink TextColor="TextColor.Primary" Clicked="LightMode">Light mode</BarLink>
+                                </BarDropdownItem>
+                                <BarDropdownItem Background="Background.Primary">
+                                    <BarLink TextColor="TextColor.Light" Clicked="DarkMode">Dark mode</BarLink>
+                                </BarDropdownItem>
+                            }
+                            <BarDropdownItem>
+                                <BarLink TextColor="TextColor.Primary" Clicked="ToggleMode" Color="Color.Primary">Switch mode</BarLink>
+                            </BarDropdownItem>
+                        </BarDropdownMenu>
+                    </BarDropdown>
+                </BarItem>
+            </BarEnd>
+        </BarMenu>
+    </AuthorizeView>
+</Bar>
+
+@code {
+    [CascadingParameter] 
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+
+    private string? username = null;
+    private string? themeMode = null;
+    private bool topbarVisible = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // get username
+        var user = (await authenticationStateTask).User;
+        if (user.Identity is not null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                username = user.Identity.Name;
+            }
+        }
+
+        // try to get current theme mode
+        themeMode = await appParamsService.GetThemeModeAsync();
+
+        // finish init
+        await base.OnInitializedAsync();
+    }
+
+    async Task ToggleMode()
+    {
+        await JS.InvokeAsync<string>("togglemode");
+
+        if (themeMode == "dark")
+        {
+            themeMode = "light";
+        }
+        else if (themeMode == "light")
+        {
+            themeMode = "dark";
+        }
+
+        if (themeMode is not null)
+        {
+            await appParamsService.SetThemeModeAsync(themeMode);
+        }
+    }
+
+    async Task DarkMode()
+    {
+        themeMode = "dark";
+        await appParamsService.SetThemeModeAsync(themeMode);
+        await JS.InvokeAsync<string>("darkmode");
+    }
+
+    async Task LightMode()
+    {
+        themeMode = "light";
+        await appParamsService.SetThemeModeAsync(themeMode);
+        await JS.InvokeAsync<string>("lightmode");
+    }
+
+    async Task<string> GetMode()
+    {
+        return (await JS.InvokeAsync<string>("getmode"));
+    }
+}

@@ -1,0 +1,138 @@
+﻿@inject NavigationManager navigationManager
+
+@rendermode InteractiveServer
+
+<Bar @bind-Visible="sidebarVisible" Breakpoint="Breakpoint.Desktop" NavigationBreakpoint="Breakpoint.Tablet" ThemeContrast="ThemeContrast.Dark"
+     Mode="BarMode.VerticalInline" CollapseMode="BarCollapseMode.Small">
+    <BarToggler />
+    <BarBrand>
+        <BarItem>
+            <BarLink To="">
+                <BarIcon IconName="customIcon" />
+                C3P1.net
+            </BarLink>
+        </BarItem>
+    </BarBrand>
+    <BarMenu>
+        <BarStart>
+            <BarItem>
+                <BarLink To="">
+                    <BarIcon IconName="IconName.Home" /> Home
+                </BarLink>
+            </BarItem>
+
+            @* describe account sidebar section *@
+            <AuthorizeView Roles="Admin">
+                <BarItem>
+                    <BarDropdown>
+                        <BarDropdownToggle>
+                            <BarIcon IconName="IconName.Server" /> Admin
+                        </BarDropdownToggle>
+                        <BarDropdownMenu>
+                            <BarDropdownItem To="https://webadmin.c3p1.net" Target="Target.Blank">
+                                <BarIcon IconName="IconName.Infinity" /> Cockpit
+                            </BarDropdownItem>
+                            <BarDropdownItem To="/admin/users">
+                                <BarIcon IconName="IconName.Users" /> Users
+                            </BarDropdownItem>
+                        </BarDropdownMenu>
+                    </BarDropdown>
+                </BarItem>
+            </AuthorizeView>
+
+            <AuthorizeView>
+                <Authorized>
+                    <BarItem>
+                        <BarDropdown>
+                            <BarDropdownToggle>
+                                <BarIcon IconName="IconName.UserCircle" /> Identity
+                            </BarDropdownToggle>
+                            <BarDropdownMenu>
+                                <BarDropdownItem>
+                                    <Form action="/Account/Logout" method="post">
+                                        <AntiforgeryToken />
+                                        <input type="hidden" name="returnUrl" value="" />
+                                        <BarIcon IconName="IconName.Eject" TextColor="TextColor.Danger" />
+                                        <Button Type="ButtonType.Submit" TextColor="TextColor.Danger">Logout</Button>
+                                    </Form>
+                                </BarDropdownItem>
+                                <BarDropdownItem To="Account/Manage">
+                                    <BarIcon IconName="IconName.User" /> Account
+                                </BarDropdownItem>
+                            </BarDropdownMenu>
+                        </BarDropdown>
+                    </BarItem>
+                </Authorized>
+                <NotAuthorized>
+                    <BarItem>
+                        <BarDropdown>
+                            <BarDropdownToggle>
+                                <BarIcon IconName="IconName.UserCircle" /> Identity
+                            </BarDropdownToggle>
+                            <BarDropdownMenu>
+                                <BarDropdownItem To="Account/Login">
+                                    <BarIcon IconName="IconName.UserCheck" /> Login
+                                </BarDropdownItem>
+                                <BarDropdownItem To="Account/Register">
+                                    <BarIcon IconName="IconName.UserPlus" /> Register
+                                </BarDropdownItem>
+                            </BarDropdownMenu>
+                        </BarDropdown>
+                    </BarItem>
+                </NotAuthorized>
+            </AuthorizeView>
+
+            <BarItem>
+                <BarDropdown>
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.CameraRetro" /> Photo
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="https://prism.c3p1.net" Target="Target.Blank">
+                            <BarIcon IconName="IconName.IdCard" /> Prism
+                        </BarDropdownItem>
+                        <BarDropdownItem To="https://pix.c3p1.net" Target="Target.Blank">
+                            <BarIcon IconName="IconName.Images" /> Pix
+                        </BarDropdownItem>
+                        <BarDropdownItem To="https://fuji.c3p1.net" Target="Target.Blank">
+                            <BarIcon IconName="IconName.Images" /> Fuji
+                        </BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+
+            <BarItem>
+                <BarDropdown>
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.Palette" /> Apps
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="https://paste.c3p1.net" Target="Target.Blank">
+                            <BarIcon IconName="IconName.PaperPlane" /> Paste
+                        </BarDropdownItem>
+                        <AuthorizeView>
+                            <BarDropdownItem To="/tools/cats/">
+                                <BarIcon IconName="IconName.Shield" /> Cats
+                            </BarDropdownItem>
+                            <BarDropdownItem To="/tools/tasklist">
+                                <BarIcon IconName="IconName.List" /> Tasklist
+                            </BarDropdownItem>
+                        </AuthorizeView>
+                        <BarDropdownItem To="/misc/counter">
+                            <BarIcon IconName="IconName.Keyboard" /> Counter
+                        </BarDropdownItem>
+                        <BarDropdownItem To="/misc/demo">
+                            <BarIcon IconName="IconName.PaintRoller" /> Demo
+                        </BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+        </BarStart>
+    </BarMenu>
+</Bar>
+
+@code
+{
+    private bool sidebarVisible = true;
+    RenderFragment customIcon =@<Image Source="pix/c3p1.png" Style="width:32px; height: 32px" Text="C3P1.net"/>;
+}

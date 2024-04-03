@@ -1,0 +1,90 @@
+﻿<Inline>
+    <DateEdit TValue="DateOnly?" ReadOnly="ReadOnly" @bind-Date="Date"></DateEdit>
+    <TimeEdit TValue="TimeOnly?" ReadOnly="ReadOnly" @bind-Time="Time"></TimeEdit>
+</Inline>
+
+@code{
+    // private data
+    private DateOnly? _date;
+    private TimeOnly? _time;
+    private DateTime? _value;
+    private bool _readonly = false;
+
+    // private properties
+    private DateOnly? Date
+    {
+        get => _date;
+        set
+        {
+            if (value is not null)
+            {
+                _date = value;
+                _value = _date?.ToDateTime(_time.GetValueOrDefault());
+            }
+            else
+            {
+                _date = null;
+                _time = null;
+                _value = null;
+            }
+            ValueChanged.InvokeAsync(_value);                
+        }
+    }
+    private TimeOnly? Time
+    {
+        get => _time;
+        set
+        {
+            if (value is not null)
+            {
+                _time = value;
+                _value = _date?.ToDateTime(_time.GetValueOrDefault());
+            }
+            else
+            {
+                _date = null;
+                _time = null;
+                _value = null;
+            }
+            ValueChanged.InvokeAsync(_value);
+
+        }
+    }
+
+    // public properties
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "BL0007: Component parameter 'C3P1.Net.Components.Tools.DateTimeEdit.Value' should be auto property", Justification = "Not pertinent")]
+    [Parameter]
+    public DateTime? Value
+    {
+        get => _value;
+        set
+        {
+            if (value is not null)
+            {
+                _date = DateOnly.FromDateTime(value.Value);
+                _time = TimeOnly.FromDateTime(value.Value);
+                _value = value;
+            }
+            else
+            {
+                _date = null;
+                _value = null;
+                _time = null;
+            }
+        }
+    }
+
+    [Parameter]
+    public bool ReadOnly
+    {
+        get => _readonly;
+        set
+        {
+            _readonly = value;
+        }
+    }
+
+    // callback
+    [Parameter]
+    public EventCallback<DateTime?> ValueChanged { get; set; }
+}

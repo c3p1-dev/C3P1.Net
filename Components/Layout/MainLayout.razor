@@ -1,0 +1,25 @@
+﻿@inherits LayoutComponentBase
+
+<LayoutSectionless Sider="true">
+    <LayoutSider>
+        <LayoutSiderContent>
+            <SideMenu />
+        </LayoutSiderContent>
+    </LayoutSider>
+
+    <LayoutSectionless>
+        <LayoutHeader Fixed="true">
+            <TopMenu />
+        </LayoutHeader>
+        <LayoutContent Padding="Padding.Is3.OnX.Is3.OnY" Class="main-layout">
+            @Body
+        </LayoutContent>
+        <LayoutFooter>
+            <div id="blazor-error-ui">
+                An unhandled error has occurred.
+                <a href="" class="reload">Reload</a>
+                <a class="dismiss">🗙</a>
+            </div>
+        </LayoutFooter>
+    </LayoutSectionless>
+</LayoutSectionless>

@@ -1,0 +1,27 @@
+﻿@page "/"
+
+@inject NavigationManager uriHelper;
+@inject IAppParamService appParamsService;
+
+@rendermode InteractiveServer
+
+<PageTitle>C3P1.Net</PageTitle>
+
+<Div TextAlignment="TextAlignment.Center">
+    <Image Source="pix/c3p1.png" Width="Width.Px(300)" Margin="Margin.IsAuto" Text="C3P1.Net logo" />
+    <Heading Size="HeadingSize.Is3">Welcolme on C3P1.Net</Heading>
+    <Paragraph>
+        <a href="https://www.opensuse.org/">
+            <Image Source="pix/icons/opensuse.svg" Height="Height.Px(50)" Text="OpenSuse logo"/>
+        </a>
+        <Image Source="/pix/icons/csharp.svg" Height="Height.Px(50)" Text="C# logo" />
+        <a href="https://dotnet.microsoft.com/">
+            <Image Source="pix/icons/net.svg" Height="Height.Px(50)" Text=".Net logo" />
+        </a>
+        <Image Source="pix/icons/blazor.svg" Height="Height.Px(50)" Text="Blazor logo" />
+    </Paragraph>
+</Div>
+
+@code {
+
+}

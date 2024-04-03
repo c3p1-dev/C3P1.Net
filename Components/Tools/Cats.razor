@@ -1,0 +1,613 @@
+﻿@page "/tools/cats"
+
+@using C3P1.Net.Components.Error
+@using C3P1.Net.Data
+@using C3P1.Net.Services.Tools
+@using C3P1.Net.Data.Models
+@using Microsoft.AspNetCore.Identity
+
+@inject ICatService catService
+@inject UserManager<ApplicationUser> userManager
+@inject AuthenticationStateProvider authStateProvider
+@inject IAppParamService appParamService;
+
+@rendermode InteractiveServer
+
+<AuthorizeView>
+    <Authorized>
+        <PageTitle>C3P1.Net/Cats</PageTitle>
+
+        <CardGroup Margin="Margin.Is2.FromBottom">
+            <Card>
+                @if (cats == null)
+                {
+                    <CardHeader>Loading catlist ...</CardHeader>
+                }
+                else if (cats.Count == 0)
+                {
+                    <CardHeader>Catlist is empty</CardHeader>
+                    <CardBody>
+                        <CardText>
+                            <Button Color="Color.Primary" Clicked="ShowAddCatModal">Add a cat</Button>
+                        </CardText>
+                    </CardBody>
+                }
+                else if (activeCat is null)
+                {
+                    <CardHeader>Open a file</CardHeader>
+                    <CardBody>
+                    <CardText Padding="Padding.Is2" Flex="Flex.InlineFlex">
+                        <Select @bind-SelectedValue="@selectActiveCatId" Width="Width.Auto">
+                            @foreach (Cat cat in cats)
+                            {
+                                <SelectItem Value="cat.Id">@cat.Name</SelectItem>
+                            }
+                        </Select>
+                        <Button Color="Color.Primary" Clicked="SetActiveCat" Margin="Margin.Is1.FromStart">Select</Button>
+                        <Button Color="Color.Primary" Clicked="ShowAddCatModal" Margin="Margin.Is1.FromStart">Add a cat</Button>
+                    </CardText>
+                    </CardBody>
+                }
+                else
+                {
+                    <CardHeader>@activeCat.Name @activeCat.Birthdate.ToShortDateString()</CardHeader>
+                    <CardBody>
+                        <CardText Padding="Padding.Is2">
+                            <Button Color="Color.Primary" Clicked="ClearActiveCat">Change</Button>
+                            <Button Color="Color.Primary" Clicked="ShowEditCatModal">Edit</Button>
+                        </CardText>
+                    </CardBody>
+                }
+            </Card>
+            @if (activeCat is not null)
+            {
+                <Card>
+                    <CardHeader>Entries</CardHeader>
+                    <CardBody>
+                        <CardText Padding="Padding.Is2">
+                            <Button Color="Color.Primary" Clicked="ShowAddEntryModal">Add data</Button>
+                        </CardText>
+                    </CardBody>
+                </Card>
+            }
+        </CardGroup>
+
+        @if (activeCat is not null)
+        {
+            <CardGroup>
+                <Card>
+                    <CardHeader>
+                        <Span>Weight curve</Span>
+                    </CardHeader>
+                    <Span Width="Width.Is100">
+                        <Button Size="Size.ExtraSmall" Outline Color="Color.Primary" Margin="Margin.Is1"><Icon Name="IconName.Settings" /> Setup</Button>
+                        <Button Size="Size.ExtraSmall" Outline Color="Color.Primary"  Margin="Margin.Is1" Clicked="@(async () => await HandleRedraw())"><Icon Name="IconName.Redo" /> Redraw</Button>
+                    </Span>
+                    <LineChart @ref="lineChart" TItem="double" />
+                </Card>
+                <Card>
+                    <CardHeader>Weight data</CardHeader>
+                    <CardBody>
+                        @if (catentries is not null)
+                        {
+                            if (catentries.Where(x => x.CatId == activeCat.Id && x.Weight is not null).Count() > 0)
+                            {
+                                <ListView TItem="CatEntry"
+                                          Data="@(catentries.Where(x => x.CatId == activeCat.Id && x.Weight is not null).OrderBy(x => x.EntryTime).Reverse())"
+                                          TextField="(item) => item.EntryTime.ToShortDateString()"
+                                          ValueField="(item) => item.Id.ToString()">
+
+                                    <ItemTemplate Context="data">
+                                        <Div Flex="Flex.InlineFlex.JustifyContent.Between" Width="Width.Is100">
+                                            <Heading Size="HeadingSize.Is4" Margin="Margin.Is2.FromBottom">@data.Item.Weight kg</Heading>
+                                            <Small>
+                                                <Button Color="Color.Danger" Size="Size.Small" Clicked="@(async () => await DeleteEntry(@data.Item))" Outline>
+                                                    <Icon Name="IconName.Ban" />
+                                                </Button>
+                                            </Small>
+                                        </Div>
+                                        <Paragraph Margin="Margin.Is2.FromBottom">@data.Text</Paragraph>
+                                    </ItemTemplate>
+                                </ListView>
+                            }
+                        }
+                    </CardBody>
+                </Card>
+            </CardGroup>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <ErrAuth ErrorMessage="ErrAuth.ErrorType.MustBeLogged" />
+    </NotAuthorized>
+</AuthorizeView>
+
+@* AddCat Modal *@
+<Modal @ref="@addCatModal">
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>Add a cat</ModalTitle>
+            <CloseButton Clicked="HideAddCatModal" />
+        </ModalHeader>
+        <ModalBody>
+            <Paragraph>Enter your cat's informations</Paragraph>
+            <Paragraph>
+                <Field>
+                    <FieldLabel>Name</FieldLabel>
+                    <TextEdit @bind-Text="@newCatName"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Birthdate</FieldLabel>
+                    <DateEdit DisplayFormat="dd/MM/yyyy" @bind-Date="@newCatBirthdate"></DateEdit>
+                </Field>
+                <Field>
+                    <FieldLabel>Gender</FieldLabel>
+                    <Select @bind-SelectedValue="@newCatGender">
+                        <SelectItem Value="@("Male")">Male</SelectItem>
+                        <SelectItem Value="@("Female")">Female</SelectItem>
+                    </Select>
+                </Field>
+                <Field>
+                    <FieldLabel>Breed</FieldLabel>
+                    <TextEdit @bind-Text="@newCatBreed" />
+                </Field>
+                <Field>
+                    <FieldLabel>Color</FieldLabel>
+                    <TextEdit @bind-Text="@newCatColor" />
+                </Field>
+            </Paragraph>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="HideAddCatModal">Cancel</Button>
+            <Button Color="Color.Primary" Clicked="AddCat">Add</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@* EditCatModal *@
+<Modal @ref="@editCatModal">
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>Edit @editCatName</ModalTitle>
+            <CloseButton Clicked="HideEditCatModal" />
+        </ModalHeader>
+        <ModalBody>
+            <Paragraph>Enter your cat's informations</Paragraph>
+            <Paragraph>
+                <Field>
+                    <FieldLabel>Name</FieldLabel>
+                    <TextEdit @bind-Text="@editCatName" />
+                </Field>
+                <Field>
+                    <FieldLabel>Birthdate</FieldLabel>
+                    <DateEdit DisplayFormat="dd/MM/yyyy" @bind-Date="@editCatBirthdate"></DateEdit>
+                </Field>
+                <Field>
+                    <FieldLabel>Gender</FieldLabel>
+                    <Select @bind-SelectedValue="@editCatGender">
+                        <SelectItem Value="@("Male")">Male</SelectItem>
+                        <SelectItem Value="@("Female")">Female</SelectItem>
+                    </Select>
+                </Field>
+                <Field>
+                    <FieldLabel>Breed</FieldLabel>
+                    <TextEdit @bind-Text="@editCatBreed" />
+                </Field>
+                <Field>
+                    <FieldLabel>Color</FieldLabel>
+                    <TextEdit @bind-Text="@editCatColor" />
+                </Field>
+            </Paragraph>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="HideEditCatModal">Cancel</Button>
+            <Button Color="Color.Primary" Clicked="EditCat">Edit</Button>
+            <Button Color="Color.Danger" Clicked="DeleteCat">Delete</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@* AddEntry Modal *@
+<Modal @ref="@addEntryModal">
+    <ModalContent Centered="true">
+        <ModalHeader>
+            @if (activeCat is not null)
+            {
+                <ModalTitle>Add data for @activeCat.Name</ModalTitle>
+            }
+            else
+            {
+                <ModalTitle>Add data</ModalTitle>
+            }
+            <CloseButton Clicked="HideAddEntryModal" />
+        </ModalHeader>
+        <ModalBody>
+            <Paragraph>Enter your cat's informations</Paragraph>
+            <Paragraph>
+                <Field>
+                    <FieldLabel>Observation time</FieldLabel>
+                    <DateTimeEdit @bind-Value="@newEntryTime"></DateTimeEdit>
+                </Field>
+                <Field>
+                    <FieldLabel>Comment</FieldLabel>
+                    <TextEdit @bind-Text="@newEntryComment"></TextEdit>
+                </Field>
+                <Field>
+                    <FieldLabel>Weight</FieldLabel>
+                    <NumericPicker @bind-Value="@newEntryWeight"></NumericPicker>
+                </Field>
+                <Field>
+                    <FieldLabel>Temperature</FieldLabel>
+                    <NumericPicker @bind-Value="@newEntryTemperature"></NumericPicker>
+                </Field>
+            </Paragraph>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="HideAddEntryModal">Cancel</Button>
+            <Button Color="Color.Primary" Clicked="AddEntry">Add</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    List<Cat>? cats;
+    List<CatEntry>? catentries;
+    Cat? activeCat;
+    Guid selectActiveCatId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // load data if user is authenticated
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            await GetData();
+        }
+    }
+
+    async Task GetData()
+    {
+        // check if user is connected
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUserId = Guid.Parse(userManager.GetUserId(user)!);
+
+        cats = await catService.GetCatsAsync(currentUserId);
+
+        if (cats is not null)
+        {
+            if (cats.Count > 0)
+            {
+                selectActiveCatId = cats.First().Id;
+                catentries = await catService.GetCatEntriesAsync(currentUserId, selectActiveCatId);
+            }
+        }
+    }
+
+    async Task SetActiveCat()
+    {
+        // check if user is connected
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUserId = Guid.Parse(userManager.GetUserId(user)!);
+
+        activeCat = await catService.GetCatAsync(currentUserId, selectActiveCatId);
+    }
+
+    void  ClearActiveCat()
+    {
+        activeCat = null;
+    }
+
+    Modal addCatModal = new Modal();
+    string newCatName = "";
+    string newCatBreed = "";
+    string newCatColor = "";
+    string newCatGender = "Male";
+    DateTime? newCatBirthdate = null;
+
+    void HideAddCatModal()
+    {
+        addCatModal.Hide();
+    }
+
+    void ShowAddCatModal()
+    {
+        addCatModal.Show();
+    }
+
+    async Task AddCat()
+    {
+        // get logged in user data
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUserId = Guid.Parse(userManager.GetUserId(user)!);
+
+        // check validity before adding new cat in database
+        if (!string.IsNullOrEmpty(newCatName) && newCatBirthdate is not null)
+        {
+            Cat cat = new Cat() { Name = newCatName, Birthdate = newCatBirthdate.Value, Gender = newCatGender };
+            cat.Breed = newCatBreed;
+            cat.Color = newCatColor;
+
+            activeCat = await catService.AddCatAsync(currentUserId, cat);
+            await GetData();
+        }
+        // Hide modal dialog
+        HideAddCatModal();
+    }
+
+    Modal editCatModal = new Modal();
+    string editCatName = "";
+    string editCatBreed = "";
+    string editCatColor = "";
+    string editCatGender = "";
+    DateTime? editCatBirthdate = null;
+
+    void ShowEditCatModal()
+    {
+        // check if there is an active cat
+        if (activeCat is not null)
+        {
+            editCatName = activeCat.Name;
+            editCatBreed = activeCat.Breed!;
+            editCatColor = activeCat.Color!;
+            editCatBirthdate = activeCat.Birthdate;
+            editCatGender = activeCat.Gender;
+            editCatModal.Show();
+        }
+
+        // else do not open modal
+    }
+
+    void HideEditCatModal()
+    {
+        editCatName = "";
+        editCatBreed = "";
+        editCatColor = "";
+        editCatGender = "";
+        editCatBirthdate = null;
+        editCatModal.Hide();
+    }
+
+    async Task EditCat()
+    {
+        // get logged in user data
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUser = await userManager.GetUserAsync(user);
+
+        if (activeCat is not null)
+        {
+            // update
+            activeCat.Name = editCatName;
+            if (editCatBirthdate is not null)
+                activeCat.Birthdate = editCatBirthdate.Value;
+            activeCat.Color = editCatColor;
+            activeCat.Breed = editCatBreed;
+            activeCat.Gender = editCatGender;
+
+            // post on db and reload
+            await catService.UpdateCatAsync(activeCat);
+            await GetData();
+        }
+
+        // Hide modal
+        HideEditCatModal();
+    }
+
+    async Task DeleteCat()
+    {
+        // get logged in user data
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUserId = Guid.Parse(userManager.GetUserId(user)!);
+
+        if (activeCat is not null)
+        {
+            await catService.DeleteCatAsync(currentUserId, activeCat.Id);
+            activeCat = null;
+            await GetData();
+        }
+
+        // Hide modal
+        HideEditCatModal();
+    }
+
+    Modal addEntryModal = new Modal();
+    string? newEntryComment = null;
+    double? newEntryWeight = null;
+    double? newEntryTemperature = null;
+    DateTime? newEntryTime = null;
+
+    void ShowAddEntryModal()
+    {
+        newEntryTime = DateTime.Now;
+        addEntryModal.Show();
+    }
+
+    void HideAddEntryModal()
+    {
+        newEntryComment = null;
+        newEntryWeight = null;
+        newEntryTemperature = null;
+        newEntryTime = null;
+
+        addEntryModal.Hide();
+    }
+
+    async Task AddEntry()
+    {
+        // get logged in user data
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUserId = Guid.Parse(userManager.GetUserId(user)!);
+
+        // check validity before adding new entry in database
+        if (newEntryTime is not null && activeCat is not null)
+        {
+            CatEntry entry = new CatEntry();
+            entry.Id = Guid.NewGuid();
+            entry.CreationTime = DateTime.Now;
+            entry.EntryTime = newEntryTime.Value;
+            entry.Comment = newEntryComment;
+            entry.Weight = newEntryWeight;
+            entry.Temperature = newEntryTemperature;
+            await catService.AddCatEntryAsync(currentUserId, activeCat.Id, entry);
+        }
+        await GetData();
+
+        // Hide modal dialog
+        HideAddEntryModal();
+    }
+
+    async Task DeleteEntry(CatEntry entry)
+    {
+        await catService.DeleteCatEntryAsync(entry.UserId, entry.CatId, entry.Id);
+        await GetData();
+    }
+
+    // -- curve
+    LineChart<double>? lineChart;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (activeCat is not null)
+        {
+            await HandleRedraw();
+        }
+    }
+
+    async Task HandleRedraw()
+    {
+        if (lineChart is not null)
+        {
+            await lineChart.Clear();
+            dateLabel.Clear();
+            dateLabel = await CreateWeightlistLabel();
+
+            await lineChart.AddLabelsDatasetsAndUpdate(dateLabel, GetLineChartDataset());
+        }
+    }
+
+    LineChartDataset<double> GetLineChartDataset()
+    {
+        LineChartDataset<double> result = new () 
+            {
+                Label = "Weight (kg)",
+                Data = CreateWeightList().Result,
+                Fill = true,
+                PointRadius = 3,
+                CubicInterpolationMode = "monotone"
+            };
+
+        List<string> labelColor = new List<string>();
+        List<string> borderColor = new List<string>();
+        for (int i = 0; i < result.Data.Count; i++)
+        {
+            labelColor.Add(ChartColor.FromRgba(54, 162, 235, 0.2f));
+            borderColor.Add(ChartColor.FromRgba(54, 162, 235, 1f));
+        }
+
+        result.BackgroundColor = labelColor;
+        result.BorderColor = borderColor;
+
+        return result;
+    }
+
+    List<string> dateLabel = new List<string>();
+
+    async Task<List<double>> CreateWeightList()
+    {
+        // get logged in user data
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUserId = Guid.Parse(userManager.GetUserId(user)!);
+
+        List<double> weightList = new List<double>();
+
+        if (activeCat is not null)
+        {
+            List<CatEntry> listEntryWeight = await catService.GetCatWeightListAsync(currentUserId, activeCat.Id);
+
+            if (listEntryWeight is not null)
+            {
+                if (listEntryWeight.Count > 0)
+                {
+                    foreach (CatEntry entry in listEntryWeight.OrderBy(a => a.EntryTime))
+                    {
+                        if (entry.Weight is not null)
+                        {
+                            weightList.Add(entry.Weight.Value);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        /*List<double> cropedList = new();
+        int countMax;
+        if (weightList.Count < 10)
+        {
+            countMax = weightList.Count;
+        }
+        else
+        {
+            countMax = 10;
+        }
+        for (int i = 0; i < countMax; i++)
+        {
+            cropedList.Add(weightList[i]);
+        }*/
+
+        return weightList;
+    }
+    async Task<List<string>> CreateWeightlistLabel()
+    {
+        // get logged in user data
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUserId = Guid.Parse(userManager.GetUserId(user)!);
+
+        List<string> label = new();
+
+        if (activeCat is not null)
+        {
+            List<CatEntry> listEntryWeight = await catService.GetCatWeightListAsync(currentUserId, activeCat.Id);
+
+            if (listEntryWeight is not null)
+            {
+                if (listEntryWeight.Count > 0)
+                {
+                    foreach (CatEntry entry in listEntryWeight.OrderBy(a => a.EntryTime))
+                    {
+                        if (entry.Weight is not null)
+                        {
+                            label.Add(entry.EntryTime.ToShortDateString().Substring(0,5));
+                        }
+                    }
+                }
+            }
+
+        }
+
+        /*List<string> cropedLabel = new();
+        int countMax;
+        if (label.Count < 10)
+        {
+            countMax = label.Count;
+        }
+        else
+        {
+            countMax = 10;
+        }
+        for (int i = 0; i < countMax; i++)
+        {
+            cropedLabel.Add(label[i]);
+        }*/
+
+        return label;
+    }
+}

@@ -1,0 +1,30 @@
+﻿@page "/misc/counter"
+
+@rendermode InteractiveServer
+
+<PageTitle>C3P1.Net/Counter</PageTitle>
+
+<Heading Size="HeadingSize.Is3">
+    Counter
+</Heading>
+<Divider />
+
+<Paragraph>
+    Current count : @currentCount
+</Paragraph>
+
+<Button Color="Color.Primary" Clicked="IncrementCount">Click me</Button>
+<Button Color="Color.Primary" Clicked="DecrementCount">Unclick me</Button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+    private void DecrementCount()
+    {
+        currentCount--;
+    }
+}
