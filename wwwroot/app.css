@@ -1,3 +1,4 @@
+/* Default settings from microsoft blazor template */
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -49,6 +50,85 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+/* Blazor modal for signalR reconnect */
+#components-reconnect-modal {
+    background-color: aliceblue !important;
+}
+
+    #components-reconnect-modal h5 {
+        color: darkslateblue;
+    }
+
+    #components-reconnect-modal button {
+        align-items: center;
+        appearance: button;
+        background-color: /*#0276FF*/ rgb(2, 130, 255);
+        border-radius: 8px;
+        border-style: none;
+        box-shadow: rgba(255, 255, 255, 0.26) 0 1px 2px inset;
+        box-sizing: border-box;
+        color: #fff;
+        cursor: pointer;
+        display: flex;
+        flex-direction: row;
+        flex-shrink: 0;
+        font-family: "RM Neue",sans-serif;
+        font-size: 100%;
+        line-height: 1.15;
+        margin: 0;
+        padding: 10px 21px;
+        text-align: center;
+        text-transform: none;
+        transition: color .13s ease-in-out,background .13s ease-in-out,opacity .13s ease-in-out,box-shadow .13s ease-in-out;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+    }
+
+        #components-reconnect-modal button:active {
+            background-color: #006AE8;
+        }
+
+        #components-reconnect-modal button:hover {
+            background-color: #006AE8;
+        }
+
+    #components-reconnect-modal a {
+        align-items: center;
+        appearance: button;
+        background-color: #00AEAE;
+        border-radius: 8px;
+        border-style: none;
+        box-shadow: rgba(255, 255, 255, 0.26) 0 1px 2px inset;
+        box-sizing: border-box;
+        color: #fff;
+        cursor: pointer;
+        display: inline-block;
+        flex-direction: row;
+        flex-shrink: 0;
+        font-family: "RM Neue",sans-serif;
+        font-size: 100%;
+        line-height: 1.15;
+        margin: 0;
+        padding: 7.5px 21px;
+        text-align: center;
+        text-transform: none;
+        transition: color .13s ease-in-out,background .13s ease-in-out,opacity .13s ease-in-out,box-shadow .13s ease-in-out;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        text-transform: capitalize;
+        font-size: large;
+        text-decoration: none;
+    }
+
+        #components-reconnect-modal a:active {
+            background-color: teal;
+        }
+
+        #components-reconnect-modal a:hover {
+            background-color: teal;
+        }
 
 /* Responsives design rules for main content div */
 @media only screen and (min-width:1500px)
@@ -59,3 +139,4 @@ h1:focus {
         min-width:1300px;
     }
 }
+
