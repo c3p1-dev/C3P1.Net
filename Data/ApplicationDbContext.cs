@@ -10,6 +10,6 @@ namespace C3P1.Net.Data
         public DbSet<TodoItem> Tasklist => Set<TodoItem>();
         public DbSet<Cat> Cats => Set<Cat>();
         public DbSet<CatEntry> CatEntries => Set<CatEntry>();
-        public DbSet<AppParam> UsersAppParam => Set<AppParam>();
+        public DbSet<AppConfig> UserAppConfig => Set<AppConfig>();
     }
 }

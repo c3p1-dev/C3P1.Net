@@ -1,15 +1,19 @@
-﻿@inject IAppParamService appParamsService
+﻿@inject IAppConfigService AppConfig
 @inject IJSRuntime JS
 
 @rendermode InteractiveServer
 
-<Bar @bind-Visible="@topbarVisible" Breakpoint="Breakpoint.Desktop" Background="Background.Primary" Shadow="Shadow.Default" ThemeContrast="ThemeContrast.Dark" Padding="Padding.Is2">
+<Bar @bind-Visible="@topbarVisible" Breakpoint="Breakpoint.Desktop" Style="background: darkslateblue;" Shadow="Shadow.Default" ThemeContrast="ThemeContrast.Dark" Padding="Padding.Is2">
     <BarBrand Margin="Margin.Is1">
         <BarItem>
-            <BarLink To="" TextAlignment="TextAlignment.Center">
-                <BarIcon IconName="IconName.Dashboard" />
-                C3P1.Net
-            </BarLink>
+            <AuthorizeView>
+                <Authorized>
+                    <Badge Color="Color.Primary">@context.User.Identity?.Name</Badge>
+                </Authorized>
+                <NotAuthorized>
+                    <Badge Color="Color.Secondary">public access</Badge>
+                </NotAuthorized>
+            </AuthorizeView>
         </BarItem>
     </BarBrand>
     <AuthorizeView>
@@ -73,7 +77,7 @@
         }
 
         // try to get current theme mode
-        themeMode = await appParamsService.GetThemeModeAsync();
+        themeMode = await AppConfig.GetThemeModeAsync();
 
         // finish init
         await base.OnInitializedAsync();
@@ -94,21 +98,21 @@
 
         if (themeMode is not null)
         {
-            await appParamsService.SetThemeModeAsync(themeMode);
+            await AppConfig.SetThemeModeAsync(themeMode);
         }
     }
 
     async Task DarkMode()
     {
         themeMode = "dark";
-        await appParamsService.SetThemeModeAsync(themeMode);
+        await AppConfig.SetThemeModeAsync(themeMode);
         await JS.InvokeAsync<string>("darkmode");
     }
 
     async Task LightMode()
     {
         themeMode = "light";
-        await appParamsService.SetThemeModeAsync(themeMode);
+        await AppConfig.SetThemeModeAsync(themeMode);
         await JS.InvokeAsync<string>("lightmode");
     }
 

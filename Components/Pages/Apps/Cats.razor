@@ -1,15 +1,8 @@
-﻿@page "/tools/cats"
-
-@using C3P1.Net.Components.Error
-@using C3P1.Net.Data
-@using C3P1.Net.Services.Tools
-@using C3P1.Net.Data.Models
-@using Microsoft.AspNetCore.Identity
+﻿@page "/apps/cats"
 
 @inject ICatService catService
 @inject UserManager<ApplicationUser> userManager
 @inject AuthenticationStateProvider authStateProvider
-@inject IAppParamService appParamService;
 
 @rendermode InteractiveServer
 

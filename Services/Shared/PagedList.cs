@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace C3P1.Net.Services.Tools
+namespace C3P1.Net.Services.Shared
 {
     public class PagedList<T>
     {
@@ -16,8 +16,8 @@ namespace C3P1.Net.Services.Tools
             PageIndex = pageIndex;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
 
-            this.Items = new List<T>();
-            this.Items.AddRange(items);
+            Items = new List<T>();
+            Items.AddRange(items);
         }
         #endregion
 
@@ -26,7 +26,7 @@ namespace C3P1.Net.Services.Tools
         {
             get
             {
-                return (PageIndex > 1);
+                return PageIndex > 1;
             }
             set { }
         }
@@ -35,7 +35,7 @@ namespace C3P1.Net.Services.Tools
         {
             get
             {
-                return (PageIndex < TotalPages);
+                return PageIndex < TotalPages;
             }
             set { }
         }

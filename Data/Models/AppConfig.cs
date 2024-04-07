@@ -2,7 +2,7 @@
 
 namespace C3P1.Net.Data.Models
 {
-    public class AppParam
+    public class AppConfig
     {
         [Key]
         public Guid Id { get; set; }

@@ -21,7 +21,6 @@
                 </BarLink>
             </BarItem>
 
-            @* describe account sidebar section *@
             <AuthorizeView Roles="Admin">
                 <BarItem>
                     <BarDropdown>
@@ -32,7 +31,7 @@
                             <BarDropdownItem To="https://webadmin.c3p1.net" Target="Target.Blank">
                                 <BarIcon IconName="IconName.Infinity" /> Cockpit
                             </BarDropdownItem>
-                            <BarDropdownItem To="/admin/users">
+                            <BarDropdownItem To="admin/users">
                                 <BarIcon IconName="IconName.Users" /> Users
                             </BarDropdownItem>
                         </BarDropdownMenu>
@@ -49,14 +48,14 @@
                             </BarDropdownToggle>
                             <BarDropdownMenu>
                                 <BarDropdownItem>
-                                    <Form action="/Account/Logout" method="post">
+                                    <Form action="account/logout" method="post">
                                         <AntiforgeryToken />
                                         <input type="hidden" name="returnUrl" value="" />
                                         <BarIcon IconName="IconName.Eject" TextColor="TextColor.Danger" />
                                         <Button Type="ButtonType.Submit" TextColor="TextColor.Danger">Logout</Button>
                                     </Form>
                                 </BarDropdownItem>
-                                <BarDropdownItem To="Account/Manage">
+                                <BarDropdownItem To="account/manage">
                                     <BarIcon IconName="IconName.User" /> Account
                                 </BarDropdownItem>
                             </BarDropdownMenu>
@@ -70,10 +69,10 @@
                                 <BarIcon IconName="IconName.UserCircle" /> Identity
                             </BarDropdownToggle>
                             <BarDropdownMenu>
-                                <BarDropdownItem To="Account/Login">
+                                <BarDropdownItem To="account/login">
                                     <BarIcon IconName="IconName.UserCheck" /> Login
                                 </BarDropdownItem>
-                                <BarDropdownItem To="Account/Register">
+                                <BarDropdownItem To="account/register">
                                     <BarIcon IconName="IconName.UserPlus" /> Register
                                 </BarDropdownItem>
                             </BarDropdownMenu>
@@ -111,17 +110,17 @@
                             <BarIcon IconName="IconName.PaperPlane" /> Paste
                         </BarDropdownItem>
                         <AuthorizeView>
-                            <BarDropdownItem To="/tools/cats/">
+                            <BarDropdownItem To="apps/cats/">
                                 <BarIcon IconName="IconName.Shield" /> Cats
                             </BarDropdownItem>
-                            <BarDropdownItem To="/tools/tasklist">
+                            <BarDropdownItem To="apps/tasklist">
                                 <BarIcon IconName="IconName.List" /> Tasklist
                             </BarDropdownItem>
                         </AuthorizeView>
-                        <BarDropdownItem To="/misc/counter">
+                        <BarDropdownItem To="misc/counter">
                             <BarIcon IconName="IconName.Keyboard" /> Counter
                         </BarDropdownItem>
-                        <BarDropdownItem To="/misc/demo">
+                        <BarDropdownItem To="misc/demo">
                             <BarIcon IconName="IconName.PaintRoller" /> Demo
                         </BarDropdownItem>
                     </BarDropdownMenu>
@@ -134,5 +133,5 @@
 @code
 {
     private bool sidebarVisible = true;
-    RenderFragment customIcon =@<Image Source="pix/c3p1.png" Style="width:32px; height: 32px" Text="C3P1.net"/>;
+    RenderFragment customIcon =@<Image Source="pix/bb-8.svg" Style="width:40px; height:40px;" Text="C3P1.net" />;
 }

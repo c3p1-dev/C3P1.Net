@@ -42,11 +42,11 @@
                 <Paragraph TextColor="TextColor.Dark" Margin="Margin.Is2.FromBottom">
                     @if (usersAdminService.IsAdminAsync(data.Item).Result == true)
                     {
-                        <Badge Color="Color.Primary">Admin</Badge>
+                        <Badge Color="Color.Warning">Admin</Badge>
                     }
                     else
                     {
-                        <Badge Color="Color.Secondary">User</Badge>
+                        <Badge Color="Color.Primary">User</Badge>
                     }
 
                     @if (data.Item.EmailConfirmed == true)

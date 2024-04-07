@@ -6,12 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace C3P1.Net.Services.Admin
 {
-    public class AppParamService : IAppParamService
+    public class AppConfigService : IAppConfigService
     {
         private readonly AuthenticationStateProvider _authStateProvider;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        public AppParamService(ApplicationDbContext context, AuthenticationStateProvider authStateProvider, UserManager<ApplicationUser> userManager)
+        public AppConfigService(ApplicationDbContext context, AuthenticationStateProvider authStateProvider, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _authStateProvider = authStateProvider;
@@ -29,7 +29,7 @@ namespace C3P1.Net.Services.Admin
                 {
                     // authenticated, read theme from db
                     var currentUserId = Guid.Parse(_userManager.GetUserId(user)!);
-                    AppParam? result = await _context.UsersAppParam
+                    AppConfig? result = await _context.UserAppConfig
                         .Where(x => x.UserId == currentUserId).FirstOrDefaultAsync();
 
                     if (result is not null && result.ThemeMode is not null)
@@ -59,7 +59,7 @@ namespace C3P1.Net.Services.Admin
                 {
                     // authenticated, but is there a stored theme mode ?
                     var currentUserId = Guid.Parse(_userManager.GetUserId(user)!);
-                    AppParam? result = await _context.UsersAppParam
+                    AppConfig? result = await _context.UserAppConfig
                         .Where(x => x.UserId == currentUserId).FirstOrDefaultAsync();
 
                     // check if there is a match
@@ -74,7 +74,7 @@ namespace C3P1.Net.Services.Admin
                     else
                     {
                         // no match, add an app params entry
-                        AppParam appParam = new AppParam();
+                        AppConfig appParam = new AppConfig();
                         appParam.Id = Guid.NewGuid();
                         appParam.UserId = currentUserId;
                         appParam.ThemeMode = themeMode;

@@ -5,7 +5,7 @@ using C3P1.Net.Components;
 using C3P1.Net.Components.Account;
 using C3P1.Net.Data;
 using C3P1.Net.Services.Admin;
-using C3P1.Net.Services.Tools;
+using C3P1.Net.Services.Apps;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -62,7 +62,7 @@ builder.Services
 
 // Register services
 builder.Services.AddTransient<IUsersAdminService, UsersAdminService>();
-builder.Services.AddTransient<IAppParamService, AppParamService>();
+builder.Services.AddTransient<IAppConfigService, AppConfigService>();
 builder.Services.AddTransient<ITasklistService, TasklistService>();
 builder.Services.AddTransient<ICatService, CatService>();
 

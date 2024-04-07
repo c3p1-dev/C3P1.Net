@@ -1,18 +1,17 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace C3P1.Net.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateUsersAppParamSchema : Migration
+    public partial class CreateAppConfigSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "UsersAppParam",
+                name: "UserAppConfig",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -21,7 +20,7 @@ namespace C3P1.Net.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UsersAppParam", x => x.Id);
+                    table.PrimaryKey("PK_UserAppConfig", x => x.Id);
                 });
         }
 
@@ -29,7 +28,7 @@ namespace C3P1.Net.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UsersAppParam");
+                name: "UserAppConfig");
         }
     }
 }

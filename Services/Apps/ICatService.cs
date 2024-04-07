@@ -1,6 +1,6 @@
 ﻿using C3P1.Net.Data.Models;
 
-namespace C3P1.Net.Services.Tools
+namespace C3P1.Net.Services.Apps
 {
     public interface ICatService
     {

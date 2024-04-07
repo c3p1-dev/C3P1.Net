@@ -81,7 +81,7 @@ namespace C3P1.Net.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("C3P1.Net.Data.Models.AppParam", b =>
+            modelBuilder.Entity("C3P1.Net.Data.Models.AppConfig", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -95,7 +95,7 @@ namespace C3P1.Net.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UsersAppParam");
+                    b.ToTable("UserAppConfig");
                 });
 
             modelBuilder.Entity("C3P1.Net.Data.Models.Cat", b =>

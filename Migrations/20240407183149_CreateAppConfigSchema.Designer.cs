@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C3P1.Net.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240330180825_CreateUsersAppParamSchema")]
-    partial class CreateUsersAppParamSchema
+    [Migration("20240407183149_CreateAppConfigSchema")]
+    partial class CreateAppConfigSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,7 +84,7 @@ namespace C3P1.Net.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("C3P1.Net.Data.Models.AppParam", b =>
+            modelBuilder.Entity("C3P1.Net.Data.Models.AppConfig", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -98,7 +98,7 @@ namespace C3P1.Net.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UsersAppParam");
+                    b.ToTable("UserAppConfig");
                 });
 
             modelBuilder.Entity("C3P1.Net.Data.Models.Cat", b =>

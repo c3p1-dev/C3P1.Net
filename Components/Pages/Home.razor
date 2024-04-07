@@ -1,12 +1,11 @@
 ﻿@page "/"
 
-@inject NavigationManager uriHelper;
-@inject IAppParamService appParamsService;
+@inject IAppConfigService AppConfig;
 
-<PageTitle>C3P1.Net</PageTitle>
+<PageTitle>C3P1.Net/Home</PageTitle>
 
 <Div TextAlignment="TextAlignment.Center">
-    <Image Source="pix/c3p1.png" Width="Width.Px(300)" Margin="Margin.IsAuto" Text="C3P1.Net logo" />
+    <Image Source="pix/bb-8.svg" Width="Width.Px(300)" Margin="Margin.IsAuto" Text="C3P1.Net logo" />
     <Heading Size="HeadingSize.Is3">Welcolme on C3P1.Net</Heading>
     <Paragraph>
         <a href="https://www.opensuse.org/">
