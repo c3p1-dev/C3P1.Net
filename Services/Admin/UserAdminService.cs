@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace C3P1.Net.Services.Admin
 {
-    public class UsersAdminService : IUsersAdminService
+    public class UserAdminService : IUserAdminService
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UsersAdminService(UserManager<ApplicationUser> userManager)
+        public UserAdminService(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }

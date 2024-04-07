@@ -61,7 +61,7 @@ builder.Services
     .AddFontAwesomeIcons();
 
 // Register services
-builder.Services.AddTransient<IUsersAdminService, UsersAdminService>();
+builder.Services.AddTransient<IUserAdminService, UserAdminService>();
 builder.Services.AddTransient<IAppConfigService, AppConfigService>();
 builder.Services.AddTransient<ITasklistService, TasklistService>();
 builder.Services.AddTransient<ICatService, CatService>();

@@ -2,7 +2,7 @@
 
 namespace C3P1.Net.Services.Admin
 {
-    public interface IUsersAdminService
+    public interface IUserAdminService
     {
         public Task<List<ApplicationUser>> GetAdminUsersAsync();
         public Task<List<ApplicationUser>> GetRegularUsersAsync();

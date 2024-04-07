@@ -1,8 +1,8 @@
 ﻿@page "/apps/tasklist"
 
-@inject ITasklistService tasklistService
-@inject UserManager<ApplicationUser> userManager
-@inject AuthenticationStateProvider authStateProvider
+@inject ITasklistService TasklistService
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthStateProvider
 
 @rendermode InteractiveServer
 
@@ -306,7 +306,7 @@
     protected override async Task OnInitializedAsync()
     {
         // load data if user is authenticated
-        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
         if (user.Identity is not null && user.Identity.IsAuthenticated)
@@ -319,40 +319,40 @@
     async Task GetData()
     {
         // check if user is connected
-        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        var currentUserId = Guid.Parse(userManager.GetUserId(user)!);
+        var currentUserId = Guid.Parse(UserManager.GetUserId(user)!);
 
         if (filter == Filter.All)
         {
-            tasklist = await tasklistService.GetTasklistPagedAsync(currentUserId, pageNumber, pageSize, sortField, sortOrder);
+            tasklist = await TasklistService.GetTasklistPagedAsync(currentUserId, pageNumber, pageSize, sortField, sortOrder);
         }
         else if (filter == Filter.Todo)
         {
-            tasklist = await tasklistService.GetTodoTasklistPagedAsync(currentUserId, pageNumber, pageSize, sortField, sortOrder);
+            tasklist = await TasklistService.GetTodoTasklistPagedAsync(currentUserId, pageNumber, pageSize, sortField, sortOrder);
         }
         else
         {
-            tasklist = await tasklistService.GetDoneTasklistPagedAsync(currentUserId, pageNumber, pageSize, sortField, sortOrder);
+            tasklist = await TasklistService.GetDoneTasklistPagedAsync(currentUserId, pageNumber, pageSize, sortField, sortOrder);
         }
     }
 
     bool AnyDoneItems()
     {
         // check if user is connected
-        var authState = authStateProvider.GetAuthenticationStateAsync().Result;
+        var authState = AuthStateProvider.GetAuthenticationStateAsync().Result;
         var user = authState.User;
-        var currentUserId = Guid.Parse(userManager.GetUserId(user)!);
+        var currentUserId = Guid.Parse(UserManager.GetUserId(user)!);
 
-        return (tasklistService.GetDoneTasklistAsync(currentUserId).Result.Count > 0);
+        return (TasklistService.GetDoneTasklistAsync(currentUserId).Result.Count > 0);
     }
 
     async Task InvertCompletedState(TodoItem item)
     {
         // check if user is connected
-        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        var currentUserId = await userManager.GetUserAsync(user);
+        var currentUserId = await UserManager.GetUserAsync(user);
 
         if (item.Completed == false)
         {
@@ -365,7 +365,7 @@
             item.Completed = false;
         }
 
-        await tasklistService.UpdateTodoItemAsync(item);
+        await TasklistService.UpdateTodoItemAsync(item);
         await GetData();
 
     }
@@ -496,14 +496,14 @@
     async Task AddTask()
     {
         // get logged in user data
-        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        var currentUserId = Guid.Parse(userManager.GetUserId(user)!);
+        var currentUserId = Guid.Parse(UserManager.GetUserId(user)!);
 
         // check item validity before adding a new task in database
         if (!string.IsNullOrEmpty(newItem.Title))
         {
-            await tasklistService.AddTodoItemAsync(currentUserId, newItem);
+            await TasklistService.AddTodoItemAsync(currentUserId, newItem);
             await GetData();
         }
 
@@ -538,9 +538,9 @@
     async Task EditTask()
     {
         // get logged in user data
-        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        var currentUser = await userManager.GetUserAsync(user);
+        var currentUser = await UserManager.GetUserAsync(user);
 
         // update task
         selectedItem.Title = selectedItemTitle;
@@ -552,7 +552,7 @@
         }
         selectedItem.Completed = selectedItemCompleted;
 
-        await tasklistService.UpdateTodoItemAsync(selectedItem);
+        await TasklistService.UpdateTodoItemAsync(selectedItem);
         await GetData();
 
         // hide modal dialog
@@ -562,12 +562,12 @@
     async Task DeleteTask()
     {
         // check if user is connected
-        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        var currentUserId = Guid.Parse(userManager.GetUserId(user)!);
+        var currentUserId = Guid.Parse(UserManager.GetUserId(user)!);
 
         // delete task
-        await tasklistService.DeleteTodoItemAsync(currentUserId, selectedItem.Id);
+        await TasklistService.DeleteTodoItemAsync(currentUserId, selectedItem.Id);
         await GetData();
 
         // Hide modal dialog
@@ -641,12 +641,12 @@
     {
         await deleteDoneTasksModal.Hide();
         // check if user is connected
-        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        var currentUserId = Guid.Parse(userManager.GetUserId(user)!);
+        var currentUserId = Guid.Parse(UserManager.GetUserId(user)!);
 
         // delete all done tasks
-        await tasklistService.DeleteDoneTasklistAsync(currentUserId);
+        await TasklistService.DeleteDoneTasklistAsync(currentUserId);
         await GetData();
     }
 }

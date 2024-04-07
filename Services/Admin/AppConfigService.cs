@@ -45,7 +45,7 @@ namespace C3P1.Net.Services.Admin
             }
 
             // not authenticated, default theme is light
-            return "light";
+            return "dark";
         }
 
         public async Task<bool> SetThemeModeAsync(string themeMode)

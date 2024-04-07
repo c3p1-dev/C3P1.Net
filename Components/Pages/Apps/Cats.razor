@@ -1,6 +1,6 @@
 ﻿@page "/apps/cats"
 
-@inject ICatService catService
+@inject ICatService CatService
 @inject UserManager<ApplicationUser> userManager
 @inject AuthenticationStateProvider authStateProvider
 
@@ -266,14 +266,14 @@
         var user = authState.User;
         var currentUserId = Guid.Parse(userManager.GetUserId(user)!);
 
-        cats = await catService.GetCatsAsync(currentUserId);
+        cats = await CatService.GetCatsAsync(currentUserId);
 
         if (cats is not null)
         {
             if (cats.Count > 0)
             {
                 selectActiveCatId = cats.First().Id;
-                catentries = await catService.GetCatEntriesAsync(currentUserId, selectActiveCatId);
+                catentries = await CatService.GetCatEntriesAsync(currentUserId, selectActiveCatId);
             }
         }
     }
@@ -285,7 +285,7 @@
         var user = authState.User;
         var currentUserId = Guid.Parse(userManager.GetUserId(user)!);
 
-        activeCat = await catService.GetCatAsync(currentUserId, selectActiveCatId);
+        activeCat = await CatService.GetCatAsync(currentUserId, selectActiveCatId);
     }
 
     void  ClearActiveCat()
@@ -324,7 +324,7 @@
             cat.Breed = newCatBreed;
             cat.Color = newCatColor;
 
-            activeCat = await catService.AddCatAsync(currentUserId, cat);
+            activeCat = await CatService.AddCatAsync(currentUserId, cat);
             await GetData();
         }
         // Hide modal dialog
@@ -382,7 +382,7 @@
             activeCat.Gender = editCatGender;
 
             // post on db and reload
-            await catService.UpdateCatAsync(activeCat);
+            await CatService.UpdateCatAsync(activeCat);
             await GetData();
         }
 
@@ -399,7 +399,7 @@
 
         if (activeCat is not null)
         {
-            await catService.DeleteCatAsync(currentUserId, activeCat.Id);
+            await CatService.DeleteCatAsync(currentUserId, activeCat.Id);
             activeCat = null;
             await GetData();
         }
@@ -447,7 +447,7 @@
             entry.Comment = newEntryComment;
             entry.Weight = newEntryWeight;
             entry.Temperature = newEntryTemperature;
-            await catService.AddCatEntryAsync(currentUserId, activeCat.Id, entry);
+            await CatService.AddCatEntryAsync(currentUserId, activeCat.Id, entry);
         }
         await GetData();
 
@@ -457,7 +457,7 @@
 
     async Task DeleteEntry(CatEntry entry)
     {
-        await catService.DeleteCatEntryAsync(entry.UserId, entry.CatId, entry.Id);
+        await CatService.DeleteCatEntryAsync(entry.UserId, entry.CatId, entry.Id);
         await GetData();
     }
 
@@ -522,7 +522,7 @@
 
         if (activeCat is not null)
         {
-            List<CatEntry> listEntryWeight = await catService.GetCatWeightListAsync(currentUserId, activeCat.Id);
+            List<CatEntry> listEntryWeight = await CatService.GetCatWeightListAsync(currentUserId, activeCat.Id);
 
             if (listEntryWeight is not null)
             {
@@ -568,7 +568,7 @@
 
         if (activeCat is not null)
         {
-            List<CatEntry> listEntryWeight = await catService.GetCatWeightListAsync(currentUserId, activeCat.Id);
+            List<CatEntry> listEntryWeight = await CatService.GetCatWeightListAsync(currentUserId, activeCat.Id);
 
             if (listEntryWeight is not null)
             {

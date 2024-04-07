@@ -1,6 +1,6 @@
 ﻿@page "/admin/users"
 
-@inject IUsersAdminService usersAdminService
+@inject IUserAdminService UserAdminService
 
 @rendermode InteractiveServer
 
@@ -21,7 +21,7 @@
                     <Buttons>
                         @if (data.Item.Email != username)
                         {
-                            @if (usersAdminService.IsAdminAsync(data.Item).Result == true)
+                            @if (UserAdminService.IsAdminAsync(data.Item).Result == true)
                             {
                                 <Button Size="Size.Small" Clicked="@(async () => await MakeRegular(data.Item))" Color="Color.Warning">
                                     <Icon Name="IconName.ChevronDown" />
@@ -40,7 +40,7 @@
                     </Buttons>
                 </Div>
                 <Paragraph TextColor="TextColor.Dark" Margin="Margin.Is2.FromBottom">
-                    @if (usersAdminService.IsAdminAsync(data.Item).Result == true)
+                    @if (UserAdminService.IsAdminAsync(data.Item).Result == true)
                     {
                         <Badge Color="Color.Warning">Admin</Badge>
                     }
@@ -136,28 +136,28 @@
 
     private async Task DeleteUser(ApplicationUser user)
     {
-        await usersAdminService.DeleteUserAsync(user);
+        await UserAdminService.DeleteUserAsync(user);
         await DataChanged();
         HideModal();
     }
 
     private async Task DataChanged()
     {
-        var adminList = await usersAdminService.GetAdminUsersAsync();
-        var userList = await usersAdminService.GetRegularUsersAsync();
+        var adminList = await UserAdminService.GetAdminUsersAsync();
+        var userList = await UserAdminService.GetRegularUsersAsync();
 
         Userlist = adminList.Concat(userList).ToList();
     }
 
     private async Task MakeAdmin(ApplicationUser user)
     {
-        await usersAdminService.MakeAdminAsync(user);
+        await UserAdminService.MakeAdminAsync(user);
         await DataChanged();
     }
 
     private async Task MakeRegular(ApplicationUser user)
     {
-        await usersAdminService.MakeRegularAsync(user);
+        await UserAdminService.MakeRegularAsync(user);
         await DataChanged();
     }
 }
