@@ -7,8 +7,8 @@ namespace C3P1.Net.Services.Apps
 {
     public class TasklistService : ITasklistService
     {
-        private readonly ApplicationDbContext _context;
-        public TasklistService(ApplicationDbContext context)
+        private readonly AppDbContext _context;
+        public TasklistService(AppDbContext context)
         {
             _context = context;
         }

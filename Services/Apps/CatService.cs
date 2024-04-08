@@ -6,8 +6,8 @@ namespace C3P1.Net.Services.Apps
 {
     public class CatService : ICatService
     {
-        private readonly ApplicationDbContext _context;
-        public CatService(ApplicationDbContext context)
+        private readonly AppDbContext _context;
+        public CatService(AppDbContext context)
         {
             _context = context;
         }

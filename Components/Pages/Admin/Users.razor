@@ -9,7 +9,7 @@
         <PageTitle>Manage users</PageTitle>
         <Heading Size="HeadingSize.Is3">Manage users</Heading>
         <Divider />
-        <ListView TItem="ApplicationUser"
+        <ListView TItem="AppUser"
                     Data="@Userlist"
                     TextField="(item) => item.Email"
                     ValueField="(item) => item.Id.ToString()"
@@ -91,9 +91,9 @@
     private string? username = null;
 
     // Lists of admin users and regular users (filled in OnInitializedAsync() )
-    private List<ApplicationUser>? Userlist;
+    private List<AppUser>? Userlist;
 
-    private ApplicationUser selectedUser = new ApplicationUser();
+    private AppUser selectedUser = new AppUser();
     private Modal? modalRef;
 
     protected override async Task OnInitializedAsync()
@@ -115,7 +115,7 @@
         await base.OnInitializedAsync();
     }
 
-    private void ShowModal(ApplicationUser user)
+    private void ShowModal(AppUser user)
     {
         selectedUser = user;
 
@@ -127,14 +127,14 @@
 
     private void HideModal()
     {
-        selectedUser = new ApplicationUser();
+        selectedUser = new AppUser();
         if (modalRef is not null)
         {
             modalRef.Hide();
         }
     }
 
-    private async Task DeleteUser(ApplicationUser user)
+    private async Task DeleteUser(AppUser user)
     {
         await UserAdminService.DeleteUserAsync(user);
         await DataChanged();
@@ -149,13 +149,13 @@
         Userlist = adminList.Concat(userList).ToList();
     }
 
-    private async Task MakeAdmin(ApplicationUser user)
+    private async Task MakeAdmin(AppUser user)
     {
         await UserAdminService.MakeAdminAsync(user);
         await DataChanged();
     }
 
-    private async Task MakeRegular(ApplicationUser user)
+    private async Task MakeRegular(AppUser user)
     {
         await UserAdminService.MakeRegularAsync(user);
         await DataChanged();

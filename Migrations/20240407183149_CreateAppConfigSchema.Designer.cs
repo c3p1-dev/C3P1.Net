@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace C3P1.Net.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20240407183149_CreateAppConfigSchema")]
     partial class CreateAppConfigSchema
     {
@@ -20,7 +20,7 @@ namespace C3P1.Net.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
 
-            modelBuilder.Entity("C3P1.Net.Data.ApplicationUser", b =>
+            modelBuilder.Entity("C3P1.Net.Data.AppUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -333,7 +333,7 @@ namespace C3P1.Net.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("C3P1.Net.Data.ApplicationUser", null)
+                    b.HasOne("C3P1.Net.Data.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -342,7 +342,7 @@ namespace C3P1.Net.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("C3P1.Net.Data.ApplicationUser", null)
+                    b.HasOne("C3P1.Net.Data.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -357,7 +357,7 @@ namespace C3P1.Net.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("C3P1.Net.Data.ApplicationUser", null)
+                    b.HasOne("C3P1.Net.Data.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -366,7 +366,7 @@ namespace C3P1.Net.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("C3P1.Net.Data.ApplicationUser", null)
+                    b.HasOne("C3P1.Net.Data.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

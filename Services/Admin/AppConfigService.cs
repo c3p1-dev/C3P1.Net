@@ -9,9 +9,9 @@ namespace C3P1.Net.Services.Admin
     public class AppConfigService : IAppConfigService
     {
         private readonly AuthenticationStateProvider _authStateProvider;
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        public AppConfigService(ApplicationDbContext context, AuthenticationStateProvider authStateProvider, UserManager<ApplicationUser> userManager)
+        private readonly AppDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
+        public AppConfigService(AppDbContext context, AuthenticationStateProvider authStateProvider, UserManager<AppUser> userManager)
         {
             _context = context;
             _authStateProvider = authStateProvider;

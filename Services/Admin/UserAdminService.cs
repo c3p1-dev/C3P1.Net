@@ -6,46 +6,46 @@ namespace C3P1.Net.Services.Admin
 {
     public class UserAdminService : IUserAdminService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
 
-        public UserAdminService(UserManager<ApplicationUser> userManager)
+        public UserAdminService(UserManager<AppUser> userManager)
         {
             _userManager = userManager;
         }
-        public async Task<bool> DeleteUserAsync(ApplicationUser user)
+        public async Task<bool> DeleteUserAsync(AppUser user)
         {
             return (await _userManager.DeleteAsync(user)).Succeeded;
         }
-        public async Task<List<ApplicationUser>> GetAdminUsersAsync()
+        public async Task<List<AppUser>> GetAdminUsersAsync()
         {
             return (await _userManager.GetUsersInRoleAsync("Admin")).ToList();
         }
-        public async Task<List<ApplicationUser>> GetRegularUsersAsync()
+        public async Task<List<AppUser>> GetRegularUsersAsync()
         {
-            List<ApplicationUser> regularusers = await GetUsersAsync();
-            List<ApplicationUser> admins = await GetAdminUsersAsync();
+            List<AppUser> regularusers = await GetUsersAsync();
+            List<AppUser> admins = await GetAdminUsersAsync();
 
-            foreach (ApplicationUser user in admins)
+            foreach (AppUser user in admins)
             {
                 regularusers.Remove(user);
             }
 
             return regularusers;
         }
-        public async Task<List<ApplicationUser>> GetUsersAsync()
+        public async Task<List<AppUser>> GetUsersAsync()
         {
             return await _userManager.Users.ToListAsync();
         }
-        public async Task<bool> MakeAdminAsync(ApplicationUser user)
+        public async Task<bool> MakeAdminAsync(AppUser user)
         {
             return (await _userManager.AddToRoleAsync(user, "Admin")).Succeeded;
         }
-        public async Task<bool> MakeRegularAsync(ApplicationUser user)
+        public async Task<bool> MakeRegularAsync(AppUser user)
         {
             return (await _userManager.RemoveFromRoleAsync(user, "Admin")).Succeeded;
         }
 
-        public async Task<bool> IsAdminAsync(ApplicationUser user)
+        public async Task<bool> IsAdminAsync(AppUser user)
         {
             var result = (await _userManager.GetRolesAsync(user)).Where(x => x == "Admin").FirstOrDefault();
 

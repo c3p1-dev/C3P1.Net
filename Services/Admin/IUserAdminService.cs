@@ -4,12 +4,12 @@ namespace C3P1.Net.Services.Admin
 {
     public interface IUserAdminService
     {
-        public Task<List<ApplicationUser>> GetAdminUsersAsync();
-        public Task<List<ApplicationUser>> GetRegularUsersAsync();
-        public Task<List<ApplicationUser>> GetUsersAsync();
-        public Task<bool> DeleteUserAsync(ApplicationUser user);
-        public Task<bool> MakeAdminAsync(ApplicationUser user);
-        public Task<bool> MakeRegularAsync(ApplicationUser user);
-        public Task<bool> IsAdminAsync(ApplicationUser user);
+        public Task<List<AppUser>> GetAdminUsersAsync();
+        public Task<List<AppUser>> GetRegularUsersAsync();
+        public Task<List<AppUser>> GetUsersAsync();
+        public Task<bool> DeleteUserAsync(AppUser user);
+        public Task<bool> MakeAdminAsync(AppUser user);
+        public Task<bool> MakeRegularAsync(AppUser user);
+        public Task<bool> IsAdminAsync(AppUser user);
     }
 }

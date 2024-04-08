@@ -10,7 +10,7 @@ namespace C3P1.Net.Data
             RoleManager<IdentityRole> roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
             await EnsureRolesAsync(roleManager);
 
-            UserManager<ApplicationUser> userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+            UserManager<AppUser> userManager = services.GetRequiredService<UserManager<AppUser>>();
             await EnsureTestAdminAsync(userManager);
             await EnsureTestUserAsync(userManager);
         }
@@ -33,15 +33,15 @@ namespace C3P1.Net.Data
 
         }
 
-        private static async Task EnsureTestAdminAsync(UserManager<ApplicationUser> userManager)
+        private static async Task EnsureTestAdminAsync(UserManager<AppUser> userManager)
         {
-            ApplicationUser? newAdmin = await userManager.Users
+            AppUser? newAdmin = await userManager.Users
                     .Where(x => x.UserName == "webmaster@c3p1.net")
                     .FirstOrDefaultAsync();
 
             if (newAdmin is null)
             {
-                newAdmin = new ApplicationUser
+                newAdmin = new AppUser
                 {
                     UserName = "webmaster@c3p1.net",
                     Email = "webmaster@c3p1.net",
@@ -54,15 +54,15 @@ namespace C3P1.Net.Data
             }
         }
 
-        private static async Task EnsureTestUserAsync(UserManager<ApplicationUser> userManager)
+        private static async Task EnsureTestUserAsync(UserManager<AppUser> userManager)
         {
-            ApplicationUser? newUser = await userManager.Users
+            AppUser? newUser = await userManager.Users
                 .Where(x => x.UserName == "user@c3p1.net")
                 .FirstOrDefaultAsync();
 
             if (newUser is null)
             {
-                newUser = new ApplicationUser
+                newUser = new AppUser
                 {
                     UserName = "user@c3p1.net",
                     Email = "user@c3p1.net",

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace C3P1.Net.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<AppUser>(options)
     {
         // Set Tables in database
         public DbSet<TodoItem> Tasklist => Set<TodoItem>();
