@@ -7,16 +7,16 @@
 <div class="subnav clearfix @(Nav.Visible ? "" : "invisible")">
     @* BREADCRUMBS *@
     <div class="float-left">
-        <ol class="breadcrumb">
+        <ol class="breadcrumb" >
             @foreach (var item in Nav.Breadcrumbs)
             {
                 if (item.Active)
                 {
-                    <li class="breadcrumb-item active">@item.Text</li>
+                    <li class="breadcrumb-item active text-light text-opacity-75">@item.Text</li>
                 }
                 else
                 {
-                    <li class="breadcrumb-item"><a href="@item.Link">@item.Text</a></li>
+                    <li class="breadcrumb-item text-light text-opacity-75"><a href="@item.Link">@item.Text</a></li>
                 }
             }
         </ol>
