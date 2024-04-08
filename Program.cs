@@ -4,6 +4,7 @@ using Blazorise.Icons.FontAwesome;
 using C3P1.Net.Components;
 using C3P1.Net.Components.Account;
 using C3P1.Net.Data;
+using C3P1.Net.Services;
 using C3P1.Net.Services.Admin;
 using C3P1.Net.Services.Apps;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -61,6 +62,7 @@ builder.Services
     .AddFontAwesomeIcons();
 
 // Register services
+builder.Services.AddScoped<NavState>();
 builder.Services.AddTransient<IUserAdminService, UserAdminService>();
 builder.Services.AddTransient<IAppConfigService, AppConfigService>();
 builder.Services.AddTransient<ITasklistService, TasklistService>();

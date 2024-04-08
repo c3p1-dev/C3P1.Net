@@ -3,6 +3,7 @@
 @inject ICatService CatService
 @inject UserManager<AppUser> userManager
 @inject AuthenticationStateProvider authStateProvider
+@inject NavState Nav
 
 @rendermode InteractiveServer
 
@@ -249,6 +250,13 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // setup breadcrumbs
+        Nav.SetBreadcrumbs(new List<Node>()
+        {
+            new Node {Text = "Home", Link = "" },
+            new Node {Text = "Cats", Link = "apps/cats", Active = true }
+        });
+        
         // load data if user is authenticated
         var authState = await authStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;

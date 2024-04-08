@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Components\Tools\**" />
+    <Content Remove="Components\Tools\**" />
+    <EmbeddedResource Remove="Components\Tools\**" />
+    <None Remove="Components\Tools\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazorise.Bootstrap5" Version="1.5.1" />
     <PackageReference Include="Blazorise.Charts" Version="1.5.1" />
     <PackageReference Include="Blazorise.Components" Version="1.5.1" />
@@ -17,10 +24,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\Tools\" />
   </ItemGroup>
 
 </Project>

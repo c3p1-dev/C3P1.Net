@@ -2,6 +2,8 @@
 
 @inject IUserAdminService UserAdminService
 
+@inject NavState Nav
+
 @rendermode InteractiveServer
 
 <AuthorizeView Roles="Admin">
@@ -98,6 +100,13 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // setup breadcrumbs
+        Nav.SetBreadcrumbs(new List<Node>()
+        {
+            new Node() { Text = "Home", Link = ""},
+            new Node() { Text = "Manage users", Link = "", Active = true}
+        });
+
         // get username
         var user = (await authenticationStateTask).User;
         if (user.Identity is not null)

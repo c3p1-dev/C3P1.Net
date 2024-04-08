@@ -1,0 +1,37 @@
+﻿@using C3P1.Net.Services
+@inject NavState Nav
+
+@implements IDisposable
+
+
+<div class="subnav clearfix @(Nav.Visible ? "" : "invisible")">
+    @* BREADCRUMBS *@
+    <div class="float-left">
+        <ol class="breadcrumb">
+            @foreach (var item in Nav.Breadcrumbs)
+            {
+                if (item.Active)
+                {
+                    <li class="breadcrumb-item active">@item.Text</li>
+                }
+                else
+                {
+                    <li class="breadcrumb-item"><a href="@item.Link">@item.Text</a></li>
+                }
+            }
+        </ol>
+    </div>
+</div>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        Nav.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        Nav.OnChange -= StateHasChanged;
+    }
+}

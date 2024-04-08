@@ -1,4 +1,6 @@
 ﻿@page "/misc/counter"
+@using C3P1.Net.Services
+@inject NavState Nav
 
 @rendermode InteractiveServer
 
@@ -26,5 +28,17 @@
     private void DecrementCount()
     {
         currentCount--;
+    }
+
+    protected override void OnInitialized()
+    {
+        // NavState (breadcrumbs, etc) is Scoped, so it lives as long as our connection lives.
+        // So when a new page is visited, we need to clear navigation to prevent breadcrumbs from bleed-over, etc.
+        // This also makes the navbar invisible by default.
+        Nav.SetBreadcrumbs(new List<Node>()
+        {
+            new Node {Text = "Home", Link = "" },
+            new Node {Text = "Counter", Link = "misc/counter" , Active = true}
+        });
     }
 }

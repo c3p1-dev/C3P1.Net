@@ -1,26 +1,24 @@
 ﻿@inject IAppConfigService AppConfig
 @inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+@inject NavState Nav
+
+@implements IDisposable
 
 @rendermode InteractiveServer
 
 <Bar @bind-Visible="@topbarVisible" Breakpoint="Breakpoint.Desktop" Style="background: darkslateblue;" Shadow="Shadow.Default" ThemeContrast="ThemeContrast.Dark" Padding="Padding.Is2">
     <BarBrand Margin="Margin.Is1">
-        <BarItem>
-            <AuthorizeView>
-                <Authorized>
-                    <Badge Color="Color.Primary">@context.User.Identity?.Name</Badge>
-                </Authorized>
-                <NotAuthorized>
-                    <Badge Color="Color.Secondary">public access</Badge>
-                </NotAuthorized>
-            </AuthorizeView>
+        <BarItem Height="Height.Px(30)">
+            @* TODO : insert NavBreadcrumb here *@
+            <NavBar />
         </BarItem>
     </BarBrand>
     <AuthorizeView>
         <BarToggler />
         <BarMenu>
             <BarStart>
-                @* TODO : insert NavBreadcrumb here *@
+
             </BarStart>
             <BarEnd>
                 <BarItem>
@@ -60,12 +58,40 @@
     [CascadingParameter] 
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
 
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
     private string? username = null;
     private string? themeMode = null;
     private bool topbarVisible = false;
 
+    void LocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        // check if we're going to Identity section
+        string target = e.Location.Substring(NavigationManager.BaseUri.Length);
+
+        if (target.StartsWith("Account/") || target.StartsWith("account/"))
+        {
+            // disable breadcrumb
+            Nav.Reset();
+            Nav.SetBreadcrumbs(new List<Node>()
+            {
+                new Node() {Text = "Home", Link = ""},
+                new Node() {Text = "Identity", Link = "", Active = true}
+            });
+        }
+    }
+
+    void IDisposable.Dispose()
+    {
+        // Unsubscribe from the event when our component is disposed
+        NavigationManager.LocationChanged -= LocationChanged;
+    }
+
     protected override async Task OnInitializedAsync()
     {
+        // Subscribe to the event
+        NavigationManager.LocationChanged += LocationChanged;
         // get username
         var user = (await authenticationStateTask).User;
         if (user.Identity is not null)

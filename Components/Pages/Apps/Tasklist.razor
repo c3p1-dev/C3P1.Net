@@ -3,6 +3,7 @@
 @inject ITasklistService TasklistService
 @inject UserManager<AppUser> UserManager
 @inject AuthenticationStateProvider AuthStateProvider
+@inject NavState Nav
 
 @rendermode InteractiveServer
 
@@ -305,6 +306,13 @@
     // page events
     protected override async Task OnInitializedAsync()
     {
+        // setup breadcrumbs
+        Nav.SetBreadcrumbs(new List<Node>()
+        {
+            new Node {Text = "Home", Link = "" },
+            new Node {Text = "Tasklist", Link = "apps/tasklist", Active = true }
+        });
+
         // load data if user is authenticated
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
