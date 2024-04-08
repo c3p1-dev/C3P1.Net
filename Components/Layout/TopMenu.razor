@@ -72,7 +72,7 @@
 
         if (target.StartsWith("Account/") || target.StartsWith("account/"))
         {
-            // disable breadcrumb
+            // Show a static breadcrumb for all Account section
             Nav.Reset();
             Nav.SetBreadcrumbs(new List<Node>()
             {

@@ -5,115 +5,110 @@
 @inject AuthenticationStateProvider authStateProvider
 @inject NavState Nav
 
+@attribute [Authorize]
+
 @rendermode InteractiveServer
 
-<AuthorizeView>
-    <Authorized>
-        <PageTitle>Cats</PageTitle>
+<PageTitle>Cats</PageTitle>
 
-        <CardGroup Margin="Margin.Is2.FromBottom">
-            <Card>
-                @if (cats == null)
-                {
-                    <CardHeader>Loading catlist ...</CardHeader>
-                }
-                else if (cats.Count == 0)
-                {
-                    <CardHeader>Catlist is empty</CardHeader>
-                    <CardBody>
-                        <CardText>
-                            <Button Color="Color.Primary" Clicked="ShowAddCatModal">Add a cat</Button>
-                        </CardText>
-                    </CardBody>
-                }
-                else if (activeCat is null)
-                {
-                    <CardHeader>Open a file</CardHeader>
-                    <CardBody>
-                    <CardText Padding="Padding.Is2" Flex="Flex.InlineFlex">
-                        <Select @bind-SelectedValue="@selectActiveCatId" Width="Width.Auto">
-                            @foreach (Cat cat in cats)
-                            {
-                                <SelectItem Value="cat.Id">@cat.Name</SelectItem>
-                            }
-                        </Select>
-                        <Button Color="Color.Primary" Clicked="SetActiveCat" Margin="Margin.Is1.FromStart">Select</Button>
-                        <Button Color="Color.Primary" Clicked="ShowAddCatModal" Margin="Margin.Is1.FromStart">Add a cat</Button>
-                    </CardText>
-                    </CardBody>
-                }
-                else
-                {
-                    <CardHeader>@activeCat.Name @activeCat.Birthdate.ToShortDateString()</CardHeader>
-                    <CardBody>
-                        <CardText Padding="Padding.Is2">
-                            <Button Color="Color.Primary" Clicked="ClearActiveCat">Change</Button>
-                            <Button Color="Color.Primary" Clicked="ShowEditCatModal">Edit</Button>
-                        </CardText>
-                    </CardBody>
-                }
-            </Card>
-            @if (activeCat is not null)
-            {
-                <Card>
-                    <CardHeader>Entries</CardHeader>
-                    <CardBody>
-                        <CardText Padding="Padding.Is2">
-                            <Button Color="Color.Primary" Clicked="ShowAddEntryModal">Add data</Button>
-                        </CardText>
-                    </CardBody>
-                </Card>
-            }
-        </CardGroup>
-
-        @if (activeCat is not null)
+<CardGroup Margin="Margin.Is2.FromBottom">
+    <Card>
+        @if (cats == null)
         {
-            <CardGroup>
-                <Card>
-                    <CardHeader>
-                        <Span>Weight curve</Span>
-                    </CardHeader>
-                    <Span Width="Width.Is100">
-                        <Button Size="Size.ExtraSmall" Outline Color="Color.Primary" Margin="Margin.Is1"><Icon Name="IconName.Settings" /> Setup</Button>
-                        <Button Size="Size.ExtraSmall" Outline Color="Color.Primary"  Margin="Margin.Is1" Clicked="@(async () => await HandleRedraw())"><Icon Name="IconName.Redo" /> Redraw</Button>
-                    </Span>
-                    <LineChart @ref="lineChart" TItem="double" />
-                </Card>
-                <Card>
-                    <CardHeader>Weight data</CardHeader>
-                    <CardBody>
-                        @if (catentries is not null)
-                        {
-                            if (catentries.Where(x => x.CatId == activeCat.Id && x.Weight is not null).Count() > 0)
-                            {
-                                <ListView TItem="CatEntry"
-                                          Data="@(catentries.Where(x => x.CatId == activeCat.Id && x.Weight is not null).OrderBy(x => x.EntryTime).Reverse())"
-                                          TextField="(item) => item.EntryTime.ToShortDateString()"
-                                          ValueField="(item) => item.Id.ToString()">
-
-                                    <ItemTemplate Context="data">
-                                        <Div Flex="Flex.InlineFlex.JustifyContent.Between" Width="Width.Is100">
-                                            <Heading Size="HeadingSize.Is4" Margin="Margin.Is2.FromBottom">@data.Item.Weight kg</Heading>
-                                            <Small>
-                                                <Button Color="Color.Danger" Size="Size.Small" Clicked="@(async () => await DeleteEntry(@data.Item))" Outline>
-                                                    <Icon Name="IconName.Ban" />
-                                                </Button>
-                                            </Small>
-                                        </Div>
-                                        <Paragraph Margin="Margin.Is2.FromBottom">@data.Text</Paragraph>
-                                    </ItemTemplate>
-                                </ListView>
-                            }
-                        }
-                    </CardBody>
-                </Card>
-            </CardGroup>
+            <CardHeader>Loading catlist ...</CardHeader>
         }
-    </Authorized>
-    <NotAuthorized>
-        <ErrAuth ErrorMessage="ErrAuth.ErrorType.MustBeLogged" />
-    </NotAuthorized>
-</AuthorizeView>
+        else if (cats.Count == 0)
+        {
+            <CardHeader>Catlist is empty</CardHeader>
+            <CardBody>
+                <CardText>
+                    <Button Color="Color.Primary" Clicked="ShowAddCatModal">Add a cat</Button>
+                </CardText>
+            </CardBody>
+        }
+        else if (activeCat is null)
+        {
+            <CardHeader>Open a file</CardHeader>
+            <CardBody>
+            <CardText Padding="Padding.Is2" Flex="Flex.InlineFlex">
+                <Select @bind-SelectedValue="@selectActiveCatId" Width="Width.Auto">
+                    @foreach (Cat cat in cats)
+                    {
+                        <SelectItem Value="cat.Id">@cat.Name</SelectItem>
+                    }
+                </Select>
+                <Button Color="Color.Primary" Clicked="SetActiveCat" Margin="Margin.Is1.FromStart">Select</Button>
+                <Button Color="Color.Primary" Clicked="ShowAddCatModal" Margin="Margin.Is1.FromStart">Add a cat</Button>
+            </CardText>
+            </CardBody>
+        }
+        else
+        {
+            <CardHeader>@activeCat.Name @activeCat.Birthdate.ToShortDateString()</CardHeader>
+            <CardBody>
+                <CardText Padding="Padding.Is2">
+                    <Button Color="Color.Primary" Clicked="ClearActiveCat">Change</Button>
+                    <Button Color="Color.Primary" Clicked="ShowEditCatModal">Edit</Button>
+                </CardText>
+            </CardBody>
+        }
+    </Card>
+    @if (activeCat is not null)
+    {
+        <Card>
+            <CardHeader>Entries</CardHeader>
+            <CardBody>
+                <CardText Padding="Padding.Is2">
+                    <Button Color="Color.Primary" Clicked="ShowAddEntryModal">Add data</Button>
+                </CardText>
+            </CardBody>
+        </Card>
+    }
+</CardGroup>
+
+@if (activeCat is not null)
+{
+    <CardGroup>
+        <Card>
+            <CardHeader>
+                <Span>Weight curve</Span>
+            </CardHeader>
+            <Span Width="Width.Is100">
+                <Button Size="Size.ExtraSmall" Outline Color="Color.Primary" Margin="Margin.Is1"><Icon Name="IconName.Settings" /> Setup</Button>
+                <Button Size="Size.ExtraSmall" Outline Color="Color.Primary"  Margin="Margin.Is1" Clicked="@(async () => await HandleRedraw())"><Icon Name="IconName.Redo" /> Redraw</Button>
+            </Span>
+            <LineChart @ref="lineChart" TItem="double" />
+        </Card>
+        <Card>
+            <CardHeader>Weight data</CardHeader>
+            <CardBody>
+                @if (catentries is not null)
+                {
+                    if (catentries.Where(x => x.CatId == activeCat.Id && x.Weight is not null).Count() > 0)
+                    {
+                        <ListView TItem="CatEntry"
+                                    Data="@(catentries.Where(x => x.CatId == activeCat.Id && x.Weight is not null).OrderBy(x => x.EntryTime).Reverse())"
+                                    TextField="(item) => item.EntryTime.ToShortDateString()"
+                                    ValueField="(item) => item.Id.ToString()">
+
+                            <ItemTemplate Context="data">
+                                <Div Flex="Flex.InlineFlex.JustifyContent.Between" Width="Width.Is100">
+                                    <Heading Size="HeadingSize.Is4" Margin="Margin.Is2.FromBottom">@data.Item.Weight kg</Heading>
+                                    <Small>
+                                        <Button Color="Color.Danger" Size="Size.Small" Clicked="@(async () => await DeleteEntry(@data.Item))" Outline>
+                                            <Icon Name="IconName.Ban" />
+                                        </Button>
+                                    </Small>
+                                </Div>
+                                <Paragraph Margin="Margin.Is2.FromBottom">@data.Text</Paragraph>
+                            </ItemTemplate>
+                        </ListView>
+                    }
+                }
+            </CardBody>
+        </Card>
+    </CardGroup>
+}
 
 @* AddCat Modal *@
 <Modal @ref="@addCatModal">

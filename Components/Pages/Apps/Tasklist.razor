@@ -5,135 +5,129 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavState Nav
 
+@attribute [Authorize]
+
 @rendermode InteractiveServer
 
-<AuthorizeView>
-    <Authorized>
-        <PageTitle>Tasklist</PageTitle>
+<PageTitle>Tasklist</PageTitle>
 
-        <Card>
-            <CardHeader Padding="Padding.Is1.FromBottom">
-                <Heading Size="HeadingSize.Is4">
-                    <Buttons>
-                        <Button Size="Size.Small" Color="Color.Primary" Clicked="@(async () => await SetFilter(Filter.Todo))" Active="@(filter == Filter.Todo)">Todo</Button>
-                        <Button Size="Size.Small" Color="Color.Primary" Clicked="@(async () => await SetFilter(Filter.Completed))" Active="@(filter == Filter.Completed)">Done</Button>
-                        <Button Size="Size.Small" Color="Color.Primary" Clicked="@(async () => await SetFilter(Filter.All))" Active="@(filter == Filter.All)">All</Button>
-                    </Buttons>
+<Card>
+    <CardHeader Padding="Padding.Is1.FromBottom">
+        <Heading Size="HeadingSize.Is4">
+            <Buttons>
+                <Button Size="Size.Small" Color="Color.Primary" Clicked="@(async () => await SetFilter(Filter.Todo))" Active="@(filter == Filter.Todo)">Todo</Button>
+                <Button Size="Size.Small" Color="Color.Primary" Clicked="@(async () => await SetFilter(Filter.Completed))" Active="@(filter == Filter.Completed)">Done</Button>
+                <Button Size="Size.Small" Color="Color.Primary" Clicked="@(async () => await SetFilter(Filter.All))" Active="@(filter == Filter.All)">All</Button>
+            </Buttons>
 
-                    <Buttons>
-                        @if ((filter != Filter.Todo) && (AnyDoneItems()))
-                        {
-                            <Button Color="Color.Danger" Size="Size.Small" Clicked="@ShowDeleteDoneTasksModal">
-                                <Icon Name="IconName.Ban" />
-                            </Button>
-                        }
-                        <Button Size="Size.Small" Color="Color.Primary" Clicked="@ShowSortTasksModal">
-                            <Icon Name="IconName.Search" />
-                        </Button>
-                        <Button Size="Size.Small" Color="Color.Primary" Clicked="@ShowAddTaskModal">
-                            <Icon Name="IconName.Add" />
-                        </Button>
-                    </Buttons>
-                </Heading>
-            </CardHeader>
-            <CardBody >
-                @if (tasklist == null)
+            <Buttons>
+                @if ((filter != Filter.Todo) && (AnyDoneItems()))
                 {
-                    <Alert Visible="true" Color="Color.Info">Loading tasklist...</Alert>
+                    <Button Color="Color.Danger" Size="Size.Small" Clicked="@ShowDeleteDoneTasksModal">
+                        <Icon Name="IconName.Ban" />
+                    </Button>
                 }
-                else if (tasklist.Items.Count == 0)
-                {
-                    if (filter == Filter.All)
-                    {
-                        <Alert Visible="true" Color="Color.Success">
-                            There are no tasks in your tasklist
-                        </Alert>
-                    }
-                    else if (filter == Filter.Todo)
-                    {
-                        <Alert Visible="true" Color="Color.Success">
-                            There are no tasks todo
-                        </Alert>
-                    }
-                    else
-                    {
-                        <Alert Visible="true" Color="Color.Success">
-                            There are no completed tasks
-                        </Alert>
-                    }
-                }
-                else // tasklist exists and is not empty
-                {
-                    <Table Hoverable="true" Borderless="true" TextColor="TextColor.Dark">
-                        <TableBody>
-
-                            @foreach (TodoItem item in tasklist.Items)
-                            {
-                                <TableRow>
-                                    <TableRowCell Style="width:40px">
-                                        <Button Clicked="@(() => InvertCompletedState(item))" Color="Color.Primary" Size="Size.Small" Outline="@(item.Completed == false)">
-                                            <Icon Name="IconName.Check" />
-                                        </Button>
-                                    </TableRowCell>
-                                            
-                                    <TableRowCell Clicked="@(() => ShowEditTaskModal(item))">
-                                        <Inline>
-                                            @if (item.Completed == false)
-                                            {
-                                                <Tooltip Text="@($"Created on {item.CreationTime}")">
-                                                    <Span Style="line-break:anywhere">@item.Title</Span>
-                                                </Tooltip>
-                                            }
-                                            else
-                                            {
-                                                <Tooltip Text="@($"Created on {item.CreationTime}\nCompleted on {item.CompletedTime}")">
-                                                    <Span Style="line-break:anywhere">@item.Title</Span>
-                                                </Tooltip>
-                                            }
-                                        </Inline>
-                                    </TableRowCell>
-
-                                </TableRow>
-                            }
-
-                        </TableBody>
-                    </Table>
-                }
-            </CardBody>
-
-            @if (tasklist is not null && tasklist.TotalPages > 1)
-            { 
-                <CardFooter Padding="Padding.Is0.FromBottom">
-                    <Pagination Size="Size.Small">
-                        <PaginationItem Disabled="@(pageNumber == 1)">
-                            <PaginationLink Clicked="@GoPreviousPage" Border="Border.Primary" >
-                                <Span aria-hidden="true">«</Span>
-                            </PaginationLink>
-                        </PaginationItem>
-
-                        <PaginationItem Disabled="@(pageNumber == tasklist.TotalPages)">
-                            <PaginationLink Clicked="@GoNextPage" Border="Border.Primary" >
-                                <Span aria-hidden="true">»</Span>
-                            </PaginationLink>
-                        </PaginationItem>
-
-                        <Select TValue="int" Border="Border.Primary" SelectedValue="@pageNumber" Size="Size.Small" Style="max-width:200px" Margin="Margin.Is2.FromStart" SelectedValueChanged="@GoToSelectedPage">
-                            @for (int i = 0; i < tasklist.TotalPages; i++)
-                            {
-                                int n = i + 1;
-                                <SelectItem Value="@n">Page @n</SelectItem>
-                            }
-                        </Select>
-                    </Pagination>
-                </CardFooter>
+                <Button Size="Size.Small" Color="Color.Primary" Clicked="@ShowSortTasksModal">
+                    <Icon Name="IconName.Search" />
+                </Button>
+                <Button Size="Size.Small" Color="Color.Primary" Clicked="@ShowAddTaskModal">
+                    <Icon Name="IconName.Add" />
+                </Button>
+            </Buttons>
+        </Heading>
+    </CardHeader>
+    <CardBody >
+        @if (tasklist == null)
+        {
+            <Alert Visible="true" Color="Color.Info">Loading tasklist...</Alert>
+        }
+        else if (tasklist.Items.Count == 0)
+        {
+            if (filter == Filter.All)
+            {
+                <Alert Visible="true" Color="Color.Success">
+                    There are no tasks in your tasklist
+                </Alert>
             }
-        </Card>
+            else if (filter == Filter.Todo)
+            {
+                <Alert Visible="true" Color="Color.Success">
+                    There are no tasks todo
+                </Alert>
+            }
+            else
+            {
+                <Alert Visible="true" Color="Color.Success">
+                    There are no completed tasks
+                </Alert>
+            }
+        }
+        else // tasklist exists and is not empty
+        {
+            <Table Hoverable="true" Borderless="true" TextColor="TextColor.Dark">
+                <TableBody>
 
-    </Authorized>
-    <NotAuthorized>
-        <ErrAuth ErrorMessage="ErrAuth.ErrorType.MustBeLogged"/>
-    </NotAuthorized>
-</AuthorizeView>
+                    @foreach (TodoItem item in tasklist.Items)
+                    {
+                        <TableRow>
+                            <TableRowCell Style="width:40px">
+                                <Button Clicked="@(() => InvertCompletedState(item))" Color="Color.Primary" Size="Size.Small" Outline="@(item.Completed == false)">
+                                    <Icon Name="IconName.Check" />
+                                </Button>
+                            </TableRowCell>
+                                            
+                            <TableRowCell Clicked="@(() => ShowEditTaskModal(item))">
+                                <Inline>
+                                    @if (item.Completed == false)
+                                    {
+                                        <Tooltip Text="@($"Created on {item.CreationTime}")">
+                                            <Span Style="line-break:anywhere">@item.Title</Span>
+                                        </Tooltip>
+                                    }
+                                    else
+                                    {
+                                        <Tooltip Text="@($"Created on {item.CreationTime}\nCompleted on {item.CompletedTime}")">
+                                            <Span Style="line-break:anywhere">@item.Title</Span>
+                                        </Tooltip>
+                                    }
+                                </Inline>
+                            </TableRowCell>
+
+                        </TableRow>
+                    }
+
+                </TableBody>
+            </Table>
+        }
+    </CardBody>
+
+    @if (tasklist is not null && tasklist.TotalPages > 1)
+    { 
+        <CardFooter Padding="Padding.Is0.FromBottom">
+            <Pagination Size="Size.Small">
+                <PaginationItem Disabled="@(pageNumber == 1)">
+                    <PaginationLink Clicked="@GoPreviousPage" Border="Border.Primary" >
+                        <Span aria-hidden="true">«</Span>
+                    </PaginationLink>
+                </PaginationItem>
+
+                <PaginationItem Disabled="@(pageNumber == tasklist.TotalPages)">
+                    <PaginationLink Clicked="@GoNextPage" Border="Border.Primary" >
+                        <Span aria-hidden="true">»</Span>
+                    </PaginationLink>
+                </PaginationItem>
+
+                <Select TValue="int" Border="Border.Primary" SelectedValue="@pageNumber" Size="Size.Small" Style="max-width:200px" Margin="Margin.Is2.FromStart" SelectedValueChanged="@GoToSelectedPage">
+                    @for (int i = 0; i < tasklist.TotalPages; i++)
+                    {
+                        int n = i + 1;
+                        <SelectItem Value="@n">Page @n</SelectItem>
+                    }
+                </Select>
+            </Pagination>
+        </CardFooter>
+    }
+</Card>
 
 @* Modals description section *@
 @* AddTaskModal *@
