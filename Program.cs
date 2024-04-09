@@ -27,6 +27,8 @@ builder.Services.AddRazorComponents()
         options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromMinutes(10);
     });
 
+builder.Services.AddHttpClient();
+
 // Add SignalR related service (ping every 15s to keep connexion alive)
 builder.Services.AddSignalR(options =>
     {
