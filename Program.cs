@@ -10,8 +10,15 @@ using C3P1.Net.Services.Apps;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var configuration = builder.Configuration;
+
+// Add services related to webapi Controllers
+builder.Services.AddControllers();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -31,14 +38,27 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
+// Add authentication
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = IdentityConstants.ApplicationScheme;
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidAudience = configuration["JWT:ValidAudience"],
+            ValidIssuer = configuration["JWT:ValidIssuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]!))
+        };
+    })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -55,7 +75,7 @@ builder.Services.AddSingleton<IEmailSender<AppUser>, IdentityNoOpEmailSender>();
 builder.Services
     .AddBlazorise(options =>
     {
-        options.ProductToken = builder.Configuration.GetValue<string>("Blazorise:ProductToken");
+        options.ProductToken = configuration["Blazorise:ProductToken"];
         options.Immediate = true;
     })
     .AddBootstrap5Providers()
@@ -88,6 +108,10 @@ else
 app.UseStaticFiles();
 app.UseAntiforgery();
 
+// Map WebApi endpoints
+app.MapControllers();
+
+// Map Blazor server endpoints
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
