@@ -90,18 +90,6 @@ builder.Services.AddTransient<IAppConfigService, AppConfigService>();
 builder.Services.AddTransient<ITasklistService, TasklistService>();
 builder.Services.AddTransient<ICatService, CatService>();
 
-// Enable CORS
-// Configuration des politiques CORS
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-    });
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
