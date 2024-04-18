@@ -90,6 +90,18 @@ builder.Services.AddTransient<IAppConfigService, AppConfigService>();
 builder.Services.AddTransient<ITasklistService, TasklistService>();
 builder.Services.AddTransient<ICatService, CatService>();
 
+// Enable CORS
+// Configuration des politiques CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -130,7 +142,7 @@ try
 {
     AppDbContext context = services.GetRequiredService<AppDbContext>();
     context.Database.Migrate();
-    SeedDatabase.InitializeAsync(services).Wait();
+    SeedData.InitializeAsync(services).Wait();
 }
 catch (Exception ex)
 {

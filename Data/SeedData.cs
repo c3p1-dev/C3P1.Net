@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace C3P1.Net.Data
 {
-    public class SeedDatabase
+    public class SeedData
     {
         public static async Task InitializeAsync(IServiceProvider services)
         {
