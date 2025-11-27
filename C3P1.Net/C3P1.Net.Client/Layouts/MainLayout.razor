@@ -19,7 +19,7 @@
                      ThemeColorChanged="@OnThemeColorChanged"
                      @bind-LayoutType="@layoutType" />
             </LayoutHeader>
-            <LayoutContent Padding="Padding.Is4.OnX.Is4.FromTop">
+            <LayoutContent Padding="Padding.Is4.OnX.Is4.FromTop" Class="main-layout">
                 @Body
             </LayoutContent>
             <LayoutFooter>
@@ -42,7 +42,7 @@ else if ( layoutType == "fixed-header-footer-only" )
                  ThemeColorChanged="@OnThemeColorChanged"
                  @bind-LayoutType="@layoutType" />
         </LayoutHeader>
-        <LayoutContent Padding="Padding.Is4.OnX.Is4.FromTop">
+        <LayoutContent Padding="Padding.Is4.OnX.Is4.FromTop" Class="main-layout">
             @Body
         </LayoutContent>
         <LayoutFooter Fixed>
@@ -71,7 +71,7 @@ else if ( layoutType == "sider-with-header-on-top" )
                 </LayoutSiderContent>
             </LayoutSider>
             <Layout>
-                <LayoutContent Padding="Padding.Is4.OnX.Is4.FromTop">
+                <LayoutContent Padding="Padding.Is4.OnX.Is4.FromTop" Class="main-layout">
                     @Body
                 </LayoutContent>
             </Layout>
