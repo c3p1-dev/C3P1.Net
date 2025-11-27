@@ -16,7 +16,7 @@ namespace C3P1.Net.Client
             builder.Services.AddAuthorizationCore();
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddAuthenticationStateDeserialization();
-            
+
             // Add Blazorise related services
             builder.Services
                 .AddBlazorise(options =>
@@ -24,7 +24,7 @@ namespace C3P1.Net.Client
                     options.Immediate = true;
                     // unsafe way to store product token
                     // TODO : figure out how to store secret strings in wasm
-                    options.ProductToken = builder.Configuration["Blazorise:ProductToken"] ?? throw new InvalidOperationException("Blazorise license token 'ProductToken' not found.");                    
+                    options.ProductToken = builder.Configuration["Blazorise:ProductToken"] ?? throw new InvalidOperationException("Blazorise license token 'ProductToken' not found.");
                 })
                 .AddBootstrap5Providers()
                 .AddFontAwesomeIcons();

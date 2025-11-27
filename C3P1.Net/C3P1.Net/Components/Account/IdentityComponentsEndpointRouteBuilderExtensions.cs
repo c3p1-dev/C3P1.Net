@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using System.Text.Json;
 using C3P1.Net.Components.Account.Pages;
 using C3P1.Net.Components.Account.Pages.Manage;
 using C3P1.Net.Data;
@@ -10,6 +8,8 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using System.Security.Claims;
+using System.Text.Json;
 
 namespace C3P1.Net.Components.Account
 {
