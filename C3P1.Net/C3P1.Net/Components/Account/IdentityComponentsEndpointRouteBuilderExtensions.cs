@@ -1,6 +1,7 @@
 using C3P1.Net.Client.Data;
 using C3P1.Net.Components.Account.Pages;
 using C3P1.Net.Components.Account.Pages.Manage;
+using C3P1.Net.Data;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;

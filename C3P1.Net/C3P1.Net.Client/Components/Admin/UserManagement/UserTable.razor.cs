@@ -1,7 +1,7 @@
 ﻿using Blazorise;
+using C3P1.Net.Client.Services.Admin;
 using C3P1.Net.Client.Data;
 using C3P1.Net.Client.Data.Admin.UserManagement;
-using C3P1.Net.Client.Services.Admin;
 using Microsoft.AspNetCore.Components;
 
 namespace C3P1.Net.Client.Components.Admin.UserManagement
