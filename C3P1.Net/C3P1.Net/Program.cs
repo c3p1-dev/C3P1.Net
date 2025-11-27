@@ -2,11 +2,14 @@ using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Blazr.RenderState.Server;
+using C3P1.Net.Client.Data;
+using C3P1.Net.Client.Services.Admin;
 using C3P1.Net.Client.Services.Layout;
 using C3P1.Net.Components;
 using C3P1.Net.Components.Account;
 using C3P1.Net.Data;
 using C3P1.Net.Middleware;
+using C3P1.Net.Services.Admin;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -121,6 +124,9 @@ namespace C3P1.Net
 
             // Add HttpClient service
             builder.Services.AddHttpClient();
+
+            // Add app services
+            builder.Services.AddTransient<IUserManagementService, UserManagementServerService>();
 
             var app = builder.Build();
 

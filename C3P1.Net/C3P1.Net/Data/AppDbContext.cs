@@ -1,3 +1,4 @@
+using C3P1.Net.Client.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

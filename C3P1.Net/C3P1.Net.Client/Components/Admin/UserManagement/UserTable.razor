@@ -1,0 +1,89 @@
+﻿@using C3P1.Net.Client.Data
+@using C3P1.Net.Client.Data.Admin.UserManagement
+@using C3P1.Net.Client.Components.Admin.UserManagement
+@inherits UserTableBase
+
+<ListView TItem="AppUserWithRoles"
+          Data="@Users"
+          TextField="(item) => item.User!.Email"
+          ValueField="(item) => item.User!.Id.ToString()"
+          MaxHeight="500px">
+
+    <ItemTemplate Context="data">
+        <Div Flex="Flex.InlineFlex.JustifyContent.Between" Width="Width.Is100">
+            <Heading Size="HeadingSize.Is4" Margin="Margin.Is2.FromBottom">@data.Text</Heading>
+
+            @if (username != data.Item.User!.Email)
+            {
+                <Buttons>
+                    @if (data.Item.IsAdmin() == true)
+                    {
+                        <Button Size="Size.Small" Color="Color.Warning" Clicked="@(async () => await MakeRegular(Guid.Parse(data.Item.User!.Id)))">
+                            <Icon Name="IconName.ChevronDown" />
+                        </Button>
+                    }
+                    else
+                    {
+                        <Button Size="Size.Small" Color="Color.Primary" Clicked="@(async () => await MakeAdmin(Guid.Parse(data.Item.User!.Id)))">
+                            <Icon Name="IconName.ChevronUp" />
+                        </Button>
+                    }
+                    <Button Color="Color.Danger" Size="Size.Small" Clicked="@(async () => await DeleteUser(data.Item.User!))">
+                        <Icon Name="IconName.Ban" />
+                    </Button>
+                </Buttons>
+            }
+
+        </Div>
+
+        <Paragraph TextColor="TextColor.Dark" Margin="Margin.Is2.FromBottom">
+            @foreach (var role in data.Item.Roles!)
+            {
+                if (role == "Admin")
+                {
+                    <Badge Color="Color.Warning" Margin="Margin.Is1.FromEnd">Admin</Badge>
+                }
+                else if (role == "User")
+                {
+                    <Badge Color="Color.Primary" Margin="Margin.Is1.FromEnd">User</Badge>
+                }
+                else
+                {
+                    <Badge Color="Color.Secondary" Margin="Margin.Is1.FromEnd">@role</Badge>
+                }
+            }
+
+            @if (data.Item.User!.EmailConfirmed == true)
+            {
+                <Badge Color="Color.Success" Margin="Margin.Is1.FromEnd">Verified email</Badge>
+            }
+            else
+            {
+                <Badge Color="Color.Warning" TextColor="TextColor.Dark" Margin="Margin.Is1.FromEnd">Unverified email</Badge>
+            }
+        </Paragraph>
+
+    </ItemTemplate>
+</ListView>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+    private string? username = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // get username
+        var user = (await authenticationStateTask).User;
+        if (user.Identity is not null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                username = user.Identity.Name;
+            }
+        }
+
+        await LoadData();
+        await base.OnInitializedAsync();
+    }
+}

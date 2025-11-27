@@ -3,7 +3,7 @@
 @using System.Text
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
-@using C3P1.Net.Data
+@using C3P1.Net.Client.Data
 
 @inject UserManager<AppUser> UserManager
 @inject IEmailSender<AppUser> EmailSender
@@ -55,7 +55,8 @@ else
             HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
             statusMessage = "Error finding user for unspecified email";
         }
-        else if (EmailSender is IdentityNoOpEmailSender)
+        //  else if (EmailSender is IdentityNoOpEmailSender)
+        else if (EmailSender.GetType().Name == "IdentityNoOpEmailSender")
         {
             // Once you add a real email sender, you should remove this code that lets you confirm the account
             var userId = await UserManager.GetUserIdAsync(user);

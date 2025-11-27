@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <Folder Include="WebApi\Admin\" />
   </ItemGroup>
 
 </Project>

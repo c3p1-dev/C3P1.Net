@@ -1,4 +1,4 @@
-using C3P1.Net.Data;
+using C3P1.Net.Client.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
