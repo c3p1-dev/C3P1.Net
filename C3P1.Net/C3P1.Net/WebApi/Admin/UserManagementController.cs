@@ -1,9 +1,8 @@
-﻿using C3P1.Net.Client.Components.Admin.UserManagement;
+﻿using C3P1.Net.Client.Data;
+using C3P1.Net.Client.Data.Admin.UserManagement;
 using C3P1.Net.Client.Services.Admin;
-using C3P1.Net.Client.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using C3P1.Net.Client.Data.Admin.UserManagement;
 
 namespace C3P1.Net.WebApi.Admin
 {
@@ -84,7 +83,7 @@ namespace C3P1.Net.WebApi.Admin
                 .FirstOrDefault();
 
             if (user != null)
-            { 
+            {
                 bool result = await _manageUserService.IsInRoleAsync(user, roleEditModel.Role!);
                 return Ok(result);
             }
@@ -92,12 +91,12 @@ namespace C3P1.Net.WebApi.Admin
             {
                 return BadRequest();
             }
-            
+
         }
 
         // POST : api/admin/[controller]/user/addrole/{role}
         [HttpPost("user/addrole/")]
-        public async Task<ActionResult<bool>> AddToRoleAsync([FromBody]RoleEditModel roleEditModel)
+        public async Task<ActionResult<bool>> AddToRoleAsync([FromBody] RoleEditModel roleEditModel)
         {
             bool result = await _manageUserService.AddToRoleAsync(roleEditModel.UserId, roleEditModel.Role!);
 
@@ -106,7 +105,7 @@ namespace C3P1.Net.WebApi.Admin
 
         // POST : api/admin/[controller]/user/removerole/{role}
         [HttpPost("user/removerole/")]
-        public async Task<ActionResult<bool>> RemoveFromRoleAsync([FromBody]RoleEditModel roleEditModel)
+        public async Task<ActionResult<bool>> RemoveFromRoleAsync([FromBody] RoleEditModel roleEditModel)
         {
             bool result = await _manageUserService.RemoveFromRoleAsync(roleEditModel.UserId, roleEditModel.Role!);
 

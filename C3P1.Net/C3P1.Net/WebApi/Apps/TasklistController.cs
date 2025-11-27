@@ -1,11 +1,7 @@
-﻿using C3P1.Net.Client.Components.Apps.Tasklist;
-using C3P1.Net.Client.Data;
+﻿using C3P1.Net.Client.Data;
 using C3P1.Net.Client.Data.Apps.Tasklist;
 using C3P1.Net.Client.Services.Apps;
 using C3P1.Net.Data;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
