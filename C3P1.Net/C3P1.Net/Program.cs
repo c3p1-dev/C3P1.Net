@@ -4,12 +4,14 @@ using Blazorise.Icons.FontAwesome;
 using Blazr.RenderState.Server;
 using C3P1.Net.Client.Data;
 using C3P1.Net.Client.Services.Admin;
+using C3P1.Net.Client.Services.Apps;
 using C3P1.Net.Client.Services.Layout;
 using C3P1.Net.Components;
 using C3P1.Net.Components.Account;
 using C3P1.Net.Data;
 using C3P1.Net.Middleware;
 using C3P1.Net.Services.Admin;
+using C3P1.Services.Apps;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -39,7 +41,10 @@ namespace C3P1.Net
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents()
                 .AddInteractiveWebAssemblyComponents()
-                .AddAuthenticationStateSerialization();
+                .AddAuthenticationStateSerialization(options =>
+                {
+                    options.SerializeAllClaims = true;
+                });
 
 
             builder.Services.AddCascadingAuthenticationState();
@@ -47,12 +52,13 @@ namespace C3P1.Net
             builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
             /*
-            builder.Services.AddAuthentication(options =>
-                {
-                    options.DefaultScheme = IdentityConstants.ApplicationScheme;
-                    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-                })
-                .AddIdentityCookies();
+             * Replaced by the more complex scheme below to support both JWT Bearer and Identity cookies
+             * builder.Services.AddAuthentication(options =>
+             *   {
+             *       options.DefaultScheme = IdentityConstants.ApplicationScheme;
+             *       options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+             *   })
+             *   .AddIdentityCookies();
             */
             builder.Services.AddAuthentication(sharedOptions =>
                 {
@@ -127,6 +133,7 @@ namespace C3P1.Net
 
             // Add app services
             builder.Services.AddTransient<IUserManagementService, UserManagementServerService>();
+            builder.Services.AddTransient<ITasklistService, TasklistServerService>();
 
             var app = builder.Build();
 

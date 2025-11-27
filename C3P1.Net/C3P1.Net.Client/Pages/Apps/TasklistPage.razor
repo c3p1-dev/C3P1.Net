@@ -1,0 +1,24 @@
+﻿@page "/apps/tasklist"
+@using C3P1.Net.Client.Components.Apps.Tasklist
+@inject NavBreadcrumbService navBreadcrumb
+
+@attribute [Authorize]
+
+<PageTitle>C3P1.net/Tasklist</PageTitle>
+
+<AuthorizeView>
+    <Tasklist />
+</AuthorizeView>
+@code {
+    protected override void OnInitialized()
+    {
+        // setup breadcrumbs
+        navBreadcrumb.SetBreadcrumbs(new List<Node>()
+        {
+            new Node(){Text = "Home", Link = "" },
+            new Node(){Text = "Tasklist", Link = "apps/tasklist", Active = true}
+        });
+
+        base.OnInitialized();
+    }
+}

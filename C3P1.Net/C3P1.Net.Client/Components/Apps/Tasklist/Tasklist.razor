@@ -1,0 +1,99 @@
+﻿@using C3P1.Net.Client.Data.Apps.Tasklist
+@inherits TasklistBase
+
+<Card>
+    <CardHeader>
+        <Addons>
+            <Addon AddonType="AddonType.Body">
+                <Validations @ref="validations" Mode="ValidationMode.Manual">
+                    <Validation Validator="@ValidationRule.IsNotEmpty">
+                        <TextEdit @bind-Text="@title" Placeholder="Add something todo" KeyPress="OnTitleKeyPressed"></TextEdit>
+                    </Validation>
+                </Validations>
+            </Addon>
+            <Addon AddonType="AddonType.End">
+                <Button Color="Color.Primary" Clicked="AddTask">
+                    <Icon Name="IconName.Add" />
+                </Button>
+            </Addon>
+        </Addons>
+    </CardHeader>
+    <CardBody Padding="Padding.Is0">
+        <ListGroup Flush>
+            @if (Tasklist == null)
+            {
+                <Paragraph TextAlignment="TextAlignment.Center" Padding="Padding.Is2">
+                    Tasklist is loading ...
+                </Paragraph>
+            }
+            else if (Tasklist.Count() == 0)
+            {
+                @if (filter == Filter.Todo)
+                {
+                    <Paragraph TextAlignment="TextAlignment.Center" Padding="Padding.Is2">Nothing to do</Paragraph>
+                }
+                else if (filter == Filter.Done)
+                {
+                    <Paragraph TextAlignment="TextAlignment.Center" Padding="Padding.Is2">Nothing done</Paragraph>
+                }
+                else if (filter == Filter.All)
+                {
+                    <Paragraph TextAlignment="TextAlignment.Center" Padding="Padding.Is2">Tasklist is empty</Paragraph>
+                }
+            }
+            else
+            {
+                @foreach (TodoItem task in Tasklist)
+                {
+                    <TaskItem Item="task" StatusChanged="@OnTodoStatusChanged"/>
+                }
+            }
+        </ListGroup>
+    </CardBody>
+    <CardFooter>
+        <Field Horizontal>
+            <FieldBody ColumnSize="ColumnSize.Is8">
+                <Buttons Role="ButtonsRole.Addons">
+                    <Button Color="Color.Secondary" Clicked="@(() => SetFilter( Filter.Todo ))" Active="@(filter == Filter.Todo)">Todo</Button>
+                    <Button Color="Color.Secondary" Clicked="@(() => SetFilter( Filter.Done ))" Active="@(filter == Filter.Done)">Done</Button>
+                    <Button Color="Color.Secondary" Clicked="@(() => SetFilter( Filter.All ))" Active="@(filter == Filter.All)">All</Button>
+                </Buttons>
+            </FieldBody>
+            <FieldBody ColumnSize="ColumnSize.Is4">
+                @if (Tasklist.Any(x => x.Completed == true))
+                {
+                    <Button Color="Color.Danger" Float="Float.End" Clicked="@DeleteDoneTasks">Clear done</Button>
+                }
+                else if (filter == Filter.Todo && Tasklist.Count() > 0)
+                {
+                    <Button Color="Color.Info" Float="Float.End" Clicked="@MarkAllAsDone">All done</Button>
+                }
+            </FieldBody>
+        </Field>
+    </CardFooter>
+</Card>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // get user id
+        var user = (await authenticationStateTask).User;
+        base.currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+
+        await LoadData();
+        await base.OnInitializedAsync();
+    }
+
+    private void OnTitleKeyPressed(KeyboardEventArgs e)
+    {
+        // track enter key
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            // add task
+            base.AddTask();
+        }
+    }
+}
