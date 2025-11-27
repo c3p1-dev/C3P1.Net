@@ -1,0 +1,37 @@
+﻿@inject NavBreadcrumbService navBreadcrumb
+@implements IDisposable
+
+<div class="subnav clearfix @(navBreadcrumb.Visible ? "" : "invisible")" style="height:30px">
+    <div class="float-left">
+        <ol class="breadcrumb">
+            @foreach (var item in navBreadcrumb.Breadcrumbs)
+            {
+                if (item.Active)
+                {
+                    <li class="breadcrumb-item active text-light text-opacity-75">
+                        @item.Text
+                    </li>
+                }
+                else
+                {
+                    <li class="breadcrumb-item text-light text-opacity-75">
+                        <a href="@item.Link" style="color:cornflowerblue">@item.Text</a>
+                    </li>
+                }
+            }
+        </ol>
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        navBreadcrumb.OnChange += StateHasChanged;
+
+        base.OnInitialized();
+    }
+    public void Dispose()
+    {
+        navBreadcrumb.OnChange -= StateHasChanged;
+    }
+}

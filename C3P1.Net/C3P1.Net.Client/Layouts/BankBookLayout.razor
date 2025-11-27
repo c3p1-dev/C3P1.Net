@@ -1,0 +1,87 @@
+﻿@using C3P1.Net.Client.Components.Layout
+
+@inherits LayoutComponentBase
+
+
+@if (layoutType == "fixed-header")
+{
+    <Layout Sider>
+        <LayoutSider>
+            <LayoutSiderContent>
+                <SideMenu />
+            </LayoutSiderContent>
+        </LayoutSider>
+        <Layout>
+            <LayoutHeader Fixed>
+                <TopMenu ThemeEnabledChanged="@OnThemeEnabledChanged"
+                         ThemeGradientChanged="@OnThemeGradientChanged"
+                         ThemeRoundedChanged="@OnThemeRoundedChanged"
+                         ThemeColorChanged="@OnThemeColorChanged"
+                         @bind-LayoutType="@layoutType" />
+            </LayoutHeader>
+            <LayoutContent Padding="Padding.Is4.OnX.Is4.FromTop">
+                @Body
+            </LayoutContent>
+            <LayoutFooter>
+                <div id="blazor-error-ui">
+                    An unhandled error has occurred.
+                    <a href="" class="reload">Reload</a>
+                    <a class="dismiss">🗙</a>
+                </div>
+            </LayoutFooter>
+        </Layout>
+    </Layout>
+}
+else if (layoutType == "fixed-header-footer-only")
+{
+    <Layout>
+        <LayoutHeader Fixed>
+            <TopMenu ThemeEnabledChanged="@OnThemeEnabledChanged"
+                     ThemeGradientChanged="@OnThemeGradientChanged"
+                     ThemeRoundedChanged="@OnThemeRoundedChanged"
+                     ThemeColorChanged="@OnThemeColorChanged"
+                     @bind-LayoutType="@layoutType" />
+        </LayoutHeader>
+        <LayoutContent Padding="Padding.Is4.OnX.Is4.FromTop">
+            @Body
+        </LayoutContent>
+        <LayoutFooter Fixed>
+            <div id="blazor-error-ui">
+                An unhandled error has occurred.
+                <a href="" class="reload">Reload</a>
+                <a class="dismiss">🗙</a>
+            </div>
+        </LayoutFooter>
+    </Layout>
+}
+else if (layoutType == "sider-with-header-on-top")
+{
+    <Layout>
+        <LayoutHeader Fixed>
+            <TopMenu ThemeEnabledChanged="@OnThemeEnabledChanged"
+                     ThemeGradientChanged="@OnThemeGradientChanged"
+                     ThemeRoundedChanged="@OnThemeRoundedChanged"
+                     ThemeColorChanged="@OnThemeColorChanged"
+                     @bind-LayoutType="@layoutType" />
+        </LayoutHeader>
+        <Layout Sider>
+            <LayoutSider>
+                <LayoutSiderContent>
+                    <SideMenu />
+                </LayoutSiderContent>
+            </LayoutSider>
+            <Layout>
+                <LayoutContent Padding="Padding.Is4.OnX.Is4.FromTop">
+                    @Body
+                </LayoutContent>
+            </Layout>
+            <LayoutFooter>
+                <div id="blazor-error-ui">
+                    An unhandled error has occurred.
+                    <a href="" class="reload">Reload</a>
+                    <a class="dismiss">🗙</a>
+                </div>
+            </LayoutFooter>
+        </Layout>
+    </Layout>
+}

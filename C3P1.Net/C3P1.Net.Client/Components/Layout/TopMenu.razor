@@ -1,0 +1,112 @@
+﻿@using Blazorise.Localization
+
+@implements IDisposable
+
+@inject NavBreadcrumbService navBreadcrumb
+@inject NavigationManager navManager
+
+@rendermode InteractiveAuto
+
+<Bar @bind-Visible="@topbarVisible" Breakpoint="Breakpoint.Desktop" Background="Background.Primary" ThemeContrast="ThemeContrast.Light" Shadow="Shadow.Default" Padding="Padding.Is3.OnX">
+    <BarBrand Margin="Margin.Is1">
+        <BarItem>
+            <NavBreadcrumb />
+        </BarItem>
+    </BarBrand>
+    <BarToggler />
+    <BarMenu>
+        <BarStart>
+
+        </BarStart>
+        <BarEnd>
+            <BarItem>
+                @if (OperatingSystem.IsBrowser())
+                {
+                    <BarLink To="https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor" Target="Target.Blank">
+                        <Image Source="pix/icons/blazor-light.svg" Height="Height.Px(25)" Margin="Margin.Is1.FromBottom.Is1.FromEnd" />
+                        Blazor Wasm
+                    </BarLink>
+                }
+                else
+                {
+                    <BarLink To="https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor" Target="Target.Blank">
+                        <Image Source="pix/icons/blazor-light.svg" Height="Height.Px(25)" Margin="Margin.Is1.FromBottom.Is1.FromEnd" />
+                        Blazor Server
+                    </BarLink>
+                }
+            </BarItem>
+            <BarItem>
+                <BarLink To="https://github.com/c3p1-dev/C3P1" Target="Target.Blank">
+                    <Image Source="pix/icons/github.svg" Height="Height.Px(25)" Margin="Margin.Is1.FromBottom.Is1.FromEnd" />
+                    GitHub
+                </BarLink>
+            </BarItem>
+        </BarEnd>
+    </BarMenu>
+</Bar>
+@code {
+    void LocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        // check if we're going to Identity section
+        string target = e.Location.Substring(navManager.BaseUri.Length);
+
+        if (target.StartsWith("Account/") || target.StartsWith("account/"))
+        {
+            // Show a static breadcrumb for all Account section
+            //navBreadcrumb.Reset();
+            navBreadcrumb.SetBreadcrumbs(new List<Node>()
+            {
+                new Node() {Text = "Home", Link = ""},
+                new Node() {Text = "Identity", Link = "", Active = true}
+            });
+        }
+    }
+
+    void IDisposable.Dispose()
+    {
+        // Unsubscribe from the event when our component is disposed
+        navManager.LocationChanged -= LocationChanged;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Subscribe to the event
+        navManager.LocationChanged += LocationChanged;
+
+        await SelectCulture("en-US");
+
+        await base.OnInitializedAsync();
+    }
+
+    Task SelectCulture( string name )
+    {
+        LocalizationService!.ChangeLanguage( name );
+
+        return Task.CompletedTask;
+    }
+
+    private bool topbarVisible = false;
+
+    Task OnLayoutTypeChecked( string layoutType )
+    {
+        LayoutType = layoutType;
+
+        return LayoutTypeChanged.InvokeAsync( layoutType );
+    }
+
+    [Parameter] public EventCallback<bool> ThemeEnabledChanged { get; set; }
+
+    [Parameter] public EventCallback<bool> ThemeGradientChanged { get; set; }
+
+    [Parameter] public EventCallback<bool> ThemeRoundedChanged { get; set; }
+
+    [Parameter] public EventCallback<string> ThemeColorChanged { get; set; }
+
+    [Parameter] public string? LayoutType { get; set; }
+
+    [Parameter] public EventCallback<string> LayoutTypeChanged { get; set; }
+
+    [Inject] protected ITextLocalizerService? LocalizationService { get; set; }
+
+    [CascadingParameter] protected Theme? Theme { get; set; }
+}

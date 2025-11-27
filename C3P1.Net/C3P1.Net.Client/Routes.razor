@@ -1,0 +1,124 @@
+﻿@* Original code 
+<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+            <NotAuthorized>
+                <RedirectToLogin />
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>
+*@
+
+@using Blazr.RenderState
+@inject IBlazrRenderStateService RenderState
+@inject NavigationManager NavManager
+
+<ThemeProvider Theme="@theme">
+    @* Show splashscreen during rendering *@
+    @if (RenderState.IsPreRender && !NavManager.Uri.Contains("/Account") && !NavManager.Uri.Contains("/account"))
+    {
+        <Splash />
+        return;
+    }
+    <Router AppAssembly="typeof(Program).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layouts.MainLayout)">
+                <NotAuthorized>
+                    <RedirectToLogin />
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        </Found>
+
+        <NotFound>
+            <C3P1.Net.Client.Pages.Error.NotFound />
+        </NotFound>
+    </Router>
+
+    <MessageProvider />
+    <PageProgressProvider />
+</ThemeProvider>
+
+@code {
+    private Theme theme = new()
+    {
+        BarOptions = new()
+        {
+            /*
+             * HorizontalHeight = "72px"
+             * is hard set in TopMenu.razor
+            */
+        },
+        /*
+        ColorOptions = new()
+        {
+            Primary = "#0288D1",
+            Secondary = "#A65529",
+            Success = "#23C02E",
+            Info = "#9BD8FE",
+            Warning = "#F8B86C",
+            Danger = "#F95741",
+            Light = "#F0F0F0",
+            Dark = "#535353",
+        },
+        BackgroundOptions = new()
+        {
+            Primary = "#0288D1",
+            Secondary = "#A65529",
+            Success = "#23C02E",
+            Info = "#9BD8FE",
+            Warning = "#F8B86C",
+            Danger = "#F95741",
+            Light = "#F0F0F0",
+            Dark = "#535353",
+        },
+        InputOptions = new()
+        {
+            CheckColor = "#0288D1",
+        }*/
+        ColorOptions = new()
+        {
+            Primary = "#9b59b6",
+            Secondary = "#5c6bc0",
+            Success = "#53b056",
+            Info = "#2196f3",
+            Warning = "#ffd54f",
+            Danger = "#ef5350",
+            Light = "#F0F0F0",
+            Dark = "#535353",
+        },
+        BackgroundOptions = new()
+        {
+            Primary = "#76448a",
+            Secondary = "#5c6bc0",
+            Success = "#53b056",
+            Info = "#2196f3",
+            Warning = "#ffd54f",
+            Danger = "#ef5350",
+            Light = "#F0F0F0",
+            Dark = "#535353",
+        },
+        InputOptions = new()
+        {
+            CheckColor = "#0288D1",
+        },
+        AlertOptions = new()
+        {
+            BackgroundLevel = 10,
+            ColorLevel = -5
+        },
+        TextColorOptions = new()
+        {
+            Primary = "#9b59b6",
+            Secondary = "#5c6bc0",
+            Success = "#53b056",
+            Info = "#2196f3",
+            Warning = "#ffd54f",
+            Danger = "#ef5350",
+            Light = "#F0F0F0",
+            Dark = "#535353",
+        }
+    };
+}

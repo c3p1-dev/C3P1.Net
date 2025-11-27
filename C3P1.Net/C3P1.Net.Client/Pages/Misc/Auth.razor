@@ -1,0 +1,60 @@
+﻿@page "/misc/auth"
+@inject NavBreadcrumbService navBreadcrumb
+
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+
+<PageTitle>Auth</PageTitle>
+
+<AuthorizeView>
+    <Card>
+        <CardHeader>
+            Hello @context.User.Identity?.Name!
+        </CardHeader>
+        <CardBody>
+            <Paragraph>
+                Claims : 
+            </Paragraph>
+            <ListView TItem="System.Security.Claims.Claim"
+                        Data="context.User.Claims"
+                        TextField="(item) => item.Type"
+                        ValueField="(item) => item.Value">
+
+                <ItemTemplate Context="data">
+                    <Div Flex="Flex.InlineFlex.JustifyContent.Between" Width="Width.Is100">
+                        <Heading Size="HeadingSize.Is4" Margin="Margin.Is2.FromBottom">@data.Value</Heading>
+                    </Div>
+                    <Paragraph Margin="Margin.Is2.FromBottom">@data.Text</Paragraph>
+                </ItemTemplate>
+            </ListView>
+        </CardBody>
+        <CardFooter>
+            @if (OperatingSystem.IsBrowser())
+            {
+                <CardText>
+                    Render mode : WASM
+                </CardText>
+            }
+            else
+            {
+                <CardText>
+                    Render mode : Server
+                </CardText>
+            }
+        </CardFooter>
+    </Card>
+</AuthorizeView>
+
+@code{
+    protected override void OnInitialized()
+    {
+        // set navbreadcrumb
+        navBreadcrumb.SetBreadcrumbs(new List<Node>()
+        {
+            new Node {Text = "Home", Link = ""},
+            new Node {Text = "Auth", Link = "misc/auth", Active = true}
+        });
+        base.OnInitialized();
+    }
+}

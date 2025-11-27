@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="152"
+   height="188"
+   viewBox="0 0 40.21692 49.74198"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="blazorise2.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs5" />
+  <sodipodi:namedview
+     id="namedview5"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="5.835"
+     inkscape:cx="100"
+     inkscape:cy="100"
+     inkscape:window-width="3440"
+     inkscape:window-height="1369"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg5" />
+  <path
+     style="fill:#9317e1;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.25315"
+     d="M 10.94596,0.95149 1.8588876,6.0582849 V 27.762353 L 10.94596,22.204951 Z"
+     id="path1" />
+  <path
+     style="fill:#b24bf2;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.25315"
+     d="M 20.06996,27.46249 10.945168,22.205324 1.8580959,27.762979 10.963901,32.94496 Z"
+     id="path2" />
+  <path
+     style="fill:#b24bf2;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.25315"
+     d="m 20.06996,6.35849 v 10.514079 l 9.199724,5.332098 9.087326,-5.407284 z"
+     id="path3" />
+  <path
+     style="fill:#9317e1;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.25315"
+     d="M 10.96496,43.68349 29.214544,32.944108 38.358068,38.313672 20.071019,48.790285 Z"
+     id="path4" />
+  <path
+     style="fill:#bb61f6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.25315"
+     d="m 38.35796,16.79749 v 21.516484 l -9.143525,-5.369818 0.05645,-10.739382 z"
+     id="path5" />
+</svg>
