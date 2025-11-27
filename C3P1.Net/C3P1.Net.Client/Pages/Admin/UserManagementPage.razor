@@ -1,11 +1,12 @@
 ﻿@page "/admin/users"
 @using C3P1.Net.Client.Components.Admin.UserManagement
 @inject NavBreadcrumbService navBreadcrumb
+
 @attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>C3P1.Net/Admin/User Management</PageTitle>
 
-<UserTable />
+<UserManagement />
 
 @code {
     protected override void OnInitialized()

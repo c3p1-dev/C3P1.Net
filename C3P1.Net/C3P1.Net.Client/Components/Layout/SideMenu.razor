@@ -102,30 +102,6 @@
             <BarItem>
                 <BarDropdown>
                     <BarDropdownToggle>
-                        <BarIcon IconName="IconName.Flask" /> Misc
-                    </BarDropdownToggle>
-                    <BarDropdownMenu>
-                        <BarDropdownItem To="misc/auth">
-                            <BarIcon IconName="IconName.Server" /> Auth
-                        </BarDropdownItem>
-                        <BarDropdownItem To="misc/counter">
-                            <BarIcon IconName="IconName.Smartphone" /> Counter
-                        </BarDropdownItem>
-                        <BarDropdownItem To="misc/weather">
-                            <BarIcon IconName="IconName.Cloud" /> Weather
-                        </BarDropdownItem>
-                        <BarDropdownItem To="misc/demo">
-                            <BarIcon IconName="IconName.PaintRoller" /> Demo
-                        </BarDropdownItem>
-                        <BarDropdownItem To="misc/bankbook">
-                            <BarIcon IconName="IconName.Book" /> BankBook
-                        </BarDropdownItem>
-                    </BarDropdownMenu>
-                </BarDropdown>
-            </BarItem>
-            <BarItem>
-                <BarDropdown>
-                    <BarDropdownToggle>
                         <BarIcon IconName="IconName.Palette" /> Apps
                     </BarDropdownToggle>
                     <BarDropdownMenu>
@@ -133,7 +109,38 @@
                             <BarIcon IconName="IconName.PaperPlane" /> Paste
                         </BarDropdownItem>
                         <AuthorizeView>
+                            <BarDropdownItem To="bankbook">
+                                <BarIcon IconName="IconName.Book" /> BankBook
+                            </BarDropdownItem>
                         </AuthorizeView>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+            <BarItem>
+                <BarDropdown>
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.Flask" /> Misc
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="misc/auth">
+                            <BarIcon IconName="IconName.Server" /> Auth
+                        </BarDropdownItem>
+                        <BarDropdownItem To="misc/counter">
+                            <BarIcon IconName="IconName.Square" /> Counter
+                        </BarDropdownItem>
+                        <BarDropdownItem To="misc/weather">
+                            <BarIcon IconName="IconName.Sun" /> Weather
+                        </BarDropdownItem>
+                        <BarDropdownItem To="misc/templateviewer">
+                            <BarIcon IconName="IconName.PaintRoller" /> Template Viewer
+                        </BarDropdownItem>
+                        <BarDropdownItem To="misc/simple-form">
+                            <BarIcon IconName="IconName.Paperclip" /> Simple Form
+                        </BarDropdownItem>
+                        <BarDropdownItem To="misc/simple-datagrid">
+                            <BarIcon IconName="IconName.Table" /> Simple DataGrid
+                        </BarDropdownItem>
+
                     </BarDropdownMenu>
                 </BarDropdown>
             </BarItem>

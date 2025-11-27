@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace C3P1.Net.Client.Components.Admin.UserManagement
 {
-    public abstract class UserTableBase : ComponentBase
+    public abstract class UserManagementBase : ComponentBase
     {
         protected List<AppUserWithRoles>? users;
         protected IEnumerable<AppUserWithRoles> Users

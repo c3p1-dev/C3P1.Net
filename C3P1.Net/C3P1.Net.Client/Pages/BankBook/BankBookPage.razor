@@ -1,6 +1,8 @@
-﻿@page "/misc/bankbook"
+﻿@page "/bankbook"
 @layout Layouts.BankBookLayout
 @inject NavBreadcrumbService navBreadcrumb
+
+@attribute [Authorize]
 
 <PageTitle>Counter</PageTitle>
 
@@ -25,8 +27,8 @@
         // This also makes the navbar invisible by default.
         navBreadcrumb.SetBreadcrumbs(new List<Node>()
         {
-            new Node {Text = "Home", Link = "" },
-            new Node {Text = "BankBook", Link = "misc/bankbook" , Active = true}
+            new Node {Text = "BankBook", Link = "bankbook" },
+            new Node {Text = "Dashboard", Link = "bankbook" , Active = true}
         });
     }
 }
