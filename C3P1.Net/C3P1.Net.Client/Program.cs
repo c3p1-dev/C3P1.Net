@@ -2,6 +2,7 @@ using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Blazr.RenderState.WASM;
+using C3P1.Net.Client.Services.Admin;
 using C3P1.Net.Client.Services.Layout;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -24,8 +25,8 @@ namespace C3P1.Net.Client
                     options.Immediate = true;
                     // unsafe way to store product token
                     // TODO : figure out how to store secret strings in wasm
-                    options.ProductToken = builder.Configuration["Blazorise:ProductToken"] ?? throw new InvalidOperationException("Blazorise license token 'ProductToken' not found.");
-                    
+                    //options.ProductToken = builder.Configuration["Blazorise:ProductToken"] ?? throw new InvalidOperationException("Blazorise license token 'ProductToken' not found.");
+
                 })
                 .AddBootstrap5Providers()
                 .AddFontAwesomeIcons();
@@ -41,6 +42,9 @@ namespace C3P1.Net.Client
             {
                 BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
             });
+
+            // Add app services
+            builder.Services.AddTransient<IUserManagementService, UserManagementClientService>();
 
             // Run the app
             await builder.Build().RunAsync();

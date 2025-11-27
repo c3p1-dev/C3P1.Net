@@ -27,8 +27,4 @@
     <PackageReference Include="SQLitePCLRaw.bundle_sqlite3" Version="2.1.11" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="WebApi\Admin\" />
-  </ItemGroup>
-
 </Project>
