@@ -32,7 +32,7 @@ namespace C3P1.Net.Data
                 await roleManager.CreateAsync(new IdentityRole("User"));
             }
 
-            // Create VisualCarnet Role
+            // Create BankBook Role
             alreadyExists = await roleManager.RoleExistsAsync("BankBook");
             if (!alreadyExists)
             {

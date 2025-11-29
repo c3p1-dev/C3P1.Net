@@ -112,6 +112,11 @@ namespace C3P1.Net
 
             builder.Services.AddSingleton<IEmailSender<AppUser>, IdentityNoOpEmailSender>();
 
+            // Add BankBookDbContext and services
+            var visualCarnetConnectionString = builder.Configuration["ConnectionStrings:BankBookConnection"] ?? throw new InvalidOperationException("Connection string 'BankBookConnection' not found.");
+            builder.Services.AddDbContext<BankBookDbContext>(options =>
+                options.UseSqlite(visualCarnetConnectionString));
+
             // Add Blazorise related services
             builder.Services
                 .AddBlazorise(options =>
@@ -134,6 +139,7 @@ namespace C3P1.Net
             // Add app services
             builder.Services.AddTransient<IUserManagementService, UserManagementServerService>();
             builder.Services.AddTransient<ITasklistService, TasklistServerService>();
+
 
             var app = builder.Build();
 
@@ -180,6 +186,8 @@ namespace C3P1.Net
             // Create and seed database on first run
             using IServiceScope scope = app.Services.CreateScope();
             IServiceProvider services = scope.ServiceProvider;
+
+            // Try to migrate and seed AppDbContext
             try
             {
                 AppDbContext context = services.GetRequiredService<AppDbContext>();
@@ -189,7 +197,19 @@ namespace C3P1.Net
             catch (Exception ex)
             {
                 ILogger<Program> logger = services.GetRequiredService<ILogger<Program>>();
-                logger.LogError(ex, "Error occured creating or seeding the database");
+                logger.LogError(ex, "Error occured creating or seeding C3P1.Net database");
+            }
+
+            // Try to migrate and seed BankBookDbContext
+            try
+            {
+                BankBookDbContext context = services.GetRequiredService<BankBookDbContext>();
+                context.Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+                ILogger<Program> logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "Error occured creating or migrating BankBook database");
             }
 
             app.Run();
