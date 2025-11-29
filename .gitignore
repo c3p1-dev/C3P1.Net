@@ -369,3 +369,6 @@ FodyWeavers.xsd
 /C3P1.Net/C3P1.Net/C3P1.Net.db
 /C3P1.Net/C3P1.Net/C3P1.Net.db-shm
 /C3P1.Net/C3P1.Net/C3P1.Net.db-wal
+/C3P1.Net/C3P1.Net/BankBook.db
+/C3P1.Net/C3P1.Net/BankBook.db-shm
+/C3P1.Net/C3P1.Net/BankBook.db-wal
