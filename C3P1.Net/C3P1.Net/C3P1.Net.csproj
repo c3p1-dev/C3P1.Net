@@ -26,7 +26,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0" />
     <PackageReference Include="SQLitePCLRaw.bundle_sqlite3" Version="2.1.11" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="10.0.0" />
   </ItemGroup>
 
 </Project>
