@@ -10,6 +10,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Components\BankBook\**" />
+    <Compile Remove="Data\BankBook\**" />
+    <Content Remove="Components\BankBook\**" />
+    <Content Remove="Data\BankBook\**" />
+    <EmbeddedResource Remove="Components\BankBook\**" />
+    <EmbeddedResource Remove="Data\BankBook\**" />
+    <None Remove="Components\BankBook\**" />
+    <None Remove="Data\BankBook\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazorise.Bootstrap5" Version="1.8.7" />
     <PackageReference Include="Blazorise.Charts" Version="1.8.7" />
     <PackageReference Include="Blazorise.Components" Version="1.8.7" />
@@ -21,11 +32,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\BankBook\" />
-    <Folder Include="Data\BankBook\" />
   </ItemGroup>
 
 </Project>

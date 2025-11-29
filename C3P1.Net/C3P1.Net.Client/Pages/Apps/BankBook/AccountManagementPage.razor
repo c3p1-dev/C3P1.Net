@@ -1,0 +1,20 @@
+﻿@page "/bankbook/accounts"
+@layout Layouts.BankBookLayout
+
+@inject NavBreadcrumbService navBreadcrumb
+
+<h3>AccountManagementPage</h3>
+
+@code {
+    protected override void OnInitialized()
+    {
+        // NavState (breadcrumbs, etc) is Scoped, so it lives as long as our connection lives.
+        // So when a new page is visited, we need to clear navigation to prevent breadcrumbs from bleed-over, etc.
+        // This also makes the navbar invisible by default.
+        navBreadcrumb.SetBreadcrumbs(new List<Node>()
+        {
+            new Node {Text = "BankBook", Link = "bankbook" },
+            new Node {Text = "Accounts", Link = "bankbook/accounts" , Active = true}
+        });
+    }
+}

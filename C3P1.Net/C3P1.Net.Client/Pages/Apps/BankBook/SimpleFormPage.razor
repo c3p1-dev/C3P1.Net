@@ -1,4 +1,7 @@
-﻿@page "/misc/simple-form"
+﻿@page "/bankbook/simple-form"
+@layout Layouts.BankBookLayout
+
+@inject NavBreadcrumbService navBreadcrumb
 
 <Row>
     <Column ColumnSize="ColumnSize.Is6.OnDesktop">
@@ -80,6 +83,18 @@
     Validations? validationsBasicExampleRef;
     Validations? validationsHorizontalFormRef;
     string? password;
+
+    protected override void OnInitialized()
+    {
+        // NavState (breadcrumbs, etc) is Scoped, so it lives as long as our connection lives.
+        // So when a new page is visited, we need to clear navigation to prevent breadcrumbs from bleed-over, etc.
+        // This also makes the navbar invisible by default.
+        navBreadcrumb.SetBreadcrumbs(new List<Node>()
+        {
+            new Node {Text = "BankBook", Link = "bankbook" },
+            new Node {Text = "Simple Form", Link = "bankbook/simple-form" , Active = true}
+        });
+    }
 
     void ValidatePassword( ValidatorEventArgs e )
     {

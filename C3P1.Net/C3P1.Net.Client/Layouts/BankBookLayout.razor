@@ -1,4 +1,5 @@
-﻿@using C3P1.Net.Client.Components.Layout
+﻿@using C3P1.Net.Client.Components.Apps.BankBook
+@using C3P1.Net.Client.Components.Layout
 
 @inherits LayoutComponentBase
 
@@ -8,12 +9,12 @@
     <Layout Sider>
         <LayoutSider>
             <LayoutSiderContent>
-                <SideMenu />
+                <BankBookSideMenu />
             </LayoutSiderContent>
         </LayoutSider>
         <Layout>
             <LayoutHeader Fixed>
-                <TopMenu ThemeEnabledChanged="@OnThemeEnabledChanged"
+                <BankBookTopMenu ThemeEnabledChanged="@OnThemeEnabledChanged"
                          ThemeGradientChanged="@OnThemeGradientChanged"
                          ThemeRoundedChanged="@OnThemeRoundedChanged"
                          ThemeColorChanged="@OnThemeColorChanged"
@@ -36,7 +37,7 @@ else if (layoutType == "fixed-header-footer-only")
 {
     <Layout>
         <LayoutHeader Fixed>
-            <TopMenu ThemeEnabledChanged="@OnThemeEnabledChanged"
+            <BankBookTopMenu ThemeEnabledChanged="@OnThemeEnabledChanged"
                      ThemeGradientChanged="@OnThemeGradientChanged"
                      ThemeRoundedChanged="@OnThemeRoundedChanged"
                      ThemeColorChanged="@OnThemeColorChanged"
@@ -58,7 +59,7 @@ else if (layoutType == "sider-with-header-on-top")
 {
     <Layout>
         <LayoutHeader Fixed>
-            <TopMenu ThemeEnabledChanged="@OnThemeEnabledChanged"
+            <BankBookTopMenu ThemeEnabledChanged="@OnThemeEnabledChanged"
                      ThemeGradientChanged="@OnThemeGradientChanged"
                      ThemeRoundedChanged="@OnThemeRoundedChanged"
                      ThemeColorChanged="@OnThemeColorChanged"
@@ -67,7 +68,7 @@ else if (layoutType == "sider-with-header-on-top")
         <Layout Sider>
             <LayoutSider>
                 <LayoutSiderContent>
-                    <SideMenu />
+                    <BankBookSideMenu />
                 </LayoutSiderContent>
             </LayoutSider>
             <Layout>

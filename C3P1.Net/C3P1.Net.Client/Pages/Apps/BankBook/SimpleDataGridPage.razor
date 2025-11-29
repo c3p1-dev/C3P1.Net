@@ -1,8 +1,13 @@
-﻿@page "/misc/simple-datagrid"
+﻿@page "/bankbook/simple-datagrid"
+@layout Layouts.BankBookLayout
+
+@inject NavBreadcrumbService navBreadcrumb
 
 <DataGrid TItem="Book"
           Data="data"
           Editable
+          EditMode="@DataGridEditMode.Cell"
+          EditModeOptions="new DataGridEditModeOptions(){ CellEditSelectTextOnEdit = true }"
           Sortable
           SortMode="DataGridSortMode.Single"
           ShowPager
@@ -46,6 +51,18 @@
 </DataGrid>
 
 @code {
+    protected override void OnInitialized()
+    {
+        // NavState (breadcrumbs, etc) is Scoped, so it lives as long as our connection lives.
+        // So when a new page is visited, we need to clear navigation to prevent breadcrumbs from bleed-over, etc.
+        // This also makes the navbar invisible by default.
+        navBreadcrumb.SetBreadcrumbs(new List<Node>()
+        {
+            new Node {Text = "BankBook", Link = "bankbook" },
+            new Node {Text = "Simple DataGrid", Link = "bankbook/simple-datagrid" , Active = true}
+        });
+    }
+
     private List<Book> data = new()
     {
         new("Harry Potter and the Sorcerer's Stone", "J.K. Rowling","9780590353427", new(1997,6,26),  "Scholastic Press" ),
@@ -71,6 +88,4 @@
     };
 
     private record Book( string Title, string Author, string Isbn, DateOnly PublicationDate, string Publisher );
-
-
 }
