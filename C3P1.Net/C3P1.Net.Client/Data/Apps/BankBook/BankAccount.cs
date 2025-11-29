@@ -9,6 +9,9 @@ namespace C3P1.Net.Client.Data.Apps.BankBook
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
+        [Required(ErrorMessage = "User ID must be defined")]
+        public Guid UserId { get; set; }
+
         [Required(ErrorMessage = "Account Code must be defined")]
         [StringLength(150, ErrorMessage = "Account Code too long (max 10 characters)")]
         public string Code { get; set; } = string.Empty;

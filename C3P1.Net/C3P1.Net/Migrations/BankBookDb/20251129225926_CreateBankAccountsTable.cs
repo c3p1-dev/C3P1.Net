@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace C3P1.Net.Migrations.BankBookDb
 {
     /// <inheritdoc />
-    public partial class BankAccounts : Migration
+    public partial class CreateBankAccountsTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,6 +16,7 @@ namespace C3P1.Net.Migrations.BankBookDb
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    UserId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Code = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     Bank = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),

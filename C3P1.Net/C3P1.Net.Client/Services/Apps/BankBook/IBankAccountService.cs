@@ -1,0 +1,10 @@
+﻿using C3P1.Net.Client.Data.Apps.BankBook;
+
+namespace C3P1.Net.Client.Services.Apps.BankBook
+{
+    public interface IBankAccountService
+    {
+        public Task<List<BankAccount>> GetBankAccountsAsync(Guid userId);
+        public Task<bool> AddBankAccountAsync(Guid userId, BankAccount bankAccount);
+    }
+}

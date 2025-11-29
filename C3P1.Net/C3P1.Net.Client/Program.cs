@@ -4,6 +4,7 @@ using Blazorise.Icons.FontAwesome;
 using Blazr.RenderState.WASM;
 using C3P1.Net.Client.Services.Admin;
 using C3P1.Net.Client.Services.Apps;
+using C3P1.Net.Client.Services.Apps.BankBook;
 using C3P1.Net.Client.Services.Layout;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -47,6 +48,7 @@ namespace C3P1.Net.Client
             // Add app services
             builder.Services.AddTransient<IUserManagementService, UserManagementClientService>();
             builder.Services.AddTransient<ITasklistService, TasklistClientService>();
+            builder.Services.AddTransient<IBankAccountService, BankAccountClientService>();
 
             // Run the app
             await builder.Build().RunAsync();

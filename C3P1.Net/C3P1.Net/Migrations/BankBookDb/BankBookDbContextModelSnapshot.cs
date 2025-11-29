@@ -64,6 +64,9 @@ namespace C3P1.Net.Migrations.BankBookDb
                         .HasMaxLength(2083)
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("BankAccounts");

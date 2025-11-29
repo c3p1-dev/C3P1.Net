@@ -5,13 +5,15 @@ using Blazr.RenderState.Server;
 using C3P1.Net.Client.Data;
 using C3P1.Net.Client.Services.Admin;
 using C3P1.Net.Client.Services.Apps;
+using C3P1.Net.Client.Services.Apps.BankBook;
 using C3P1.Net.Client.Services.Layout;
 using C3P1.Net.Components;
 using C3P1.Net.Components.Account;
 using C3P1.Net.Data;
 using C3P1.Net.Middleware;
 using C3P1.Net.Services.Admin;
-using C3P1.Services.Apps;
+using C3P1.Net.Services.Apps;
+using C3P1.Net.Services.Apps.BankBook;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -139,6 +141,7 @@ namespace C3P1.Net
             // Add app services
             builder.Services.AddTransient<IUserManagementService, UserManagementServerService>();
             builder.Services.AddTransient<ITasklistService, TasklistServerService>();
+            builder.Services.AddTransient<IBankAccountService, BankAccountServerService>();
 
 
             var app = builder.Build();

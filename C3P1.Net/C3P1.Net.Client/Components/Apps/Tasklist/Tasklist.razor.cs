@@ -22,14 +22,10 @@ namespace C3P1.Net.Client.Components.Apps.Tasklist
                     var query = from t in tasklist select t;
 
                     if (filter == Filter.Todo)
-                    {
                         query = from q in query where !q.Completed select q;
-                    }
 
                     if (filter == Filter.Done)
-                    {
                         query = from q in query where q.Completed select q;
-                    }
 
                     return query;
                 }

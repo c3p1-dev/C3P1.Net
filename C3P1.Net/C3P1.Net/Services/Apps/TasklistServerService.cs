@@ -3,15 +3,12 @@ using C3P1.Net.Client.Services.Apps;
 using C3P1.Net.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace C3P1.Services.Apps
+namespace C3P1.Net.Services.Apps
 {
-    public class TasklistServerService : ITasklistService
+    public class TasklistServerService(AppDbContext context) : ITasklistService
     {
-        private AppDbContext _context;
-        public TasklistServerService(AppDbContext context)
-        {
-            _context = context;
-        }
+        private readonly AppDbContext _context = context;
+
         public async Task<List<TodoItem>> GetTasklistAsync(Guid userId)
         {
             var result = await _context.Tasklist
@@ -85,7 +82,7 @@ namespace C3P1.Services.Apps
 
         public async Task<List<TodoItem>> DeleteTasklistDoneAsync(Guid userId)
         {
-            List<TodoItem> result = new List<TodoItem>();
+            List<TodoItem> result = [];
 
             foreach (var task in _context.Tasklist.Where(x => x.UserId == userId && x.Completed == true))
             {
@@ -100,7 +97,7 @@ namespace C3P1.Services.Apps
 
         public async Task<List<TodoItem>> MarkTasklistAsDoneAsync(Guid userId)
         {
-            List<TodoItem> result = new List<TodoItem>();
+            List<TodoItem> result = [];
 
             foreach (var task in _context.Tasklist.Where(x => x.UserId == userId && x.Completed == false))
             {

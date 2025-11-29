@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C3P1.Net.Migrations.BankBookDb
 {
     [DbContext(typeof(BankBookDbContext))]
-    [Migration("20251129181954_BankAccounts")]
-    partial class BankAccounts
+    [Migration("20251129225926_CreateBankAccountsTable")]
+    partial class CreateBankAccountsTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,6 +65,9 @@ namespace C3P1.Net.Migrations.BankBookDb
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasMaxLength(2083)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
