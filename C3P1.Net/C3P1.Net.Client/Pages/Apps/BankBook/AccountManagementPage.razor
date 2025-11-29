@@ -1,13 +1,67 @@
 ﻿@page "/bankbook/accounts"
+@using C3P1.Net.Client.Data.Apps.BankBook
 @layout Layouts.BankBookLayout
 
 @inject NavBreadcrumbService navBreadcrumb
 
-<h3>AccountManagementPage</h3>
+<Row>
+    <Column>
+        <Card>
+            <CardHeader>
+                <CardTitle>Bank Accounts</CardTitle>
+            </CardHeader>
+            <CardBody>
+                <DataGrid TItem="BankAccount"
+                          Data="inMemoryData"
+                          Responsive
+                          ShowPager
+                          ShowPageSizes
+                          @bind-SelectedRow="@selectedBankAccount"
+                          Editable
+                          EditMode="editMode"
+                          CommandMode="DataGridCommandMode.ButtonRow">
+                    <DataGridColumns>
+                        <DataGridCommandColumn TItem="BankAccount" NewCommandAllowed="false" EditCommandAllowed="false" DeleteCommandAllowed="false">
+                            <SaveCommandTemplate>
+                                <Button ElementId="btnSave" Type="ButtonType.Submit" PreventDefaultOnSubmit Color="Color.Primary" Clicked="@context.Clicked">@context.LocalizationString</Button>
+                            </SaveCommandTemplate>
+                            <CancelCommandTemplate>
+                                <Button ElementId="btnCancel" Color="Color.Secondary" Clicked="@context.Clicked">@context.LocalizationString</Button>
+                            </CancelCommandTemplate>
+                        </DataGridCommandColumn>
+                        <DataGridColumn TextAlignment="TextAlignment.Center" TItem="BankAccount" Field="@nameof(BankAccount.Code)" Caption="#" Width="60px" />
+                        <DataGridColumn TItem="BankAccount" Field="@nameof(BankAccount.Name)" Caption="Account Name" Editable />
+                        <DataGridColumn TItem="BankAccount" Field="@nameof(BankAccount.Bank)" Caption="Bank" Editable />
+                        <DataGridColumn TItem="BankAccount" Field="@nameof(BankAccount.Description)" Caption="Description" Editable />
+                        <DataGridColumn TItem="BankAccount" Field="@nameof(BankAccount.IBAN)" Caption="IBAN" Editable />
+                        <DataGridColumn TItem="BankAccount" Field="@nameof(BankAccount.Swift)" Caption="SWIFT/BIC" Editable />
+                        <DataGridColumn TItem="BankAccount" Field="@nameof(BankAccount.Url)" Caption="Website" Editable />
+                        <DataGridColumn TItem="BankAccount" Field="@nameof(BankAccount.Balance)" Caption="Balance" Editable />
+                    </DataGridColumns>
+                    <ButtonRowTemplate>
+                        <Button Color="Color.Secondary" Clicked="@context.NewCommand.Clicked">@context.NewCommand.LocalizationString</Button>
+                        <Button Color="Color.Primary" Clicked="@context.EditCommand.Clicked" Disabled="@(selectedBankAccount is null)">@context.EditCommand.LocalizationString</Button>
+                        <Button Color="Color.Danger" Clicked="@context.DeleteCommand.Clicked" Disabled="@(selectedBankAccount is null)">@context.DeleteCommand.LocalizationString</Button>
+                    </ButtonRowTemplate>
+                </DataGrid>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>
 
 @code {
-    protected override void OnInitialized()
+    private DataGridEditMode editMode = DataGridEditMode.Form;
+
+    private BankAccount? selectedBankAccount = null;
+
+    private List<BankAccount> inMemoryData = new()
     {
+        new() { Code = "CC", Name = "Compte Courant", Bank = "Crédit Agricole", Description = "Compte courant principal", Swift = "AGRIFRPP", IBAN = "FR761099765532109874552148", Url = "https://credit-agricole.fr", Balance = 1500.00m },
+        new() { Code = "PRO", Name = "Compte Pro", Bank = "Crédit Agricole", Description = "Compte professionel principal", Swift = "AGRIFRPP", IBAN = "FR761099765532109456557848", Url = "https://credit-agricole.fr", Balance = 25500.00m }
+    };
+    protected override async Task OnInitializedAsync()
+    {
+
         // NavState (breadcrumbs, etc) is Scoped, so it lives as long as our connection lives.
         // So when a new page is visited, we need to clear navigation to prevent breadcrumbs from bleed-over, etc.
         // This also makes the navbar invisible by default.
@@ -16,5 +70,9 @@
             new Node {Text = "BankBook", Link = "bankbook" },
             new Node {Text = "Accounts", Link = "bankbook/accounts" , Active = true}
         });
+
+        // Load accounts from API or database here
+
+        await base.OnInitializedAsync();
     }
 }
