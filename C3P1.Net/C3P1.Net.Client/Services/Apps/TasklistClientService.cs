@@ -1,4 +1,5 @@
-﻿using C3P1.Net.Client.Data.Apps.Tasklist;
+﻿using C3P1.Net.Shared.Data.Apps.Tasklist;
+using C3P1.Net.Shared.Services.Apps;
 using System.Net.Http.Json;
 
 namespace C3P1.Net.Client.Services.Apps

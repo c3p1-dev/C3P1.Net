@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="C3P1.Net/C3P1.Net.Client/C3P1.Net.Client.csproj" />
+  <Project Path="C3P1.Net/C3P1.Net.Shared/C3P1.Net.Shared.csproj" Id="257d4d62-db21-4a71-8469-3db73541e923" />
   <Project Path="C3P1.Net/C3P1.Net/C3P1.Net.csproj" />
 </Solution>

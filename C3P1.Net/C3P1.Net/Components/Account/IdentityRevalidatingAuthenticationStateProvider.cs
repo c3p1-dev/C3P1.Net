@@ -1,4 +1,4 @@
-using C3P1.Net.Client.Data;
+using C3P1.Net.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;

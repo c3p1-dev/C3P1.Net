@@ -1,7 +1,7 @@
 ﻿using Blazorise;
-using C3P1.Net.Client.Data;
-using C3P1.Net.Client.Data.Admin.UserManagement;
-using C3P1.Net.Client.Services.Admin;
+using C3P1.Net.Shared.Data;
+using C3P1.Net.Shared.Data.Admin.UserManagement;
+using C3P1.Net.Shared.Services.Admin;
 using Microsoft.AspNetCore.Components;
 
 namespace C3P1.Net.Client.Components.Admin.UserManagement
@@ -83,7 +83,7 @@ namespace C3P1.Net.Client.Components.Admin.UserManagement
 
             await InvokeAsync(StateHasChanged);
         }
-        protected async Task DeleteUser(AppUser user)
+        protected async Task DeleteUser(AppUserDto user)
         {
             if (await MessageService!.Confirm($"Are you sure you want to delete {user.Email} ?", "Confirmation"))
             {

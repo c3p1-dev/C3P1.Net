@@ -1,6 +1,6 @@
-﻿using C3P1.Net.Client.Data.Apps.BankBook;
+﻿using C3P1.Net.Shared.Data.Apps.BankBook;
 
-namespace C3P1.Net.Client.Services.Apps.BankBook
+namespace C3P1.Net.Shared.Services.Apps.BankBook
 {
     public interface IBankAccountService
     {

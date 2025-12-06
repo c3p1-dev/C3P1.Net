@@ -1,5 +1,5 @@
 ﻿
-using C3P1.Net.Client.Data;
+using C3P1.Net.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

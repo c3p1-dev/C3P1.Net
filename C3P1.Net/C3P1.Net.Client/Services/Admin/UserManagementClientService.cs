@@ -1,5 +1,6 @@
-﻿using C3P1.Net.Client.Data;
-using C3P1.Net.Client.Data.Admin.UserManagement;
+﻿using C3P1.Net.Shared.Data;
+using C3P1.Net.Shared.Data.Admin.UserManagement;
+using C3P1.Net.Shared.Services.Admin;
 using System.Net.Http.Json;
 
 namespace C3P1.Net.Client.Services.Admin
@@ -8,9 +9,9 @@ namespace C3P1.Net.Client.Services.Admin
     {
         private readonly HttpClient _httpClient = httpClient;
 
-        public async Task<List<AppUser>> GetUsersAsync()
+        public async Task<List<AppUserDto>> GetUsersAsync()
         {
-            var result = await _httpClient.GetFromJsonAsync<List<AppUser>>("api/admin/usermanagement/list/users");
+            var result = await _httpClient.GetFromJsonAsync<List<AppUserDto>>("api/admin/usermanagement/list/users");
 
             if (result != null)
             {
@@ -21,9 +22,9 @@ namespace C3P1.Net.Client.Services.Admin
                 return [];
             }
         }
-        public async Task<List<AppUser>> GetUsersInRoleAsync(string role)
+        public async Task<List<AppUserDto>> GetUsersInRoleAsync(string role)
         {
-            var result = await _httpClient.GetFromJsonAsync<List<AppUser>>("api/admin/usermanagement/list/inrole/" + role);
+            var result = await _httpClient.GetFromJsonAsync<List<AppUserDto>>("api/admin/usermanagement/list/inrole/" + role);
 
             if (result != null)
             {
@@ -48,9 +49,9 @@ namespace C3P1.Net.Client.Services.Admin
             }
         }
 
-        public async Task<List<string>> GetUserRolesAsync(AppUser user)
+        public async Task<List<string>> GetUserRolesAsync(AppUserDto user)
         {
-            var result = await _httpClient.PostAsJsonAsync<AppUser>("api/admin/usermanagement/user/roles", user);
+            var result = await _httpClient.PostAsJsonAsync<AppUserDto>("api/admin/usermanagement/user/roles", user);
             var roles = await result.Content.ReadFromJsonAsync<List<string>>();
 
             if (roles != null)
@@ -62,7 +63,7 @@ namespace C3P1.Net.Client.Services.Admin
                 return [];
             }
         }
-        public async Task<bool> IsInRoleAsync(AppUser user, string role)
+        public async Task<bool> IsInRoleAsync(AppUserDto user, string role)
         {
             RoleEditModel data = new() { UserId = Guid.Parse(user.Id), Role = role };
             var result = await _httpClient.PostAsJsonAsync("api/admin/usermanagement/user/inrole", data);
@@ -111,9 +112,9 @@ namespace C3P1.Net.Client.Services.Admin
             }
         }
 
-        public async Task<bool> DeleteUserAsync(AppUser user)
+        public async Task<bool> DeleteUserAsync(AppUserDto user)
         {
-            var result = await _httpClient.PostAsJsonAsync<AppUser>("api/admin/usermanagement/user/delete", user);
+            var result = await _httpClient.PostAsJsonAsync<AppUserDto>("api/admin/usermanagement/user/delete", user);
 
             var success = await result.Content.ReadAsStringAsync();
 

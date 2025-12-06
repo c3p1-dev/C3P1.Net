@@ -1,8 +1,8 @@
-﻿namespace C3P1.Net.Client.Data.Admin.UserManagement
+﻿namespace C3P1.Net.Shared.Data.Admin.UserManagement
 {
     public class AppUserWithRoles
     {
-        public AppUser? User { get; set; }
+        public AppUserDto? User { get; set; }
         public List<string>? Roles { get; set; }
         public bool IsAdmin()
         {

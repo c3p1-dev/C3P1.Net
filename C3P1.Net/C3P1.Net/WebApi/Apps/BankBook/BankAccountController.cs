@@ -1,7 +1,6 @@
-﻿using C3P1.Net.Client.Data;
-using C3P1.Net.Client.Data.Apps.BankBook;
-using C3P1.Net.Client.Services.Apps.BankBook;
-using C3P1.Net.Data;
+﻿using C3P1.Net.Data;
+using C3P1.Net.Shared.Data.Apps.BankBook;
+using C3P1.Net.Shared.Services.Apps.BankBook;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

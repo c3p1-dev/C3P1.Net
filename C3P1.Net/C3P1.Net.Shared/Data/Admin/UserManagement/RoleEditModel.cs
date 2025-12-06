@@ -1,4 +1,4 @@
-﻿namespace C3P1.Net.Client.Data.Admin.UserManagement
+﻿namespace C3P1.Net.Shared.Data.Admin.UserManagement
 {
     public class RoleEditModel
     {

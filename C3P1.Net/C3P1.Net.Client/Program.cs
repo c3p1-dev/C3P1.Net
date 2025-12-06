@@ -6,6 +6,9 @@ using C3P1.Net.Client.Services.Admin;
 using C3P1.Net.Client.Services.Apps;
 using C3P1.Net.Client.Services.Apps.BankBook;
 using C3P1.Net.Client.Services.Layout;
+using C3P1.Net.Shared.Services.Admin;
+using C3P1.Net.Shared.Services.Apps;
+using C3P1.Net.Shared.Services.Apps.BankBook;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 namespace C3P1.Net.Client

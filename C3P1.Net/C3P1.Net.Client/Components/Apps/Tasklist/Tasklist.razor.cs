@@ -1,6 +1,6 @@
 ﻿using Blazorise;
-using C3P1.Net.Client.Data.Apps.Tasklist;
-using C3P1.Net.Client.Services.Apps;
+using C3P1.Net.Shared.Data.Apps.Tasklist;
+using C3P1.Net.Shared.Services.Apps;
 using Microsoft.AspNetCore.Components;
 
 namespace C3P1.Net.Client.Components.Apps.Tasklist

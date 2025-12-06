@@ -1,5 +1,4 @@
-using C3P1.Net.Client.Data;
-using C3P1.Net.Client.Data.Apps.Tasklist;
+using C3P1.Net.Shared.Data.Apps.Tasklist;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

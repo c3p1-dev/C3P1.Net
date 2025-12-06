@@ -1,6 +1,6 @@
-﻿using C3P1.Net.Client.Data.Apps.Tasklist;
+﻿using C3P1.Net.Shared.Data.Apps.Tasklist;
 
-namespace C3P1.Net.Client.Services.Apps
+namespace C3P1.Net.Shared.Services.Apps
 {
     public interface ITasklistService
     {

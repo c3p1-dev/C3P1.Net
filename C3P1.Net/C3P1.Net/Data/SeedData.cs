@@ -1,5 +1,4 @@
-﻿using C3P1.Net.Client.Data;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace C3P1.Net.Data

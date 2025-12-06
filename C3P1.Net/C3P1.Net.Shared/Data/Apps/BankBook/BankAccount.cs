@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace C3P1.Net.Client.Data.Apps.BankBook
+namespace C3P1.Net.Shared.Data.Apps.BankBook
 {
     public class BankAccount
     {

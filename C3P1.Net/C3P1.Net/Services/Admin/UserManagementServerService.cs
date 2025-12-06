@@ -1,6 +1,6 @@
-﻿using C3P1.Net.Client.Data;
-using C3P1.Net.Client.Services.Admin;
-using C3P1.Net.Data;
+﻿using C3P1.Net.Data;
+using C3P1.Net.Shared.Data;
+using C3P1.Net.Shared.Services.Admin;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,21 +12,26 @@ namespace C3P1.Net.Services.Admin
         private readonly AppDbContext _context = context;
         private readonly UserManager<AppUser> _userManager = userManager;
 
-        public async Task<List<AppUser>> GetUsersAsync()
+        public async Task<List<AppUserDto>> GetUsersAsync()
         {
-            List<AppUser> users = await _userManager.Users.ToListAsync();
+            var result = await _userManager.Users.ToListAsync();
+            List<AppUserDto> users = [];
+            foreach (var item in result)
+            {
+                users.Add(ToDto(item));
+            }
 
             return users;
         }
-        public async Task<List<AppUser>> GetUsersInRoleAsync(string role)
+        public async Task<List<AppUserDto>> GetUsersInRoleAsync(string role)
         {
-            List<AppUser> result = [];
+            List<AppUserDto> result = [];
             foreach (var user in _userManager.Users)
             {
                 bool isInRole = await _userManager.IsInRoleAsync(user, role);
                 if (isInRole)
                 {
-                    result.Add(user);
+                    result.Add(ToDto(user));
                 }
             }
 
@@ -43,14 +48,14 @@ namespace C3P1.Net.Services.Admin
 
             return result;
         }
-        public async Task<List<string>> GetUserRolesAsync(AppUser user)
+        public async Task<List<string>> GetUserRolesAsync(AppUserDto user)
         {
-            var roles = (await _userManager.GetRolesAsync(user)).ToList();
+            var roles = (await _userManager.GetRolesAsync(FromDto(user))).ToList();
             return roles;
         }
-        public async Task<bool> IsInRoleAsync(AppUser user, string role)
+        public async Task<bool> IsInRoleAsync(AppUserDto user, string role)
         {
-            return await _userManager.IsInRoleAsync(user, role);
+            return await _userManager.IsInRoleAsync(FromDto(user), role);
         }
         public async Task<bool> AddToRoleAsync(Guid userId, string role)
         {
@@ -99,11 +104,35 @@ namespace C3P1.Net.Services.Admin
                 return false;
             }
         }
-        public async Task<bool> DeleteUserAsync(AppUser user)
+        public async Task<bool> DeleteUserAsync(AppUserDto user)
         {
-            var result = await _userManager.DeleteAsync(user);
+            var result = await _userManager.DeleteAsync(FromDto(user));
 
             return result.Succeeded;
+        }
+
+        private static AppUserDto ToDto(AppUser user)
+        {
+            if (user == null)
+                return null!;
+
+            return new AppUserDto
+            {
+                Id = user.Id,
+                UserName = user.UserName ?? "",
+                Email = user.Email ?? "",
+                EmailConfirmed = user.EmailConfirmed
+            };
+        }
+        private static AppUser FromDto(AppUserDto dto)
+        {
+            return new AppUser
+            {
+                Id = dto.Id,
+                UserName = dto.UserName,
+                Email = dto.Email,
+                EmailConfirmed = dto.EmailConfirmed
+            };
         }
     }
 }

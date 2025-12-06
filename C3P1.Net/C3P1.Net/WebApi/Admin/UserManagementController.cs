@@ -1,6 +1,6 @@
-﻿using C3P1.Net.Client.Data;
-using C3P1.Net.Client.Data.Admin.UserManagement;
-using C3P1.Net.Client.Services.Admin;
+﻿using C3P1.Net.Shared.Data;
+using C3P1.Net.Shared.Data.Admin.UserManagement;
+using C3P1.Net.Shared.Services.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +18,7 @@ namespace C3P1.Net.WebApi.Admin
         }
         // GET : api/admin/[controller]
         [HttpGet("list/users")]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsersAsync()
+        public async Task<ActionResult<IEnumerable<AppUserDto>>> GetUsersAsync()
         {
             var result = await _manageUserService.GetUsersAsync();
 
@@ -35,7 +35,7 @@ namespace C3P1.Net.WebApi.Admin
         // GET : api/admin/[controller]/list/inrole/{role}
         [HttpGet("list/inrole/{role}")]
         //public async Task<ActionResult<IEnumerable<TodoItem>>> GetUsersInRoleAsync(string role)
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsersInRoleAsync(string role)
+        public async Task<ActionResult<IEnumerable<AppUserDto>>> GetUsersInRoleAsync(string role)
         {
             var result = await _manageUserService.GetUsersInRoleAsync(role);
 
@@ -67,7 +67,7 @@ namespace C3P1.Net.WebApi.Admin
 
         // POST : api/admin/[controller]/user/roles
         [HttpPost("user/roles")]
-        public async Task<ActionResult<List<string>>> GetUserRolesAsync([FromBody] AppUser user)
+        public async Task<ActionResult<List<string>>> GetUserRolesAsync([FromBody] AppUserDto user)
         {
             var result = await _manageUserService.GetUserRolesAsync(user);
 
@@ -114,7 +114,7 @@ namespace C3P1.Net.WebApi.Admin
 
         // POST : api/admin/[controller]/user/delete
         [HttpPost("user/delete")]
-        public async Task<ActionResult<bool>> DeleteUserAsync([FromBody] AppUser user)
+        public async Task<ActionResult<bool>> DeleteUserAsync([FromBody] AppUserDto user)
         {
             bool result = await _manageUserService.DeleteUserAsync(user);
 

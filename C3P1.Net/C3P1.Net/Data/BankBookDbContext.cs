@@ -1,4 +1,4 @@
-﻿using C3P1.Net.Client.Data.Apps.BankBook;
+﻿using C3P1.Net.Shared.Data.Apps.BankBook;
 using Microsoft.EntityFrameworkCore;
 
 namespace C3P1.Net.Data

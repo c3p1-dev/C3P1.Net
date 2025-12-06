@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace C3P1.Net.Client.Data.Apps.Tasklist
+namespace C3P1.Net.Shared.Data.Apps.Tasklist
 {
     public class TodoItem
     {
