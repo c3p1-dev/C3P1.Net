@@ -15,6 +15,7 @@ using C3P1.Net.Shared.Services.Apps;
 using C3P1.Net.Shared.Services.Apps.BankBook;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -144,6 +145,13 @@ namespace C3P1.Net
 
 
             var app = builder.Build();
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor |
+                    ForwardedHeaders.XForwardedProto |
+                    ForwardedHeaders.XForwardedHost
+            });
 
             // My Middlewares
             app.UseMiddleware<DenyEmptyHost>();
