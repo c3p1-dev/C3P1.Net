@@ -1,0 +1,238 @@
+﻿@page "/apps/apiclient"
+@using System.Text
+@inject NavBreadcrumbService navBreadcrumb
+@inject HttpClient httpClient
+
+@attribute [Authorize]
+
+<PageTitle>C3P1.net/ApiClient</PageTitle>
+
+<CardDeck>
+    <Card>
+        <CardHeader>
+                <Div Display="Display.Flex">
+                    <Addons>
+                        <Addon AddonType="AddonType.Start">
+                            <AddonLabel>Api Url</AddonLabel>
+                        </Addon>
+                        <Addon AddonType="AddonType.Body">
+                            <TextEdit Size="Size.Medium" @bind-Text="_apiUrl"></TextEdit>
+                        </Addon>
+                    </Addons>
+                </Div>
+        </CardHeader>
+        <CardBody>
+            <Tabs SelectedTab="@_cardBodySelectedTab" SelectedTabChanged="OnSelectedCardBodyTabChanged">
+                <Items>
+                    <Tab Name="auth">Authorization</Tab>
+                    <Tab Name="body">Body</Tab>
+                </Items>
+                <Content>
+                    <TabPanel Name="auth">
+                        <Div Margin="Margin.Is2.FromTop">
+                            <Label>Authorization schema</Label>
+                            <Select TValue="AuthSchema" SelectedValueChanged="OnSelectedAuthSchemaChanged">
+                                <SelectItem Value="AuthSchema.None">None</SelectItem>
+                                <SelectItem Value="AuthSchema.BearerToken">Bearer token</SelectItem>
+                            </Select>
+                        </Div>
+                        @if (_authSchema == AuthSchema.BearerToken)
+                        {
+                            <Div Margin="Margin.Is1.FromTop">
+                                <Label>Token</Label>
+                                <TextEdit @bind-Text="_bearerToken"></TextEdit>
+                            </Div>
+                        }
+                    </TabPanel>
+                    <TabPanel Name="body">
+                        <Div Margin="Margin.Is2.FromTop">
+                            <Label>Request Body :</Label>
+                            <MemoEdit @bind-Text="_requestBody" />
+                        </Div>
+                    </TabPanel>
+                </Content>
+            </Tabs>
+        </CardBody>
+        <CardFooter TextAlignment="TextAlignment.Center">
+            <Buttons Size="Size.Small">
+                <Button Color="Color.Success" Clicked="RequestGet">GET</Button>
+                <Button Color="Color.Info" Clicked="RequestPost">POST</Button>
+                <Button Color="Color.Secondary" Clicked="RequestPut">PUT</Button>
+                <Button Color="Color.Warning" Clicked="RequestPatch">PATCH</Button>
+                <Button Color="Color.Danger" Clicked="RequestDelete">DELETE</Button>
+            </Buttons>
+        </CardFooter>
+    </Card>
+    <Card>
+        <CardHeader>
+            <Label>Response</Label>
+        </CardHeader>
+        <CardBody>
+            <MemoEdit @bind-Text="_response" ReadOnly="true" />
+        </CardBody>
+    </Card>
+</CardDeck>
+
+@code {
+    private string _apiUrl = "";
+    private string _response = "";
+    private string _requestBody = "";
+    private string _cardBodySelectedTab = "body";
+    private AuthSchema _authSchema = AuthSchema.None;
+    private string _bearerToken = "";
+
+    private enum AuthSchema
+    {
+        None,
+        BearerToken
+    }
+
+    protected override void OnInitialized()
+    {
+        // setup breadcrumbs
+        navBreadcrumb.SetBreadcrumbs(new List<Node>()
+        {
+            new Node(){Text = "Home", Link = "" },
+            new Node(){Text = "ApiClient", Link = "misc/apiclient", Active = true}
+        });
+
+        base.OnInitialized();
+    }
+
+    async Task RequestGet()
+    {
+        if (_authSchema == AuthSchema.None)
+        {
+            httpClient.DefaultRequestHeaders.Remove("Authorization");
+            httpClient.DefaultRequestHeaders.Add("Authorization", "None");
+        }
+        else if (_authSchema == AuthSchema.BearerToken)
+        {
+            httpClient.DefaultRequestHeaders.Remove("Authorization");
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_bearerToken}");
+        }
+
+        try
+        {
+            var result = await httpClient.GetAsync(_apiUrl);
+            _response = await result.Content.ReadAsStringAsync();
+        }
+        catch (Exception e)
+        {
+            _response = e.Message;
+        }
+    }
+
+    async Task RequestPost()
+    {
+        if (_authSchema == AuthSchema.None)
+        {
+            httpClient.DefaultRequestHeaders.Remove("Authorization");
+            httpClient.DefaultRequestHeaders.Add("Authorization", "None");
+        }
+        else if (_authSchema == AuthSchema.BearerToken)
+        {
+            httpClient.DefaultRequestHeaders.Remove("Authorization");
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_bearerToken}");
+        }
+
+        try
+        {
+            var content = new StringContent(_requestBody, Encoding.UTF8, "application/json");
+            var result = await httpClient.PostAsync(_apiUrl, content);
+            _response = await result.Content.ReadAsStringAsync();
+        }
+        catch (Exception e)
+        {
+            _response = e.Message;
+        }
+    }
+
+    async Task RequestPut()
+    {
+        if (_authSchema == AuthSchema.None)
+        {
+            httpClient.DefaultRequestHeaders.Remove("Authorization");
+            httpClient.DefaultRequestHeaders.Add("Authorization", "None");
+        }
+        else if (_authSchema == AuthSchema.BearerToken)
+        {
+            httpClient.DefaultRequestHeaders.Remove("Authorization");
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_bearerToken}");
+        }
+
+        try
+        {
+            var content = new StringContent(_requestBody, Encoding.UTF8, "application/json");
+            var result = await httpClient.PutAsync(_apiUrl, content);
+            _response = await result.Content.ReadAsStringAsync();
+        }
+        catch (Exception e)
+        {
+            _response = e.Message;
+        }
+    }
+
+    async Task RequestPatch()
+    {
+        if (_authSchema == AuthSchema.None)
+        {
+            httpClient.DefaultRequestHeaders.Remove("Authorization");
+            httpClient.DefaultRequestHeaders.Add("Authorization", "None");
+        }
+        else if (_authSchema == AuthSchema.BearerToken)
+        {
+            httpClient.DefaultRequestHeaders.Remove("Authorization");
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_bearerToken}");
+        }
+
+        try
+        {
+            var content = new StringContent(_requestBody, Encoding.UTF8, "application/json");
+            var result = await httpClient.PatchAsync(_apiUrl, content);
+            _response = await result.Content.ReadAsStringAsync();
+        }
+        catch (Exception e)
+        {
+            _response = e.Message;
+        }
+    }
+
+    async Task RequestDelete()
+    {
+        if (_authSchema == AuthSchema.None)
+        {
+            httpClient.DefaultRequestHeaders.Remove("Authorization");
+            httpClient.DefaultRequestHeaders.Add("Authorization", "None");
+        }
+        else if (_authSchema == AuthSchema.BearerToken)
+        {
+            httpClient.DefaultRequestHeaders.Remove("Authorization");
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_bearerToken}");
+        }
+
+        try
+        {
+            var result = await httpClient.DeleteAsync(_apiUrl);
+            _response = await result.Content.ReadAsStringAsync();
+        }
+        catch (Exception e)
+        {
+            _response = e.Message;
+        }
+    }
+
+    private Task OnSelectedCardBodyTabChanged(string name)
+    {
+        _cardBodySelectedTab = name;
+
+        return Task.CompletedTask;
+    }
+
+    private Task OnSelectedAuthSchemaChanged(AuthSchema auth)
+    {
+        _authSchema = auth;
+
+        return Task.CompletedTask;
+    }
+}

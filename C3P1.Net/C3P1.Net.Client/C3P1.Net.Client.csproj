@@ -1,40 +1,41 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
+		<StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
+		<BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+		<RunAOTCompilation>true</RunAOTCompilation>
+		<PublishTrimmed>true</PublishTrimmed>
+		<BlazorEnableCompression>true</BlazorEnableCompression>
+		<BlazorWebAssemblyEnableLinker>true</BlazorWebAssemblyEnableLinker>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<EmitSourceMapping>false</EmitSourceMapping>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
-    <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
-    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
-	<RunAOTCompilation>true</RunAOTCompilation>
-	<PublishTrimmed>true</PublishTrimmed>
-	<BlazorEnableCompression>true</BlazorEnableCompression>
-	<BlazorWebAssemblyEnableLinker>true</BlazorWebAssemblyEnableLinker>
-  </PropertyGroup>
+	<ItemGroup>
+	<Compile Remove="Components\BankBook\**" />
+	<Content Remove="Components\BankBook\**" />
+	<EmbeddedResource Remove="Components\BankBook\**" />
+	<None Remove="Components\BankBook\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Components\BankBook\**" />
-    <Content Remove="Components\BankBook\**" />
-    <EmbeddedResource Remove="Components\BankBook\**" />
-    <None Remove="Components\BankBook\**" />
-  </ItemGroup>
+	<ItemGroup>
+	<PackageReference Include="Blazorise.Bootstrap5" Version="1.8.7" />
+	<PackageReference Include="Blazorise.Charts" Version="1.8.7" />
+	<PackageReference Include="Blazorise.Components" Version="1.8.7" />
+	<PackageReference Include="Blazorise.DataGrid" Version="1.8.7" />
+	<PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.8.7" />
+	<PackageReference Include="Blazorise.QRCode" Version="1.8.7" />
+	<PackageReference Include="Blazorise.SpinKit" Version="1.8.7" />
+	<PackageReference Include="Blazr.RenderState.WASM" Version="1.0.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Blazorise.Bootstrap5" Version="1.8.7" />
-    <PackageReference Include="Blazorise.Charts" Version="1.8.7" />
-    <PackageReference Include="Blazorise.Components" Version="1.8.7" />
-    <PackageReference Include="Blazorise.DataGrid" Version="1.8.7" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.8.7" />
-    <PackageReference Include="Blazorise.QRCode" Version="1.8.7" />
-    <PackageReference Include="Blazorise.SpinKit" Version="1.8.7" />
-    <PackageReference Include="Blazr.RenderState.WASM" Version="1.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\C3P1.Net.Shared\C3P1.Net.Shared.csproj" />
-  </ItemGroup>
-
+	<ItemGroup>
+	<ProjectReference Include="..\C3P1.Net.Shared\C3P1.Net.Shared.csproj" />
+	</ItemGroup>
 </Project>
