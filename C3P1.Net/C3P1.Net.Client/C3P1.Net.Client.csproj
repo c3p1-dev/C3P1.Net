@@ -10,9 +10,7 @@
 		<PublishTrimmed>true</PublishTrimmed>
 		<BlazorEnableCompression>true</BlazorEnableCompression>
 		<BlazorWebAssemblyEnableLinker>true</BlazorWebAssemblyEnableLinker>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)'=='Release'">
-		<EmitSourceMapping>false</EmitSourceMapping>
+		<EmitSourceMapping>true</EmitSourceMapping>
 	</PropertyGroup>
 
 	<ItemGroup>
