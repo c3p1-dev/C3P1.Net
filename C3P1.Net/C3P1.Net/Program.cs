@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
@@ -176,6 +177,10 @@ namespace C3P1.Net
             // app.UseHttpsRedirection();
 
             app.UseAntiforgery();
+
+            if (!app.Environment.IsDevelopment())
+                app.UsePrecompressedStaticFiles();
+
             app.UseStaticFiles();
             app.MapStaticAssets();
 
