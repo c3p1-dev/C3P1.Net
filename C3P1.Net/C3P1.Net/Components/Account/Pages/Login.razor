@@ -130,13 +130,16 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
-            RedirectManager.RedirectTo(ReturnUrl);
+            RedirectManager.RedirectTo(NormalizeUrl(ReturnUrl));
         }
         else if (result.RequiresTwoFactor)
         {
             RedirectManager.RedirectTo(
                 "Account/LoginWith2fa",
-                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
+                new() { 
+                    ["returnUrl"] = NormalizeUrl(ReturnUrl), 
+                    ["rememberMe"] = Input.RememberMe 
+                });
         }
         else if (result.IsLockedOut)
         {
@@ -163,5 +166,21 @@
         public bool RememberMe { get; set; }
 
         public PasskeyInputModel? Passkey { get; set; }
+    }
+
+    private static string NormalizeUrl(string? url)
+    {
+        // keep only the path and query of the URL
+        if (url is not null)
+        {
+            if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
+                return uri.PathAndQuery;
+
+            return url;
+        }
+        else
+        {
+            return "/";
+        }
     }
 }
