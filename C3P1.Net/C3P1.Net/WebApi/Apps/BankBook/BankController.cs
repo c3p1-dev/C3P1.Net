@@ -11,11 +11,9 @@ namespace C3P1.Net.WebApi.Apps.BankBook
     [Authorize]
     [Route("api/apps/bankbook/[controller]")]
     [ApiController]
-    public class BankController(IBankAccountService bankAccountService, BankBookDbContext context, UserManager<AppUser> userManager) : ControllerBase
+    public class BankController(IBankAccountService bankAccountService, UserManager<AppUser> userManager) : ControllerBase
     {
-        private readonly IBankAccountService _bankAccountService = bankAccountService;
-        private readonly BankBookDbContext _context = context;
-        private readonly UserManager<AppUser> _userManager = userManager;
+
 
         // GET : api/apps/bankbook/[controller]
         [HttpGet]
@@ -23,7 +21,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
         {
             // get user id
             var name = User.Identity?.Name;
-            var user = await _userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
             if (user == null)
             {
                 // should not happen due to [Authorize] attribute
@@ -33,7 +31,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             var currentUserId = Guid.Parse(user.Id);
 
             // get all bank accounts for the current user
-            var result = await _bankAccountService.GetBankAccountsAsync(currentUserId);
+            var result = await bankAccountService.GetBankAccountsAsync(currentUserId);
 
             if (result == null)
                 return BadRequest();
@@ -48,7 +46,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
         {
             // get user id
             var name = User.Identity?.Name;
-            var user = await _userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
             if (user == null)
             {
                 // should not happen
@@ -57,7 +55,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
 
             var currentUserId = Guid.Parse(user.Id);
 
-            bool result = await _bankAccountService.AddBankAccountAsync(currentUserId, bankAccount);
+            bool result = await bankAccountService.AddBankAccountAsync(currentUserId, bankAccount);
 
             if (result)
                 return Ok(result);
@@ -71,7 +69,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
         {
             // get user id
             var name = User.Identity?.Name;
-            var user = await _userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
             if (user == null)
             {
                 // should not happen
