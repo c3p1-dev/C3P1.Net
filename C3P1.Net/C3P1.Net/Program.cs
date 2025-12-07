@@ -175,13 +175,14 @@ namespace C3P1.Net
             // Not needed with Apache or Nginx in front
             // app.UseHttpsRedirection();
 
-            app.UseAntiforgery();
+            app.UseStaticFiles();
+            app.MapStaticAssets();
 
             if (!app.Environment.IsDevelopment())
                 app.UsePrecompressedStaticFiles();
 
-            app.UseStaticFiles();
-            app.MapStaticAssets();
+            app.UseAntiforgery();
+
 
             // Map webapi controllers
             app.MapControllers();
