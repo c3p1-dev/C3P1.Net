@@ -6,5 +6,6 @@ namespace C3P1.Net.Shared.Services.Apps.BankBook
     {
         public Task<List<BankAccount>> GetBankAccountsAsync(Guid userId);
         public Task<bool> AddBankAccountAsync(Guid userId, BankAccount bankAccount);
+        public Task<bool> DeleteBankAccountAsync(Guid userId, Guid bankAccountId);
     }
 }

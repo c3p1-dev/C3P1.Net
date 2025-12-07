@@ -196,7 +196,7 @@ namespace C3P1.Net
             app.MapAdditionalIdentityEndpoints();
 
             // Manage 404
-            app.UseStatusCodePagesWithReExecute("/error/notfound", "?statusCode={0}");
+            app.UseStatusCodePagesWithReExecute("/error/notfound", "?statusCode={0}").UseAntiforgery();
 
             // Create and seed database on first run
             using IServiceScope scope = app.Services.CreateScope();

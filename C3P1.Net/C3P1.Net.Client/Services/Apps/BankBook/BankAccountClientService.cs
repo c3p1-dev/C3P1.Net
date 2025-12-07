@@ -9,13 +9,22 @@ namespace C3P1.Net.Client.Services.Apps.BankBook
         private readonly HttpClient _httpClient = httpClient;
         public async Task<List<BankAccount>> GetBankAccountsAsync(Guid userId)
         {
-            var result = await _httpClient.GetFromJsonAsync<List<BankAccount>>("api/apps/bankbook/bankaccount");
+            var result = await _httpClient.GetFromJsonAsync<List<BankAccount>>("api/apps/bankbook/bank");
 
             return result!;
         }
-        public Task<bool> AddBankAccountAsync(Guid userId, BankAccount bankAccount)
+        public async Task<bool> AddBankAccountAsync(Guid userId, BankAccount bankAccount)
         {
-            throw new NotImplementedException();
+            var result = await _httpClient.PostAsJsonAsync<BankAccount>("api/apps/bankbook/bank", bankAccount);
+
+            return result.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> DeleteBankAccountAsync(Guid userId, Guid bankAccountId)
+        {
+            var result = await _httpClient.DeleteAsync($"api/apps/bankbook/bank/delete/{bankAccountId}");
+
+            return result.IsSuccessStatusCode;
         }
     }
 }

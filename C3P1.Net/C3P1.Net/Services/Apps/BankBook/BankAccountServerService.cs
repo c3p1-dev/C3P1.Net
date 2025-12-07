@@ -27,5 +27,18 @@ namespace C3P1.Net.Services.Apps.BankBook
 
             return (recorded == 1);
         }
+
+        public async Task<bool> DeleteBankAccountAsync(Guid userId, Guid bankAccountId)
+        {
+            var bankAccount = await _context.BankAccounts
+                .FirstOrDefaultAsync(x => x.Id == bankAccountId && x.UserId == userId);
+            if (bankAccount != null)
+            {
+                _context.BankAccounts.Remove(bankAccount);
+                int recorded = await _context.SaveChangesAsync();
+                return (recorded == 1);
+            }
+            return false;
+        }
     }
 }

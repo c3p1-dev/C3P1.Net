@@ -11,7 +11,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
     [Authorize]
     [Route("api/apps/bankbook/[controller]")]
     [ApiController]
-    public class BankAccountController(IBankAccountService bankAccountService, BankBookDbContext context, UserManager<AppUser> userManager) : ControllerBase
+    public class BankController(IBankAccountService bankAccountService, BankBookDbContext context, UserManager<AppUser> userManager) : ControllerBase
     {
         private readonly IBankAccountService _bankAccountService = bankAccountService;
         private readonly BankBookDbContext _context = context;
@@ -63,6 +63,30 @@ namespace C3P1.Net.WebApi.Apps.BankBook
                 return Ok(result);
             else
                 return BadRequest();
+        }
+
+        // DELETE : api/apps/[controller]/{id}
+        [HttpDelete("{id:Guid}")]
+        public async Task<ActionResult<bool>> DeleteBankAccountAsync(Guid id)
+        {
+            // get user id
+            var name = User.Identity?.Name;
+            var user = await _userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                // should not happen
+                return Unauthorized();
+            }
+
+            var currentUserId = Guid.Parse(user.Id);
+
+            // delete task from id
+            var result = await bankAccountService.DeleteBankAccountAsync(currentUserId, id);
+
+            if (result)
+                return Ok(result);
+            else
+                return BadRequest(result);
         }
     }
 }

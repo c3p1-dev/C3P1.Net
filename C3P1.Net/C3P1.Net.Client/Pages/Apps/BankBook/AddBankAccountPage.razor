@@ -1,0 +1,144 @@
+﻿@page "/bankbook/bank/add"
+@using C3P1.Net.Shared.Data.Apps.BankBook
+@using C3P1.Net.Shared.Services.Apps.BankBook
+@using System.ComponentModel.DataAnnotations
+@layout Layouts.BankBookLayout
+
+@inject NavigationManager navManager;
+@inject NavBreadcrumbService navBreadcrumb;
+@inject IBankAccountService bankAccount;
+
+<PageTitle>BankBook / Add Bank Account</PageTitle>
+
+<Row>
+    <Column>
+        <Card >
+            <CardHeader>
+                <CardTitle>Add Bank Account</CardTitle>
+            </CardHeader>
+            <CardBody>
+                <Validations @ref="validations" Mode="ValidationMode.Manual" Model="@newBankAccount">
+                    <Validation>
+                        <Field>
+                            <FieldLabel RequiredIndicator>Account Code</FieldLabel>
+                            <FieldBody>
+                                <TextEdit Placeholder="CC" @bind-Text="newBankAccount!.Code">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel RequiredIndicator>Account Name</FieldLabel>
+                            <FieldBody>
+                                <TextEdit Placeholder="Account name" @bind-Text="newBankAccount!.Name">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel >Bank</FieldLabel>
+                            <FieldBody>
+                                <TextEdit Placeholder="My bank" @bind-Text="newBankAccount!.Bank">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel >Account Description</FieldLabel>
+                            <FieldBody>
+                                <TextEdit Placeholder="My account" @bind-Text="newBankAccount!.Description">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel >Account IBAN</FieldLabel>
+                            <FieldBody>
+                                <TextEdit Placeholder="FR76 ..." @bind-Text="newBankAccount!.IBAN">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel >BIC/SWIFT</FieldLabel>
+                            <FieldBody>
+                                <TextEdit Placeholder="AFRIFRPP" @bind-Text="newBankAccount!.Swift">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel>Website</FieldLabel>
+                            <FieldBody>
+                                <TextEdit Placeholder="https://" @bind-Text="newBankAccount!.Url" />
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Button Color="Color.Primary" Clicked="AddAccount">Add Account</Button>
+                </Validations>
+
+            </CardBody>
+        </Card>
+    </Column>
+</Row>
+
+@code{
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+
+    Validations? validations;
+    BankAccount? newBankAccount = new BankAccount();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // NavState (breadcrumbs, etc) is Scoped, so it lives as long as our connection lives.
+        // So when a new page is visited, we need to clear navigation to prevent breadcrumbs from bleed-over, etc.
+        // This also makes the navbar invisible by default.
+        navBreadcrumb.SetBreadcrumbs(new List<Node>()
+        {
+            new Node {Text = "Accounts", Link = "bankbook/bank"},
+            new Node {Text = "Add", Link = "bankbook/bank/add", Active = true}
+        });
+
+        // Load accounts from API or database here
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task AddAccount()
+    {
+        if (await validations!.ValidateAll())
+        {
+            // get user id
+            var user = (await authenticationStateTask).User;
+            var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+            if (await bankAccount.AddBankAccountAsync(currentUserId, newBankAccount!))
+                // navigate to bankbook/bank
+                navManager.NavigateTo("bankbook/bank");
+        }
+    }
+}
