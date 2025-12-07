@@ -181,6 +181,12 @@ namespace C3P1.Net
             if (!app.Environment.IsDevelopment())
                 app.UsePrecompressedStaticFiles();
 
+            app.MapGet("/account/blazorlogout", (SignInManager<AppUser> SignInManager, HttpContext context) =>
+            {
+                SignInManager.SignOutAsync().Wait();
+                context.Response.Redirect("/");
+            });
+
             app.UseAntiforgery();
 
 

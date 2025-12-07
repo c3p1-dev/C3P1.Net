@@ -48,15 +48,8 @@
                                 <BarIcon IconName="IconName.UserCircle" /> Identity
                             </BarDropdownToggle>
                             <BarDropdownMenu>
-                                <BarDropdownItem>
-                                    <Form action="account/logout" method="post">
-                                        <AntiforgeryToken />
-                                        <input type="hidden" name="returnUrl" value="" />
-                                        <Button Type="ButtonType.Submit" Padding="Padding.Is0.FromStart" TextColor="TextColor.Danger">
-                                            <BarIcon IconName="IconName.Eject" TextColor="TextColor.Danger" />
-                                            Logout
-                                        </Button>
-                                    </Form>
+                                <BarDropdownItem To="account/blazorlogout">
+                                    <BarIcon IconName="IconName.Eject" TextColor="TextColor.Danger" /> <Span TextColor="TextColor.Danger">Logout</Span>
                                 </BarDropdownItem>
                                 <BarDropdownItem To="account/manage">
                                     <BarIcon IconName="IconName.User" /> Account
