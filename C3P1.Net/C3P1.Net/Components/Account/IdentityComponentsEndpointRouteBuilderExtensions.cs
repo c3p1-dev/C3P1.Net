@@ -50,6 +50,12 @@ namespace C3P1.Net.Components.Account
                 return TypedResults.LocalRedirect($"~/{returnUrl}");
             });
 
+            accountGroup.MapGet("/BlazorLogout", (SignInManager<AppUser> SignInManager, HttpContext context) =>
+            {
+                SignInManager.SignOutAsync().Wait();
+                context.Response.Redirect("/");
+            });
+
             accountGroup.MapPost("/PasskeyCreationOptions", async (
                 HttpContext context,
                 [FromServices] UserManager<AppUser> userManager,

@@ -181,12 +181,6 @@ namespace C3P1.Net
             if (!app.Environment.IsDevelopment())
                 app.UsePrecompressedStaticFiles();
 
-            app.MapGet("/account/blazorlogout", (SignInManager<AppUser> SignInManager, HttpContext context) =>
-            {
-                SignInManager.SignOutAsync().Wait();
-                context.Response.Redirect("/");
-            });
-
             app.UseAntiforgery();
 
 
@@ -202,7 +196,7 @@ namespace C3P1.Net
             app.MapAdditionalIdentityEndpoints();
 
             // Manage 404
-            app.UseStatusCodePagesWithReExecute("/error/notfound", "?statusCode={0}").UseAntiforgery();
+            app.UseStatusCodePagesWithReExecute("/error/notfound", "?statusCode={0}");
 
             // Create and seed database on first run
             using IServiceScope scope = app.Services.CreateScope();

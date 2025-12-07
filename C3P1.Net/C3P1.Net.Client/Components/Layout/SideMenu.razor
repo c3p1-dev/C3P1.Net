@@ -1,4 +1,5 @@
 ﻿@rendermode InteractiveAuto
+@inject NavigationManager navManager
 
 <Bar Breakpoint="Breakpoint.Desktop" NavigationBreakpoint="Breakpoint.Tablet" ThemeContrast="ThemeContrast.Dark"
      Mode="BarMode.VerticalInline" CollapseMode="BarCollapseMode.Small">
@@ -48,9 +49,29 @@
                                 <BarIcon IconName="IconName.UserCircle" /> Identity
                             </BarDropdownToggle>
                             <BarDropdownMenu>
+                                @if (navManager.Uri.Contains("/account/"))
+                                {
+                                    <BarDropdownItem To="/">
+                                        @*
+                                        <AntiforgeryToken />
+                                        <Form action="account/logout" method="post">
+                                            
+                                            <input type="hidden" name="returnUrl" value="" />
+                                            <Button Type="ButtonType.Submit" Padding="Padding.Is0.FromStart" TextColor="TextColor.Danger">
+                                                <BarIcon IconName="IconName.Eject" TextColor="TextColor.Danger" />
+                                                Logout
+                                            </Button>
+                                        </Form>
+                                        *@
+                                        <BarIcon IconName="IconName.Eject" TextColor="TextColor.Danger" /> <Span TextColor="TextColor.Danger">Quit Identity</Span>
+                                    </BarDropdownItem>
+                                }
+                                else
+                                {
                                 <BarDropdownItem To="account/blazorlogout">
                                     <BarIcon IconName="IconName.Eject" TextColor="TextColor.Danger" /> <Span TextColor="TextColor.Danger">Logout</Span>
                                 </BarDropdownItem>
+                                }
                                 <BarDropdownItem To="account/manage">
                                     <BarIcon IconName="IconName.User" /> Account
                                 </BarDropdownItem>
