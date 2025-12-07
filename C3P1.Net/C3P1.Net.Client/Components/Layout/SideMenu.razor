@@ -49,7 +49,10 @@
                                 <BarIcon IconName="IconName.UserCircle" /> Identity
                             </BarDropdownToggle>
                             <BarDropdownMenu>
-                                @if (navManager.Uri.Contains("/account/"))
+                                <BarDropdownItem To="account/manage">
+                                    <BarIcon IconName="IconName.User" /> Account
+                                </BarDropdownItem>
+                                @if (navManager.Uri.Contains("/account") || navManager.Uri.Contains("/Account"))
                                 {
                                     <BarDropdownItem To="/">
                                         @*
@@ -68,13 +71,10 @@
                                 }
                                 else
                                 {
-                                <BarDropdownItem To="account/blazorlogout">
-                                    <BarIcon IconName="IconName.Eject" TextColor="TextColor.Danger" /> <Span TextColor="TextColor.Danger">Logout</Span>
-                                </BarDropdownItem>
+                                    <BarDropdownItem To="account/blazorlogout">
+                                        <BarIcon IconName="IconName.Eject" TextColor="TextColor.Danger" /> <Span TextColor="TextColor.Danger">Logout</Span>
+                                    </BarDropdownItem>
                                 }
-                                <BarDropdownItem To="account/manage">
-                                    <BarIcon IconName="IconName.User" /> Account
-                                </BarDropdownItem>
                             </BarDropdownMenu>
                         </BarDropdown>
                     </BarItem>
