@@ -1,11 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Primitives;
-using System.IO;
-using System.Threading.Tasks;
-
-namespace C3P1.Net.Middleware
+﻿namespace C3P1.Net.Middleware
 {
     public static class PrecompressedStaticFilesMiddlewareExtensions
     {

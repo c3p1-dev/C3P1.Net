@@ -10,7 +10,6 @@
 		<PublishTrimmed>true</PublishTrimmed>
 		<BlazorEnableCompression>true</BlazorEnableCompression>
 		<BlazorWebAssemblyEnableLinker>true</BlazorWebAssemblyEnableLinker>
-		<EmitSourceMapping>true</EmitSourceMapping>
 	</PropertyGroup>
 
 	<ItemGroup>

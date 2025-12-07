@@ -1,4 +1,4 @@
-﻿@page "/bankbook/accounts"
+﻿@page "/bankbook/bank"
 @using C3P1.Net.Shared.Data.Apps.BankBook
 @using System.Globalization
 @using C3P1.Net.Shared.Services.Apps.BankBook
@@ -66,7 +66,6 @@ else
         // This also makes the navbar invisible by default.
         navBreadcrumb.SetBreadcrumbs(new List<Node>()
         {
-            new Node {Text = "BankBook", Link = "bankbook" },
             new Node {Text = "Accounts", Link = "bankbook/accounts" , Active = true}
         });
 
