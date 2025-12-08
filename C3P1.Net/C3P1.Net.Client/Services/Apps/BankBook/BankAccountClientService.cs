@@ -22,7 +22,7 @@ namespace C3P1.Net.Client.Services.Apps.BankBook
 
         public async Task<bool> DeleteBankAccountAsync(Guid userId, Guid bankAccountId)
         {
-            var result = await _httpClient.DeleteAsync($"api/apps/bankbook/bank/delete/{bankAccountId}");
+            var result = await _httpClient.DeleteAsync($"api/apps/bankbook/bank/{bankAccountId}");
 
             return result.IsSuccessStatusCode;
         }
