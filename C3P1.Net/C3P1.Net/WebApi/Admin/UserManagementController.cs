@@ -9,13 +9,10 @@ namespace C3P1.Net.WebApi.Admin
     [Authorize(Roles = "Admin")]
     [Route("api/admin/[controller]")]
     [ApiController]
-    public class UserManagementController : ControllerBase
+    public class UserManagementController(IUserManagementService userManagementService) : ControllerBase
     {
-        private readonly IUserManagementService _manageUserService;
-        public UserManagementController(IUserManagementService userManagementService)
-        {
-            _manageUserService = userManagementService;
-        }
+        private readonly IUserManagementService _manageUserService = userManagementService;
+
         // GET : api/admin/[controller]
         [HttpGet("list/users")]
         public async Task<ActionResult<IEnumerable<AppUserDto>>> GetUsersAsync()
