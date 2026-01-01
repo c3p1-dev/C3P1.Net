@@ -40,5 +40,28 @@ namespace C3P1.Net.Services.Apps.BankBook
             }
             return false;
         }
+
+        public async Task<bool> UpdateBankAccountAsync(Guid userId, BankAccount bankAccount)
+        {
+            var existingBankAccount = await _context.BankAccounts
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == bankAccount.Id && x.UserId == userId);
+            if (existingBankAccount != null)
+            {
+                bankAccount.UserId = userId; // ensure the userId is not changed
+                _context.BankAccounts.Update(bankAccount);
+                int recorded = await _context.SaveChangesAsync();
+                return (recorded == 1);
+            }
+
+            return false;
+        }
+
+        public async Task<BankAccount?> GetBankAccountByIdAsync(Guid userId, Guid bankAccountId)
+        {
+            var result = await _context.BankAccounts
+                .FirstOrDefaultAsync(x => x.Id == bankAccountId && x.UserId == userId);
+            return result;
+        }
     }
 }

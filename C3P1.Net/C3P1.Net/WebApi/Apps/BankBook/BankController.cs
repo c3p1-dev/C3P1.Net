@@ -86,5 +86,45 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             else
                 return BadRequest(result);
         }
+
+        // GET : api/apps/bankbook/[controller]/{id}
+        [HttpGet("{id:Guid}")]
+        public async Task<ActionResult<BankAccount>> GetBankAccountByIdAsync(Guid id)
+        {
+            // get user id
+            var name = User.Identity?.Name;
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                // should not happen
+                return Unauthorized();
+            }
+            var currentUserId = Guid.Parse(user.Id);
+            var result = await bankAccountService.GetBankAccountByIdAsync(currentUserId, id);
+            if (result == null)
+                return NotFound();
+            else
+                return Ok(result);
+        }
+
+        // PUT : api/apps/bankbook/[controller]
+        [HttpPut]
+        public async Task<ActionResult<bool>> UpdateBankAccountAsync([FromBody] BankAccount bankAccount)
+        {
+            // get user id
+            var name = User.Identity?.Name;
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                // should not happen
+                return Unauthorized();
+            }
+            var currentUserId = Guid.Parse(user.Id);
+            bool result = await bankAccountService.UpdateBankAccountAsync(currentUserId, bankAccount);
+            if (result)
+                return Ok(result);
+            else
+                return BadRequest();
+        }
     }
 }

@@ -1,0 +1,172 @@
+﻿@page "/bankbook/bank/edit/{AccountId:guid}"
+@using C3P1.Net.Shared.Data.Apps.BankBook
+@using C3P1.Net.Shared.Services.Apps.BankBook
+@using System.ComponentModel.DataAnnotations
+@layout Layouts.BankBookLayout
+
+@inject NavigationManager navManager
+@inject NavBreadcrumbService navBreadcrumb
+@inject IBankAccountService bankAccount
+
+<PageTitle>BankBook / Edit Bank Account</PageTitle>
+
+<Row>
+    <Column>
+        <Card>
+            <CardHeader>
+                @if (editBankAccount is null)
+                {
+                    <CardTitle>Edit Bank Account</CardTitle>
+                }
+                else
+                {
+                    <CardTitle>Edit Bank Account "@editBankAccount.Name"</CardTitle>
+                }
+            </CardHeader>
+
+            <CardBody>
+                @if (editBankAccount is null)
+                {
+                    <Alert Color="Color.Danger">
+                        Bank account not found.
+                    </Alert>
+                }
+                else
+                {
+                    <Validations @ref="validations"
+                                 Mode="ValidationMode.Manual"
+                                 Model="@editBankAccount">
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel RequiredIndicator>Account Code</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit @bind-Text="editBankAccount.Code">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel RequiredIndicator>Account Name</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit @bind-Text="editBankAccount.Name">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel>Bank</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit @bind-Text="editBankAccount.Bank" />
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel>Description</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit @bind-Text="editBankAccount.Description" />
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel>IBAN</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit @bind-Text="editBankAccount.IBAN" />
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel>BIC / SWIFT</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit @bind-Text="editBankAccount.Swift" />
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel>Website</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit @bind-Text="editBankAccount.Url" />
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+
+                        <Button Color="Color.Primary" Clicked="SaveAccount">
+                            Save changes
+                        </Button>
+
+                        <Button Color="Color.Secondary"
+                                Clicked="@(() => navManager.NavigateTo("bankbook/bank"))">
+                            Cancel
+                        </Button>
+
+                    </Validations>
+                }
+            </CardBody>
+        </Card>
+    </Column>
+</Row>
+
+@code {
+    [Parameter]
+    public Guid AccountId { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+
+    private Validations? validations;
+    private BankAccount? editBankAccount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        navBreadcrumb.SetBreadcrumbs(new List<Node>
+        {
+            new Node { Text = "Accounts", Link = "bankbook/bank" },
+            new Node { Text = "Edit", Active = true }
+        });
+
+        var user = (await authenticationStateTask).User;
+        var currentUserId = Guid.Parse(
+            user.Claims.First(x => x.Type.EndsWith("nameidentifier")).Value);
+
+        editBankAccount = await bankAccount.GetBankAccountByIdAsync(
+            currentUserId,
+            AccountId);
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task SaveAccount()
+    {
+        if (!await validations!.ValidateAll())
+            return;
+
+        var user = (await authenticationStateTask).User;
+        var currentUserId = Guid.Parse(
+            user.Claims.First(x => x.Type.EndsWith("nameidentifier")).Value);
+
+        var success = await bankAccount.UpdateBankAccountAsync(
+            currentUserId,
+            editBankAccount!);
+
+        if (success)
+            navManager.NavigateTo("bankbook/bank");
+    }
+}

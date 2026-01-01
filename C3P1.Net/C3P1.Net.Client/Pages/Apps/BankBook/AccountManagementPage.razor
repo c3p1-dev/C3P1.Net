@@ -57,9 +57,11 @@ else
                         <CardText>
                             <Row>
                                 <Column>
-                                <Span>Selected Account: <strong>@selectedBankAccount.Name</strong> (Balance: @selectedBankAccount.Balance.ToString("C", new CultureInfo("fr-FR")))</Span>
+                                    <Div>Selected Account:</Div>
+                                    <Div> <strong>@selectedBankAccount.Name</strong> (Balance: @selectedBankAccount.Balance.ToString("C", new CultureInfo("fr-FR")))</Div>
                                 </Column>
                                 <Column TextAlignment="TextAlignment.End">
+                                    <Button Size="Size.Small" Color="Color.Primary" Clicked="EditSelectedAccount">Edit</Button>
                                     <Button Size="Size.Small" Color="Color.Danger" Clicked="DeleteSelectedAccount">Delete</Button>
                                 </Column>
                             </Row>
@@ -125,6 +127,13 @@ else
                 StateHasChanged();
             }
         }
+    }
 
+    private void EditSelectedAccount()
+    {
+        if (selectedBankAccount != null)
+        {
+            navManager.NavigateTo($"/bankbook/bank/edit/{selectedBankAccount.Id}");
+        }
     }
 }
