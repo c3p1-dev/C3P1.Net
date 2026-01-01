@@ -6,7 +6,7 @@ namespace C3P1.Net.Shared.Data.Apps.BankBook
     public class BankAccount
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
         [Required(ErrorMessage = "User ID must be defined")]
