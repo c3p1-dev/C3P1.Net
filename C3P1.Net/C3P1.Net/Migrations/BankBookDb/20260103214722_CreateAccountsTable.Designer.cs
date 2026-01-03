@@ -11,16 +11,16 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C3P1.Net.Migrations.BankBookDb
 {
     [DbContext(typeof(BankBookDbContext))]
-    [Migration("20251129225926_CreateBankAccountsTable")]
-    partial class CreateBankAccountsTable
+    [Migration("20260103214722_CreateAccountsTable")]
+    partial class CreateAccountsTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.0");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
 
-            modelBuilder.Entity("C3P1.Net.Client.Data.Apps.BankBook.BankAccount", b =>
+            modelBuilder.Entity("C3P1.Net.Shared.Data.Apps.BankBook.Account", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -72,7 +72,7 @@ namespace C3P1.Net.Migrations.BankBookDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("BankAccounts");
+                    b.ToTable("Accounts");
                 });
 #pragma warning restore 612, 618
         }

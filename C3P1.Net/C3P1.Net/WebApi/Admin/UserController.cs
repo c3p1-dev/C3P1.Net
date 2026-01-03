@@ -9,12 +9,12 @@ namespace C3P1.Net.WebApi.Admin
     [Authorize(Roles = "Admin")]
     [Route("api/admin/[controller]")]
     [ApiController]
-    public class UserManagementController(IUserManagementService userManagementService) : ControllerBase
+    public class UserController(IUserService userManagementService) : ControllerBase
     {
-        private readonly IUserManagementService _manageUserService = userManagementService;
+        private readonly IUserService _manageUserService = userManagementService;
 
         // GET : api/admin/[controller]
-        [HttpGet("list/users")]
+        [HttpGet("list")]
         public async Task<ActionResult<IEnumerable<AppUserDto>>> GetUsersAsync()
         {
             var result = await _manageUserService.GetUsersAsync();
@@ -63,7 +63,7 @@ namespace C3P1.Net.WebApi.Admin
         }
 
         // POST : api/admin/[controller]/user/roles
-        [HttpPost("user/roles")]
+        [HttpPost("roles")]
         public async Task<ActionResult<List<string>>> GetUserRolesAsync([FromBody] AppUserDto user)
         {
             var result = await _manageUserService.GetUserRolesAsync(user);
@@ -72,7 +72,7 @@ namespace C3P1.Net.WebApi.Admin
         }
 
         // POST : api/admin/[controller]/user/inrole/{role}
-        [HttpPost("user/inrole")]
+        [HttpPost("inrole")]
         public async Task<ActionResult<bool>> IsInRoleAsync([FromBody] RoleEditModel roleEditModel)
         {
             var user = (await _manageUserService.GetUsersAsync())
@@ -92,7 +92,7 @@ namespace C3P1.Net.WebApi.Admin
         }
 
         // POST : api/admin/[controller]/user/addrole/{role}
-        [HttpPost("user/addrole/")]
+        [HttpPost("addrole")]
         public async Task<ActionResult<bool>> AddToRoleAsync([FromBody] RoleEditModel roleEditModel)
         {
             bool result = await _manageUserService.AddToRoleAsync(roleEditModel.UserId, roleEditModel.Role!);
@@ -101,7 +101,7 @@ namespace C3P1.Net.WebApi.Admin
         }
 
         // POST : api/admin/[controller]/user/removerole/{role}
-        [HttpPost("user/removerole/")]
+        [HttpPost("removerole")]
         public async Task<ActionResult<bool>> RemoveFromRoleAsync([FromBody] RoleEditModel roleEditModel)
         {
             bool result = await _manageUserService.RemoveFromRoleAsync(roleEditModel.UserId, roleEditModel.Role!);
@@ -110,7 +110,7 @@ namespace C3P1.Net.WebApi.Admin
         }
 
         // POST : api/admin/[controller]/user/delete
-        [HttpPost("user/delete")]
+        [HttpPost("delete")]
         public async Task<ActionResult<bool>> DeleteUserAsync([FromBody] AppUserDto user)
         {
             bool result = await _manageUserService.DeleteUserAsync(user);

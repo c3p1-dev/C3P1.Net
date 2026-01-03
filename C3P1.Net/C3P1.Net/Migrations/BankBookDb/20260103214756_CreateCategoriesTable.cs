@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace C3P1.Net.Migrations.BankBookDb
 {
     /// <inheritdoc />
-    public partial class CreateCategoriesAndSubCategoriesTables : Migration
+    public partial class CreateCategoriesTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -49,9 +49,11 @@ namespace C3P1.Net.Client
             });
 
             // Add app services
-            builder.Services.AddTransient<IUserManagementService, UserManagementClientService>();
+            builder.Services.AddTransient<IUserService, UserClientService>();
             builder.Services.AddTransient<ITasklistService, TasklistClientService>();
-            builder.Services.AddTransient<IBankAccountService, BankAccountClientService>();
+            builder.Services.AddTransient<IAccountService, AccountClientService>();
+            builder.Services.AddTransient<ICategoryService, CategoryClientService>();
+            builder.Services.AddTransient<ISubCategoryService, SubCategoryClientService>();
 
             // Run the app
             await builder.Build().RunAsync();

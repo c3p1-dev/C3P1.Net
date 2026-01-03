@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace C3P1.Net.Services.Admin
 {
-    public class UserManagementServerService(AppDbContext context, UserManager<AppUser> userManager) : IUserManagementService
+    public class UserServerService(AppDbContext context, UserManager<AppUser> userManager) : IUserService
     {
 
         private readonly AppDbContext _context = context;

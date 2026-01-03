@@ -29,7 +29,7 @@ namespace C3P1.Net
         public static void Main(string[] args)
         {
             // Init SQLitePCLRaw_bundle_sqlite (= use system SQLite)
-            SQLitePCL.Batteries_V2.Init();
+            //SQLitePCL.Batteries_V2.Init();
 
             var builder = WebApplication.CreateBuilder(args);
 
@@ -139,9 +139,11 @@ namespace C3P1.Net
             builder.Services.AddHttpClient();
 
             // Add app services
-            builder.Services.AddTransient<IUserManagementService, UserManagementServerService>();
+            builder.Services.AddTransient<IUserService, UserServerService>();
             builder.Services.AddTransient<ITasklistService, TasklistServerService>();
-            builder.Services.AddTransient<IBankAccountService, BankAccountServerService>();
+            builder.Services.AddTransient<IAccountService, AccountServerService>();
+            builder.Services.AddTransient<ICategoryService, CategoryServerService>();
+            builder.Services.AddTransient<ISubCategoryService, SubCategoryServerService>();
 
 
             var app = builder.Build();

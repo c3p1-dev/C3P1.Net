@@ -1,4 +1,4 @@
-﻿@page "/bankbook/bank/add"
+﻿@page "/bankbook/account/add"
 @using C3P1.Net.Shared.Data.Apps.BankBook
 @using C3P1.Net.Shared.Services.Apps.BankBook
 @using System.ComponentModel.DataAnnotations
@@ -6,7 +6,7 @@
 
 @inject NavigationManager navManager;
 @inject NavBreadcrumbService navBreadcrumb;
-@inject IBankAccountService bankAccount;
+@inject IAccountService bankAccount;
 
 <PageTitle>BankBook / Add Bank Account</PageTitle>
 
@@ -99,7 +99,7 @@
                         </Field>
                     </Validation>
                     <Button Color="Color.Primary" Clicked="AddAccount">Add Account</Button>
-                    <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/bank"))">Cancel</Button>
+                    <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/account"))">Cancel</Button>
                 </Validations>
 
             </CardBody>
@@ -112,7 +112,7 @@
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
 
     Validations? validations;
-    BankAccount? newBankAccount = new BankAccount();
+    Account? newBankAccount = new Account();
 
     protected override async Task OnInitializedAsync()
     {
@@ -121,8 +121,8 @@
         // This also makes the navbar invisible by default.
         navBreadcrumb.SetBreadcrumbs(new List<Node>()
         {
-            new Node {Text = "Accounts", Link = "bankbook/bank"},
-            new Node {Text = "Add", Link = "bankbook/bank/add", Active = true}
+            new Node {Text = "Accounts", Link = "bankbook/account"},
+            new Node {Text = "Add", Link = "bankbook/account/add", Active = true}
         });
 
         // Load accounts from API or database here
@@ -137,9 +137,9 @@
             // get user id
             var user = (await authenticationStateTask).User;
             var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
-            if (await bankAccount.AddBankAccountAsync(currentUserId, newBankAccount!))
+            if (await bankAccount.AddAccountAsync(currentUserId, newBankAccount!))
                 // navigate to bankbook/bank
-                navManager.NavigateTo("bankbook/bank");
+                navManager.NavigateTo("bankbook/account");
         }
     }
 }

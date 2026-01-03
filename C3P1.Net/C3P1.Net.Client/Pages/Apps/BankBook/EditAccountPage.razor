@@ -1,4 +1,4 @@
-﻿@page "/bankbook/bank/edit/{AccountId:guid}"
+﻿@page "/bankbook/account/edit/{AccountId:guid}"
 @using C3P1.Net.Shared.Data.Apps.BankBook
 @using C3P1.Net.Shared.Services.Apps.BankBook
 @using System.ComponentModel.DataAnnotations
@@ -6,7 +6,7 @@
 
 @inject NavigationManager navManager
 @inject NavBreadcrumbService navBreadcrumb
-@inject IBankAccountService bankAccount
+@inject IAccountService bankAccount
 
 <PageTitle>BankBook / Edit Bank Account</PageTitle>
 
@@ -113,7 +113,7 @@
                         </Button>
 
                         <Button Color="Color.Secondary"
-                                Clicked="@(() => navManager.NavigateTo("bankbook/bank"))">
+                                Clicked="@(() => navManager.NavigateTo("bankbook/account"))">
                             Cancel
                         </Button>
 
@@ -132,13 +132,13 @@
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
 
     private Validations? validations;
-    private BankAccount? editBankAccount;
+    private Account? editBankAccount;
 
     protected override async Task OnInitializedAsync()
     {
         navBreadcrumb.SetBreadcrumbs(new List<Node>
         {
-            new Node { Text = "Accounts", Link = "bankbook/bank" },
+            new Node { Text = "Accounts", Link = "bankbook/account" },
             new Node { Text = "Edit", Active = true }
         });
 
@@ -146,7 +146,7 @@
         var currentUserId = Guid.Parse(
             user.Claims.First(x => x.Type.EndsWith("nameidentifier")).Value);
 
-        editBankAccount = await bankAccount.GetBankAccountByIdAsync(
+        editBankAccount = await bankAccount.GetAccountByIdAsync(
             currentUserId,
             AccountId);
 
@@ -162,11 +162,11 @@
         var currentUserId = Guid.Parse(
             user.Claims.First(x => x.Type.EndsWith("nameidentifier")).Value);
 
-        var success = await bankAccount.UpdateBankAccountAsync(
+        var success = await bankAccount.UpdateAccountAsync(
             currentUserId,
             editBankAccount!);
 
         if (success)
-            navManager.NavigateTo("bankbook/bank");
+            navManager.NavigateTo("bankbook/account");
     }
 }

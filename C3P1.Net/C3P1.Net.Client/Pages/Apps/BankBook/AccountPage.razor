@@ -1,4 +1,4 @@
-﻿@page "/bankbook/bank"
+﻿@page "/bankbook/account"
 @using C3P1.Net.Shared.Data.Apps.BankBook
 @using System.Globalization
 @using C3P1.Net.Shared.Services.Apps.BankBook
@@ -6,7 +6,7 @@
 
 @inject NavigationManager navManager
 @inject NavBreadcrumbService navBreadcrumb
-@inject IBankAccountService bankAccount
+@inject IAccountService bankAccount
 
 <PageTitle>BankBook / Bank accounts</PageTitle>
 
@@ -18,7 +18,7 @@ else if (inMemoryData.Count == 0)
 {
     <Paragraph><em>No bank accounts found.</em></Paragraph>
     <Paragraph>
-        <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/bank/add"))">
+        <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/account/add"))">
             <Icon Name="IconName.Add" /> Add Account
         </Button>
     </Paragraph>
@@ -35,19 +35,19 @@ else
                            <Span>Bank Accounts</Span>
                         </Column>
                         <Column TextAlignment="TextAlignment.End">
-                            <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/bank/add"))">
+                            <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/account/add"))">
                                 <Icon Name="IconName.Add" /> Add Account
                             </Button>
                         </Column>
                     </Row>
                 </CardHeader>
                 <CardBody>
-                    <DataGrid TItem="BankAccount" Data="inMemoryData" Responsive ShowPageSizes @bind-SelectedRow="@selectedBankAccount" Hoverable>
+                    <DataGrid TItem="Account" Data="inMemoryData" Responsive ShowPageSizes @bind-SelectedRow="@selectedBankAccount" Hoverable>
                         <DataGridColumns>
-                            <DataGridColumn TextAlignment="TextAlignment.Center" TItem="BankAccount" Field="@nameof(BankAccount.Code)" Caption="#" Width="60px" Sortable/>
-                            <DataGridColumn TItem="BankAccount" Field="@nameof(BankAccount.Name)" Caption="Name" />
-                            <DataGridColumn TItem="BankAccount" Field="@nameof(BankAccount.Bank)" Caption="Bank" />
-                            <DataGridColumn TItem="BankAccount" Field="@nameof(BankAccount.Balance)" Caption="Balance" />
+                            <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Account" Field="@nameof(Account.Code)" Caption="#" Width="60px" Sortable/>
+                            <DataGridColumn TItem="Account" Field="@nameof(Account.Name)" Caption="Name" />
+                            <DataGridColumn TItem="Account" Field="@nameof(Account.Bank)" Caption="Bank" />
+                            <DataGridColumn TItem="Account" Field="@nameof(Account.Balance)" Caption="Balance" />
                         </DataGridColumns>
                     </DataGrid>
                 </CardBody>
@@ -82,8 +82,8 @@ else
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
-    private BankAccount? selectedBankAccount = null;
-    private List<BankAccount>? inMemoryData = null;
+    private Account? selectedBankAccount = null;
+    private List<Account>? inMemoryData = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -93,7 +93,7 @@ else
         // This also makes the navbar invisible by default.
         navBreadcrumb.SetBreadcrumbs(new List<Node>()
         {
-            new Node {Text = "Accounts", Link = "bankbook/bank" , Active = true}
+            new Node {Text = "Accounts", Link = "bankbook/account" , Active = true}
         });
 
         // Load accounts from API or database here
@@ -109,7 +109,7 @@ else
         var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
 
         // load accounts from API or database
-        inMemoryData = await bankAccount.GetBankAccountsAsync(currentUserId);
+        inMemoryData = await bankAccount.GetAccountsAsync(currentUserId);
     }
 
     private async Task DeleteSelectedAccount()
@@ -119,7 +119,7 @@ else
             // get user id
             var user = (await authenticationStateTask).User;
             var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
-            var success = await bankAccount.DeleteBankAccountAsync(currentUserId, selectedBankAccount.Id);
+            var success = await bankAccount.DeleteAccountAsync(currentUserId, selectedBankAccount.Id);
             if (success)
             {
                 await LoadData();
@@ -133,7 +133,7 @@ else
     {
         if (selectedBankAccount != null)
         {
-            navManager.NavigateTo($"/bankbook/bank/edit/{selectedBankAccount.Id}");
+            navManager.NavigateTo($"/bankbook/account/edit/{selectedBankAccount.Id}");
         }
     }
 }

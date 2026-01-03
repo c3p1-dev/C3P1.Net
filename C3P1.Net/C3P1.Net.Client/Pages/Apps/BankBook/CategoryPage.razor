@@ -1,0 +1,203 @@
+﻿@page "/bankbook/category"
+@using C3P1.Net.Shared.Data.Apps.BankBook
+@using C3P1.Net.Shared.Services.Apps.BankBook
+@using Blazorise
+@using Blazorise.DataGrid
+@layout Layouts.BankBookLayout
+
+@inject NavigationManager navManager
+@inject NavBreadcrumbService navBreadcrumb
+@inject ICategoryService CategoryService
+@inject ISubCategoryService SubCategoryService
+
+<PageTitle>BankBook / Categories</PageTitle>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is4">
+        <Card class="mb-4">
+            <CardHeader>
+                <CardTitle>Category</CardTitle>
+            </CardHeader>
+            <CardBody>
+                <Validations @ref="categoryValidations" Mode="ValidationMode.Manual" Model="CurrentCategory">
+                    <Field>
+                        <Label>Code</Label>
+                        <TextEdit @bind-Text="CurrentCategory.Code" />
+                    </Field>
+                    <Field>
+                        <Label>Nom</Label>
+                        <TextEdit @bind-Text="CurrentCategory.Name" />
+                    </Field>
+                    <Field>
+                        <Label>Description</Label>
+                        <TextEdit @bind-Text="CurrentCategory.Description" />
+                    </Field>
+                    <Buttons>
+                        <Button Color="Color.Primary" Clicked="SaveCategory">Enregistrer</Button>
+                        <Button Color="Color.Secondary" Clicked="ResetCategory">Nouveau</Button>
+                    </Buttons>
+                </Validations>
+            </CardBody>
+        </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Subcategory</CardTitle>
+            </CardHeader>
+            <CardBody>
+                <Validations @ref="subCategoryValidations" Mode="ValidationMode.Manual" Model="CurrentSubCategory">
+                    <Field>
+                        <Label>Catégorie parente</Label>
+                        <Select TValue="Guid" @bind-SelectedValue="CurrentSubCategory.Category">
+                            @foreach (var cat in Categories)
+                            {
+                                <SelectItem Value="@cat.Id">@cat.Code - @cat.Name</SelectItem>
+                            }
+                        </Select>
+                    </Field>
+                    <Field>
+                        <Label>Code</Label>
+                        <TextEdit @bind-Text="CurrentSubCategory.Code" />
+                    </Field>
+                    <Field>
+                        <Label>Nom</Label>
+                        <TextEdit @bind-Text="CurrentSubCategory.Name" />
+                    </Field>
+                    <Field>
+                        <Label>Description</Label>
+                        <TextEdit @bind-Text="CurrentSubCategory.Description" />
+                    </Field>
+                    <Buttons>
+                        <Button Color="Color.Primary" Clicked="SaveSubCategory">Enregistrer</Button>
+                        <Button Color="Color.Secondary" Clicked="ResetSubCategory">Nouveau</Button>
+                    </Buttons>
+                </Validations>
+            </CardBody>
+        </Card>
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is8">
+        <Card class="mb-4">
+            <CardHeader>
+                <CardTitle>Categories</CardTitle>
+            </CardHeader>
+            <CardBody>
+                <DataGrid Data="Categories" TItem="Category" Hoverable Responsive RowClicked="OnCategoryRowClicked">
+                    <DataGridColumns>
+                        <DataGridColumn TItem="Category" Field="Code" Caption="Code" />
+                        <DataGridColumn TItem="Category" Field="Name" Caption="Nom" />
+                        <DataGridCommandColumn TItem="Category">
+                                <Button Color="Color.Danger">
+                                    Delete
+                                </Button>
+                        </DataGridCommandColumn>
+                    </DataGridColumns>
+                </DataGrid>
+            </CardBody>
+        </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Subcategories</CardTitle>
+            </CardHeader>
+            <CardBody>
+                <DataGrid Data="FilteredSubCategories" TItem="SubCategory" Hoverable Responsive RowClicked="OnSubCategoryRowClicked">
+                    <DataGridColumns>
+                        <DataGridColumn TItem="SubCategory" Field="Code" Caption="Code" />
+                        <DataGridColumn TItem="SubCategory" Field="Name" Caption="Nom" />
+                        <DataGridCommandColumn TItem="SubCategory">
+                                <Button Color="Color.Danger">
+                                    Delete
+                                </Button>
+                        </DataGridCommandColumn>
+                    </DataGridColumns>
+                </DataGrid>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>
+
+@code {
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+
+    Validations? categoryValidations;
+    Validations? subCategoryValidations;
+
+    List<Category> Categories = new();
+    List<SubCategory> SubCategories = new();
+
+    Category CurrentCategory = new();
+    SubCategory CurrentSubCategory = new();
+
+    IEnumerable<SubCategory> FilteredSubCategories =>
+        CurrentCategory.Id == Guid.Empty
+            ? Enumerable.Empty<SubCategory>()
+            : SubCategories.Where(s => s.Category == CurrentCategory.Id);
+
+    private Guid UserId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await authenticationStateTask).User;
+        UserId = Guid.Parse(user.Claims.First(x => x.Type.EndsWith("nameidentifier")).Value);
+
+        Categories = await CategoryService.GetCategoriesAsync(UserId);
+        SubCategories = await SubCategoryService.GetSubCategoriesAsync(UserId);
+
+        ResetCategory();
+        ResetSubCategory();
+
+        navBreadcrumb.SetBreadcrumbs(new List<Node>()
+        {
+            new Node { Text = "Category", Active = true }
+        });
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task SaveCategory()
+    {
+        if (await categoryValidations!.ValidateAll())
+        {
+            if (CurrentCategory.Id == Guid.Empty)
+                await CategoryService.AddCategoryAsync(UserId, CurrentCategory);
+            else
+                await CategoryService.UpdateCategoryAsync(UserId, CurrentCategory);
+
+            Categories = await CategoryService.GetCategoriesAsync(UserId);
+            ResetCategory();
+        }
+    }
+
+    private async Task SaveSubCategory()
+    {
+        if (await subCategoryValidations!.ValidateAll())
+        {
+            if (CurrentSubCategory.Id == Guid.Empty)
+                await SubCategoryService.AddSubCategoryAsync(UserId, CurrentSubCategory);
+            else
+                await SubCategoryService.UpdateSubCategoryAsync(UserId, CurrentSubCategory);
+
+            SubCategories = await SubCategoryService.GetSubCategoriesAsync(UserId);
+            ResetSubCategory();
+        }
+    }
+
+    private void ResetCategory() => CurrentCategory = new Category { UserId = UserId };
+    private void ResetSubCategory() => CurrentSubCategory = new SubCategory { UserId = UserId };
+
+    private void OnCategoryRowClicked(DataGridRowMouseEventArgs<Category> e) => CurrentCategory = e.Item;
+    private void OnSubCategoryRowClicked(DataGridRowMouseEventArgs<SubCategory> e) => CurrentSubCategory = e.Item;
+
+    private async Task DeleteCategory(Guid id)
+    {
+        await CategoryService.DeleteCategoryAsync(UserId, id);
+        Categories = await CategoryService.GetCategoriesAsync(UserId);
+    }
+
+    private async Task DeleteSubCategory(Guid id)
+    {
+        await SubCategoryService.DeleteSubCategoryAsync(UserId, id);
+        SubCategories = await SubCategoryService.GetSubCategoriesAsync(UserId);
+    }
+}

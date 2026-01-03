@@ -11,19 +11,15 @@ namespace C3P1.Net.WebApi.Apps
     [Authorize]
     [Route("api/apps/[controller]")]
     [ApiController]
-    public class TasklistController(ITasklistService tasklistService, AppDbContext context, UserManager<AppUser> userManager) : ControllerBase
+    public class TasklistController(ITasklistService tasklistService, UserManager<AppUser> userManager) : ControllerBase
     {
-        private readonly ITasklistService _tasklistService = tasklistService;
-        private readonly AppDbContext _context = context;
-        private readonly UserManager<AppUser> _userManager = userManager;
-
         // GET : api/apps/[controller]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItem>>> GetTasklistAsync()
         {
             // get user id
             var name = User.Identity?.Name;
-            var user = await _userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
             if (user == null)
             {
                 // should not happen due to [Authorize] attribute
@@ -33,7 +29,7 @@ namespace C3P1.Net.WebApi.Apps
             var currentUserId = Guid.Parse(user.Id);
 
             // get all tasks from current user
-            var result = await _tasklistService.GetTasklistAsync(currentUserId);
+            var result = await tasklistService.GetTasklistAsync(currentUserId);
 
             if (result == null)
                 return BadRequest();
@@ -47,7 +43,7 @@ namespace C3P1.Net.WebApi.Apps
         {
             // get user id
             var name = User.Identity?.Name;
-            var user = await _userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
             if (user == null)
             {
                 // should not happen
@@ -57,7 +53,7 @@ namespace C3P1.Net.WebApi.Apps
             var currentUserId = Guid.Parse(user.Id);
 
             // get all tasks from current user
-            var result = await _tasklistService.GetTasklistTodoAsync(currentUserId);
+            var result = await tasklistService.GetTasklistTodoAsync(currentUserId);
 
             if (result == null)
                 return BadRequest();
@@ -71,7 +67,7 @@ namespace C3P1.Net.WebApi.Apps
         {
             // get user id
             var name = User.Identity?.Name;
-            var user = await _userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
             if (user == null)
             {
                 // should not happen
@@ -81,7 +77,7 @@ namespace C3P1.Net.WebApi.Apps
             var currentUserId = Guid.Parse(user.Id);
 
             // get all tasks from current user
-            var result = await _tasklistService.GetTasklistDoneAsync(currentUserId);
+            var result = await tasklistService.GetTasklistDoneAsync(currentUserId);
 
             if (result == null)
                 return BadRequest();
@@ -96,7 +92,7 @@ namespace C3P1.Net.WebApi.Apps
         {
             // get user id
             var name = User.Identity?.Name;
-            var user = await _userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
             if (user == null)
             {
                 // should not happen
@@ -106,7 +102,7 @@ namespace C3P1.Net.WebApi.Apps
             var currentUserId = Guid.Parse(user.Id);
 
             // add a task
-            bool result = await _tasklistService.AddTaskAsync(currentUserId, task);
+            bool result = await tasklistService.AddTaskAsync(currentUserId, task);
 
             if (result)
                 return Ok(result);
@@ -120,7 +116,7 @@ namespace C3P1.Net.WebApi.Apps
         {
             // get user id
             var name = User.Identity?.Name;
-            var user = await _userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
             if (user == null)
             {
                 // should not happen
@@ -130,7 +126,7 @@ namespace C3P1.Net.WebApi.Apps
             var currentUserId = Guid.Parse(user.Id);
 
             // delete task from id
-            var result = await _tasklistService.DeleteTaskAsync(currentUserId, id);
+            var result = await tasklistService.DeleteTaskAsync(currentUserId, id);
 
             if (result)
                 return Ok(result);
@@ -144,7 +140,7 @@ namespace C3P1.Net.WebApi.Apps
         public async Task<ActionResult<bool>> UpdateTaskAsync([FromBody] TodoItem task)
         {
             // update task
-            var result = await _tasklistService.UpdateTaskAsync(task);
+            var result = await tasklistService.UpdateTaskAsync(task);
 
             if (result)
                 return Ok(result);
@@ -158,7 +154,7 @@ namespace C3P1.Net.WebApi.Apps
         {
             // get user id
             var name = User.Identity?.Name;
-            var user = await _userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
             if (user == null)
             {
                 // should not happen
@@ -168,7 +164,7 @@ namespace C3P1.Net.WebApi.Apps
             var currentUserId = Guid.Parse(user.Id);
 
             // delete done tasks
-            var result = await _tasklistService.DeleteTasklistDoneAsync(currentUserId);
+            var result = await tasklistService.DeleteTasklistDoneAsync(currentUserId);
 
             if (result == null)
                 return BadRequest();
@@ -182,7 +178,7 @@ namespace C3P1.Net.WebApi.Apps
         {
             // get user id
             var name = User.Identity?.Name;
-            var user = await _userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
             if (user == null)
             {
                 // should not happen
@@ -192,7 +188,7 @@ namespace C3P1.Net.WebApi.Apps
             var currentUserId = Guid.Parse(user.Id);
 
             // mark all todo as done
-            var result = await _tasklistService.MarkTasklistAsDoneAsync(currentUserId);
+            var result = await tasklistService.MarkTasklistAsDoneAsync(currentUserId);
 
             if (result == null)
                 return BadRequest();

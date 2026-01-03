@@ -17,7 +17,7 @@ namespace C3P1.Net.Migrations.BankBookDb
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
 
-            modelBuilder.Entity("C3P1.Net.Shared.Data.Apps.BankBook.BankAccount", b =>
+            modelBuilder.Entity("C3P1.Net.Shared.Data.Apps.BankBook.Account", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -69,7 +69,7 @@ namespace C3P1.Net.Migrations.BankBookDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("BankAccounts");
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("C3P1.Net.Shared.Data.Apps.BankBook.Category", b =>

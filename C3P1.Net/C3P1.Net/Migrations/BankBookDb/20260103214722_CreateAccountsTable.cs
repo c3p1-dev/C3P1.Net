@@ -5,13 +5,13 @@
 namespace C3P1.Net.Migrations.BankBookDb
 {
     /// <inheritdoc />
-    public partial class CreateBankAccountsTable : Migration
+    public partial class CreateAccountsTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "BankAccounts",
+                name: "Accounts",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -28,7 +28,7 @@ namespace C3P1.Net.Migrations.BankBookDb
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BankAccounts", x => x.Id);
+                    table.PrimaryKey("PK_Accounts", x => x.Id);
                 });
         }
 
@@ -36,7 +36,7 @@ namespace C3P1.Net.Migrations.BankBookDb
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BankAccounts");
+                name: "Accounts");
         }
     }
 }

@@ -26,7 +26,7 @@ namespace C3P1.Net.Client.Components.Admin.UserManagement
         }
 
         [Inject]
-        IUserManagementService? UserManagementService { get; set; }
+        IUserService? UserManagementService { get; set; }
         [Inject]
         IMessageService? MessageService { get; set; }
 

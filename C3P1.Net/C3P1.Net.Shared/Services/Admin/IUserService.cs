@@ -2,7 +2,7 @@
 
 namespace C3P1.Net.Shared.Services.Admin
 {
-    public interface IUserManagementService
+    public interface IUserService
     {
         public Task<List<AppUserDto>> GetUsersAsync();
         public Task<List<AppUserDto>> GetUsersInRoleAsync(string role);

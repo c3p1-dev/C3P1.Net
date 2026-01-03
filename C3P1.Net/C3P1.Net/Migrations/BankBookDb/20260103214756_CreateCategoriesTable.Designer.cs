@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C3P1.Net.Migrations.BankBookDb
 {
     [DbContext(typeof(BankBookDbContext))]
-    [Migration("20260101221947_CreateCategoriesAndSubCategoriesTables")]
-    partial class CreateCategoriesAndSubCategoriesTables
+    [Migration("20260103214756_CreateCategoriesTable")]
+    partial class CreateCategoriesTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,7 @@ namespace C3P1.Net.Migrations.BankBookDb
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
 
-            modelBuilder.Entity("C3P1.Net.Shared.Data.Apps.BankBook.BankAccount", b =>
+            modelBuilder.Entity("C3P1.Net.Shared.Data.Apps.BankBook.Account", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -72,7 +72,7 @@ namespace C3P1.Net.Migrations.BankBookDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("BankAccounts");
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("C3P1.Net.Shared.Data.Apps.BankBook.Category", b =>
