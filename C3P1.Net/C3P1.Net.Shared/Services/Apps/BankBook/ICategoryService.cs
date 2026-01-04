@@ -9,5 +9,6 @@ namespace C3P1.Net.Shared.Services.Apps.BankBook
         public Task<bool> DeleteCategoryAsync(Guid userId, Guid categoryId);
         public Task<bool> UpdateCategoryAsync(Guid userId, Category category);
         public Task<Category?> GetCategoryByIdAsync(Guid userId, Guid categoryId);
+        public Task<Category?> GetCategoryByCodeAsync(Guid userId, string code);
     }
 }

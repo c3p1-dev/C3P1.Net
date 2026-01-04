@@ -28,7 +28,6 @@ namespace C3P1.Net.Client.Services.Apps.BankBook
             return result!;
         }
 
-
         public async Task<SubCategory?> GetSubCategoryByIdAsync(Guid userId, Guid subCategoryId)
         {
             var result = await _httpClient.GetFromJsonAsync<SubCategory?>($"/api/apps/bankbook/subcategory/get/{subCategoryId}");
@@ -41,6 +40,27 @@ namespace C3P1.Net.Client.Services.Apps.BankBook
             var result = await _httpClient.PutAsJsonAsync($"/api/apps/bankbook/subcategory/update", subCategory);
 
             return result.IsSuccessStatusCode;
+        }
+
+        public async Task<SubCategory?> GetSubCategoryByCodeAsync(Guid userId, string code)
+        {
+            var result = await _httpClient.GetFromJsonAsync<SubCategory?>($"/api/apps/bankbook/subcategory/get/code/{code}");
+
+            return result;
+        }
+
+        public async Task<List<SubCategory>> GetSubCategoriesByCategoryIdAsync(Guid userId, Guid categoryId)
+        {
+            var result = await _httpClient.GetFromJsonAsync<List<SubCategory>>($"/api/apps/bankbook/subcategory/list/category/{categoryId}");
+
+            return result!;
+        }
+
+        public async Task<List<SubCategory>> GetSubCategoriesByCategoryCodeAsync(Guid userId, string categoryCode)
+        {
+            var result = await _httpClient.GetFromJsonAsync<List<SubCategory>>($"/api/apps/bankbook/subcategory/list/category/code/{categoryCode}");
+
+            return result!;
         }
     }
 }

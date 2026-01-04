@@ -39,5 +39,11 @@ namespace C3P1.Net.Client.Services.Apps.BankBook
             var result = await _httpClient.GetFromJsonAsync<Account>($"api/apps/bankbook/account/get/{bankAccountId}");
             return result;
         }
+
+        public async Task<Account?> GetAccountByCodeAsync(Guid userId, string code)
+        {
+            var result = await _httpClient.GetFromJsonAsync<Account>($"api/apps/bankbook/account/get/code/{code}");
+            return result;
+        }
     }
 }

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C3P1.Net.Migrations.BankBookDb
 {
     [DbContext(typeof(BankBookDbContext))]
-    [Migration("20260103214756_CreateCategoriesTable")]
-    partial class CreateCategoriesTable
+    [Migration("20260104135047_CreateCategoriesAndSubCategoriesTables")]
+    partial class CreateCategoriesAndSubCategoriesTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -88,12 +88,12 @@ namespace C3P1.Net.Migrations.BankBookDb
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(10)
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(10)
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("UserId")
@@ -120,12 +120,12 @@ namespace C3P1.Net.Migrations.BankBookDb
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(10)
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(10)
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("UserId")

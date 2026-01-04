@@ -52,7 +52,17 @@ namespace C3P1.Net.WebApi.Apps.BankBook
 
             var currentUserId = Guid.Parse(user.Id);
 
+            // duplicate check
+            var existingSubCategory = await subcategoryService.GetSubCategoryByCodeAsync(currentUserId, subCategory.Code);
+            if (existingSubCategory != null)
+            {
+                // subcategory with the same code already exists
+                return Conflict("A subcategory with the same code already exists.");
+            }
+
+            // add subcategory for the current user
             bool result = await subcategoryService.AddSubCategoryAsync(currentUserId, subCategory);
+
             if (result)
                 return Ok(true);
             else
@@ -119,6 +129,81 @@ namespace C3P1.Net.WebApi.Apps.BankBook
 
             // get subcategory by id for the current user
             var result = await subcategoryService.GetSubCategoryByIdAsync(currentUserId, id);
+            if (result != null)
+                return Ok(result);
+            else
+                return NotFound();
+        }
+
+        // GET api/apps/bankbook/[controller]/get/code/{code}
+        [HttpGet("get/code/{code}")]
+        public async Task<ActionResult<SubCategory>> GetSubCategoryByCodeAsync(string code)
+        {
+            // get user id
+            var name = User.Identity?.Name;
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                // should not happen due to [Authorize] attribute
+                return Unauthorized();
+            }
+
+            var currentUserId = Guid.Parse(user.Id);
+
+            // get subcategory by code for the current user
+            var result = await subcategoryService.GetSubCategoryByCodeAsync(currentUserId, code);
+
+            if (result != null)
+                return Ok(result);
+            else
+                return NotFound();
+        }
+
+        // GET api/apps/bankbook/[controller]/list/category/{categoryId}
+        [HttpGet("list/category/{categoryId:Guid}")]
+        public async Task<ActionResult<IEnumerable<SubCategory>>> GetSubCategoriesByCategoryIdAsync(Guid categoryId)
+        {
+            // get user id
+            var name = User.Identity?.Name;
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                // should not happen due to [Authorize] attribute
+                return Unauthorized();
+            }
+
+            var currentUserId = Guid.Parse(user.Id);
+
+            // get subcategories by category id for the current user
+            var result = await subcategoryService.GetSubCategoriesByCategoryIdAsync(currentUserId, categoryId);
+
+            if (result != null)
+                return Ok(result);
+            else
+                return NotFound();
+        }
+
+        // GET api/apps/bankbook/[controller]/list/category/code/{categoryCode}
+        [HttpGet("list/category/code/{categoryCode}")]
+        public async Task<ActionResult<IEnumerable<SubCategory>>> GetSubCategoriesByCategoryCodeAsync(string categoryCode)
+        {
+            // get user id
+            var name = User.Identity?.Name;
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                // should not happen due to [Authorize] attribute
+                return Unauthorized();
+            }
+
+            var currentUserId = Guid.Parse(user.Id);
+
+            // get subcategories by category code for the current user
+            var result = await subcategoryService.GetSubCategoriesByCategoryCodeAsync(currentUserId, categoryCode);
+
             if (result != null)
                 return Ok(result);
             else

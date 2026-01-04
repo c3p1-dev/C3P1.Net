@@ -53,6 +53,14 @@ namespace C3P1.Net.WebApi.Apps.BankBook
 
             var currentUserId = Guid.Parse(user.Id);
 
+            // duplicate check
+            var existingCategory = await categoryService.GetCategoryByCodeAsync(currentUserId, category.Code);
+            if (existingCategory != null)
+            {
+                // category with the same code already exists
+                return Conflict("A category with the same code already exists.");
+            }
+
             // add category
             bool result = await categoryService.AddCategoryAsync(currentUserId, category);
 
@@ -101,6 +109,14 @@ namespace C3P1.Net.WebApi.Apps.BankBook
 
             var currentUserId = Guid.Parse(user.Id);
 
+            // duplicate check
+            var existingCategory = await categoryService.GetCategoryByCodeAsync(currentUserId, category.Code);
+            if (existingCategory != null && existingCategory.Id != category.Id)
+            {
+                // category with the same code already exists
+                return Conflict("A category with the same code already exists.");
+            }
+
             // update category
             bool result = await categoryService.UpdateCategoryAsync(currentUserId, category);
 
@@ -127,6 +143,31 @@ namespace C3P1.Net.WebApi.Apps.BankBook
 
             // get category by id for the current user
             var result = await categoryService.GetCategoryByIdAsync(currentUserId, id);
+
+            if (result != null)
+                return Ok(result);
+            else
+                return NotFound();
+        }
+
+        // GET api/apps/bankbook/[controller]/get/code/{code}
+        [HttpGet("get/code/{code}")]
+        public async Task<ActionResult<Category>> GetCategoryByCodeAsync(string code)
+        {
+            // get user id
+            var name = User.Identity?.Name;
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                // should not happen due to [Authorize] attribute
+                return Unauthorized();
+            }
+
+            var currentUserId = Guid.Parse(user.Id);
+
+            // get category by code for the current user
+            var result = await categoryService.GetCategoryByCodeAsync(currentUserId, code);
 
             if (result != null)
                 return Ok(result);

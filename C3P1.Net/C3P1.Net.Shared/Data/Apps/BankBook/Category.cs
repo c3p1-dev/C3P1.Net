@@ -16,10 +16,10 @@ namespace C3P1.Net.Shared.Data.Apps.BankBook
         public string Code { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Category Name is required")]
-        [StringLength(10, ErrorMessage = "Category Name is at most 100 characters")]
+        [StringLength(100, ErrorMessage = "Category Name is at most 100 characters")]
         public string Name { get; set; } = string.Empty;
 
-        [StringLength(10, ErrorMessage = "Description is at most 100 characters")]
+        [StringLength(100, ErrorMessage = "Description is at most 100 characters")]
         public string Description { get; set; } = string.Empty;
     }
 }

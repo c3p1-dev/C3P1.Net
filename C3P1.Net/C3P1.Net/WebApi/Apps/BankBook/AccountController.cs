@@ -17,7 +17,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
 
         // GET : api/apps/bankbook/[controller]/list
         [HttpGet("list")]
-        public async Task<ActionResult<IEnumerable<Account>>> GetBankAccountsAsync()
+        public async Task<ActionResult<IEnumerable<Account>>> GetAccountsAsync()
         {
             // get user id
             var name = User.Identity?.Name;
@@ -42,7 +42,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
         // POST : api/apps/bankbook/[controller]/add
         // data [FromBody]
         [HttpPost("add")]
-        public async Task<ActionResult<bool>> AddBankAccountAsync([FromBody] Account bankAccount)
+        public async Task<ActionResult<bool>> AddAccountAsync([FromBody] Account bankAccount)
         {
             // get user id
             var name = User.Identity?.Name;
@@ -55,6 +55,13 @@ namespace C3P1.Net.WebApi.Apps.BankBook
 
             var currentUserId = Guid.Parse(user.Id);
 
+            // duplicate check
+            var existingAccount = await bankAccountService.GetAccountByCodeAsync(currentUserId, bankAccount.Code);
+            if (existingAccount != null)
+            {
+                return Conflict("An account with the same code already exists.");
+            }
+
             // add bank account
             bool result = await bankAccountService.AddAccountAsync(currentUserId, bankAccount);
 
@@ -66,7 +73,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
 
         // DELETE : api/apps/[controller]/delete/{id}
         [HttpDelete("delete/{id:Guid}")]
-        public async Task<ActionResult<bool>> DeleteBankAccountAsync(Guid id)
+        public async Task<ActionResult<bool>> DeleteAccountAsync(Guid id)
         {
             // get user id
             var name = User.Identity?.Name;
@@ -90,7 +97,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
 
         // GET : api/apps/bankbook/[controller]/get/{id}
         [HttpGet("get/{id:Guid}")]
-        public async Task<ActionResult<Account>> GetBankAccountByIdAsync(Guid id)
+        public async Task<ActionResult<Account>> GetAccountByIdAsync(Guid id)
         {
             // get user id
             var name = User.Identity?.Name;
@@ -112,9 +119,34 @@ namespace C3P1.Net.WebApi.Apps.BankBook
                 return Ok(result);
         }
 
+        // GET : api/apps/bankbook/[controller]/code/{code}
+        [HttpGet("get/code/{code}")]
+        public async Task<ActionResult<Account>> GetAccountByCodeAsync(string code)
+        {
+            // get user id
+            var name = User.Identity?.Name;
+            var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                // should not happen
+                return Unauthorized();
+            }
+
+            var currentUserId = Guid.Parse(user.Id);
+
+            // get bank account from code
+            var result = await bankAccountService.GetAccountByCodeAsync(currentUserId, code);
+
+            if (result == null)
+                return NotFound();
+            else
+                return Ok(result);
+        }
+
         // PUT : api/apps/bankbook/[controller]/update
         [HttpPut("update")]
-        public async Task<ActionResult<bool>> UpdateBankAccountAsync([FromBody] Account bankAccount)
+        public async Task<ActionResult<bool>> UpdateAccountAsync([FromBody] Account bankAccount)
         {
             // get user id
             var name = User.Identity?.Name;
@@ -126,6 +158,13 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             }
 
             var currentUserId = Guid.Parse(user.Id);
+
+            // duplicate check
+            var existingAccount = await bankAccountService.GetAccountByCodeAsync(currentUserId, bankAccount.Code);
+            if (existingAccount != null && existingAccount.Id != bankAccount.Id)
+            {
+                return Conflict("An account with the same code already exists.");
+            }
 
             // update bank account
             bool result = await bankAccountService.UpdateAccountAsync(currentUserId, bankAccount);

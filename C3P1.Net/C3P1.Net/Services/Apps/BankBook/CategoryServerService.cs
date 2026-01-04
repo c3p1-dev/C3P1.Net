@@ -14,55 +14,96 @@ namespace C3P1.Net.Services.Apps.BankBook
             category.Id = Guid.NewGuid(); ;
             category.UserId = userId;
 
-            // add category
-            _context.Add(category);
-            int recorded = await _context.SaveChangesAsync();
+            // check duplicate code
+            var duplicateCategory = await _context.Categories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == category.Code);
 
-            return (recorded == 1);
+            if (duplicateCategory is null)
+            {
+                // add category
+                _context.Add(category);
+                int recorded = await _context.SaveChangesAsync();
+
+                return (recorded == 1);
+            }
+            else // category code duplicate case
+                return false;
         }
 
         public async Task<bool> DeleteCategoryAsync(Guid userId, Guid categoryId)
         {
+            // find category
             var category = await _context.Categories
                 .FirstOrDefaultAsync(x => x.Id == categoryId && x.UserId == userId);
+
+            // delete if found
             if (category != null)
             {
                 _context.Categories.Remove(category);
                 int recorded = await _context.SaveChangesAsync();
                 return (recorded == 1);
             }
+
             return false;
         }
 
         public async Task<List<Category>> GetCategoriesAsync(Guid userId)
         {
+            // get categories
             var result = await _context.Categories
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
 
+            // return result
             return result;
         }
 
         public async Task<Category?> GetCategoryByIdAsync(Guid userId, Guid categoryId)
         {
+            // find category
             var category = await _context.Categories
                 .FirstOrDefaultAsync(x => x.Id == categoryId && x.UserId == userId);
+
             return category;
         }
 
         public async Task<bool> UpdateCategoryAsync(Guid userId, Category category)
         {
+            // find existing category
             var existingCategory = await _context.Categories
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == category.Id && x.UserId == userId);
+
             if (existingCategory != null)
             {
-                category.UserId = userId; // ensure the userId is not changed
-                _context.Categories.Update(category);
-                int recorded = await _context.SaveChangesAsync();
-                return (recorded == 1);
+                // check duplicate code
+                var duplicateCategory = await _context.Categories
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == category.Code && x.Id != category.Id);
+
+                if (duplicateCategory is null)
+                {
+                    // ensure the userId is not changed
+                    category.UserId = userId;
+                    _context.Categories.Update(category);
+
+                    int recorded = await _context.SaveChangesAsync();
+                    return (recorded == 1);
+                }
+                else // category code duplicate case
+                    return false;
             }
-            return false;
+            return false; // category not found
+        }
+
+        public async Task<Category?> GetCategoryByCodeAsync(Guid userId, string code)
+        {
+            // find category by code
+            var category = await _context.Categories
+                .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == code);
+
+            return category;
         }
     }
 }

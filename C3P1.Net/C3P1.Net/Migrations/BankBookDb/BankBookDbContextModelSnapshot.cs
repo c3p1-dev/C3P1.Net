@@ -85,12 +85,12 @@ namespace C3P1.Net.Migrations.BankBookDb
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(10)
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(10)
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("UserId")
@@ -117,12 +117,12 @@ namespace C3P1.Net.Migrations.BankBookDb
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(10)
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(10)
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("UserId")

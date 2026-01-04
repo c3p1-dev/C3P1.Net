@@ -16,13 +16,13 @@ namespace C3P1.Net.Shared.Data.Apps.BankBook
         public string Code { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "SubCategory Name is required")]
-        [StringLength(10, ErrorMessage = "SubCategory Name is at most 100 characters")]
+        [StringLength(100, ErrorMessage = "SubCategory Name is at most 100 characters")]
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Category Id is required")]
         public Guid Category { get; set; }
 
-        [StringLength(10, ErrorMessage = "Description is at most 100 characters")]
+        [StringLength(100, ErrorMessage = "Description is at most 100 characters")]
         public string Description { get; set; } = string.Empty;
     }
 }

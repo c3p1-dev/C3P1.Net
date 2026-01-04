@@ -171,10 +171,13 @@
 
     private async Task SaveSubCategory()
     {
+        CurrentSubCategory.Category = CurrentCategory.Id;
         if (await subCategoryValidations!.ValidateAll())
         {
             if (CurrentSubCategory.Id == Guid.Empty)
+            {
                 await SubCategoryService.AddSubCategoryAsync(UserId, CurrentSubCategory);
+            }
             else
                 await SubCategoryService.UpdateSubCategoryAsync(UserId, CurrentSubCategory);
 

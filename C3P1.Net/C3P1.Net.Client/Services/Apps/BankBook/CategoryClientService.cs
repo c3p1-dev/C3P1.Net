@@ -48,5 +48,11 @@ namespace C3P1.Net.Client.Services.Apps.BankBook
             return result.IsSuccessStatusCode;
         }
 
+        public async Task<Category?> GetCategoryByCodeAsync(Guid userId, string code)
+        {
+            var result = await _httpClient.GetFromJsonAsync<Category?>($"/api/apps/bankbook/category/get/code/{code}");
+            return result;
+        }
+
     }
 }

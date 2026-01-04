@@ -14,54 +14,127 @@ namespace C3P1.Net.Services.Apps.BankBook
             subcategory.Id = Guid.NewGuid(); ;
             subcategory.UserId = userId;
 
-            // add category
-            _context.Add(subcategory);
-            int recorded = await _context.SaveChangesAsync();
+            // duplicate check
+            var duplicateSubcategory = await _context.SubCategories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == subcategory.Code);
 
-            return (recorded == 1);
+            if (duplicateSubcategory is null)
+            {
+                // add category
+                _context.Add(subcategory);
+                int recorded = await _context.SaveChangesAsync();
+
+                return (recorded == 1);
+            }
+            else // duplication case
+                return false;
         }
 
         public async Task<bool> DeleteSubCategoryAsync(Guid userId, Guid subcategoryId)
         {
+            // find subcategory
             var subcategory = await _context.SubCategories
                 .FirstOrDefaultAsync(x => x.Id == subcategoryId && x.UserId == userId);
+
+            // delete if found
             if (subcategory != null)
             {
                 _context.SubCategories.Remove(subcategory);
                 int recorded = await _context.SaveChangesAsync();
                 return (recorded == 1);
             }
+
             return false;
         }
 
         public async Task<List<SubCategory>> GetSubCategoriesAsync(Guid userId)
         {
+            // get subcategories
             var result = await _context.SubCategories
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
+
             return result;
         }
 
         public async Task<SubCategory?> GetSubCategoryByIdAsync(Guid userId, Guid subCategoryId)
         {
+            // get subcategory
             var subcategory = await _context.SubCategories
                 .FirstOrDefaultAsync(x => x.Id == subCategoryId && x.UserId == userId);
+
             return subcategory;
         }
 
         public async Task<bool> UpdateSubCategoryAsync(Guid userId, SubCategory subCategory)
         {
+            // find existing subcategory
             var existingSubCategory = await _context.SubCategories
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == subCategory.Id && x.UserId == userId);
+
+            // update if found
             if (existingSubCategory != null)
             {
-                subCategory.UserId = userId; // ensure the userId is not changed
-                _context.SubCategories.Update(subCategory);
-                int recorded = await _context.SaveChangesAsync();
-                return (recorded == 1);
+                // check for code duplication
+                var duplicateSubcategory = await _context.SubCategories
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == subCategory.Code && x.Id != subCategory.Id);
+
+                if (duplicateSubcategory is null)
+                {
+                    // ensure the userId is not changed
+                    subCategory.UserId = userId;
+                    _context.SubCategories.Update(subCategory);
+
+                    int recorded = await _context.SaveChangesAsync();
+
+                    return (recorded == 1);
+                }
+                else
+                    return false; // duplication case
             }
-            return false;
+
+            return false; // not found
+        }
+
+        public async Task<SubCategory?> GetSubCategoryByCodeAsync(Guid userId, string code)
+        {
+            // get subcategory by code
+            var subcategory = await _context.SubCategories
+                .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == code);
+
+            return subcategory;
+        }
+
+        public async Task<List<SubCategory>> GetSubCategoriesByCategoryIdAsync(Guid userId, Guid categoryId)
+        {
+            // get subcategories by category id
+            var result = await _context.SubCategories
+                .Where(x => x.UserId == userId && x.Category == categoryId)
+                .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<List<SubCategory>> GetSubCategoriesByCategoryCodeAsync(Guid userId, string categoryCode)
+        {
+            // get category by code
+            var category = await _context.Categories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == categoryCode);
+
+            if (category != null)
+            {
+                // get subcategories by category id
+                var result = await _context.SubCategories
+                    .Where(x => x.UserId == userId && x.Category == category.Id)
+                    .ToListAsync();
+                return result;
+            }
+            else
+                return new List<SubCategory>();
         }
     }
 }
