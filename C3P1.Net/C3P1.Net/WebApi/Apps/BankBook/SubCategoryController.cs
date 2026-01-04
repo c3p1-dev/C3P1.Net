@@ -13,8 +13,8 @@ namespace C3P1.Net.WebApi.Apps.BankBook
     [ApiController]
     public class SubCategoryController(ISubCategoryService subcategoryService, UserManager<AppUser> userManager) : ControllerBase
     {
-        // GET api/apps/bankbook/[controller]
-        [HttpGet]
+        // GET api/apps/bankbook/[controller]/list
+        [HttpGet("list")]
         public async Task<ActionResult<IEnumerable<SubCategory>>> GetSubCategoriesAsync()
         {
             // get user id
@@ -36,9 +36,9 @@ namespace C3P1.Net.WebApi.Apps.BankBook
                 return NotFound();
         }
 
-        // POST api/apps/bankbook/[controller]
+        // POST api/apps/bankbook/[controller]/add
         // data [FromBody]
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<ActionResult<bool>> AddSubCategoryAsync([FromBody] SubCategory subCategory)
         {
             // get user id
@@ -59,8 +59,8 @@ namespace C3P1.Net.WebApi.Apps.BankBook
                 return BadRequest();
         }
 
-        // DELETE api/apps/bankbook/[controller]/{id}
-        [HttpDelete("{id:Guid}")]
+        // DELETE api/apps/bankbook/[controller]/delete/{id}
+        [HttpDelete("delete/{id:Guid}")]
         public async Task<ActionResult<bool>> DeleteSubCategoryAsync(Guid id)
         {
             // get user id
@@ -82,8 +82,8 @@ namespace C3P1.Net.WebApi.Apps.BankBook
                 return BadRequest();
         }
 
-        // UPDATE api/apps/bankbook/[controller]
-        [HttpPut]
+        // UPDATE api/apps/bankbook/[controller]/update
+        [HttpPut("update")]
         public async Task<ActionResult<bool>> UpdateSubCategoryAsync([FromBody] SubCategory subCategory)
         {
             // get user id
@@ -102,8 +102,8 @@ namespace C3P1.Net.WebApi.Apps.BankBook
                 return BadRequest();
         }
 
-        // GET api/apps/bankbook/[controller]/{id}
-        [HttpGet("{id:Guid}")]
+        // GET api/apps/bankbook/[controller]/get/{id}
+        [HttpGet("get/{id:Guid}")]
         public async Task<ActionResult<SubCategory>> GetSubCategoryByIdAsync(Guid id)
         {
             // get user id

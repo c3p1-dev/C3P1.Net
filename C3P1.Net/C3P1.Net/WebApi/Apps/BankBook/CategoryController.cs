@@ -13,8 +13,8 @@ namespace C3P1.Net.WebApi.Apps.BankBook
     [ApiController]
     public class CategoryController(ICategoryService categoryService, UserManager<AppUser> userManager) : ControllerBase
     {
-        // GET : api/apps/bankbook/[controller]
-        [HttpGet]
+        // GET : api/apps/bankbook/[controller]/list
+        [HttpGet("list")]
         public async Task<ActionResult<IEnumerable<Account>>> GetCategoriesAsync()
         {
             // get user id
@@ -37,9 +37,9 @@ namespace C3P1.Net.WebApi.Apps.BankBook
                 return Ok(result);
         }
 
-        // POST : api/apps/bankbook/[controller]
+        // POST : api/apps/bankbook/[controller]/add
         // data [FromBody]
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<ActionResult<bool>> AddCategoryAsync([FromBody] Category category)
         {
             // get user id
@@ -52,6 +52,8 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             }
 
             var currentUserId = Guid.Parse(user.Id);
+
+            // add category
             bool result = await categoryService.AddCategoryAsync(currentUserId, category);
 
             if (result)
@@ -60,8 +62,8 @@ namespace C3P1.Net.WebApi.Apps.BankBook
                 return BadRequest();
         }
 
-        // DELETE : api/apps/bankbook/[controller]/{id}
-        [HttpDelete("{id:Guid}")]
+        // DELETE : api/apps/bankbook/[controller]/delete/{id}
+        [HttpDelete("delete/{id:Guid}")]
         public async Task<ActionResult<bool>> DeleteCategoryAsync(Guid id)
         {
             // get user id
@@ -77,14 +79,15 @@ namespace C3P1.Net.WebApi.Apps.BankBook
 
             // delete category from id
             bool result = await categoryService.DeleteCategoryAsync(currentUserId, id);
+
             if (result)
                 return Ok(true);
             else
                 return BadRequest();
         }
 
-        // UPDATE : api/apps/bankbook/[controller]
-        [HttpPut]
+        // UPDATE : api/apps/bankbook/[controller]/update
+        [HttpPut("update")]
         public async Task<ActionResult<bool>> UpdateCategoryAsync(Guid id, [FromBody] Category category)
         {
             // get user id
@@ -95,17 +98,20 @@ namespace C3P1.Net.WebApi.Apps.BankBook
                 // should not happen
                 return Unauthorized();
             }
+
             var currentUserId = Guid.Parse(user.Id);
+
             // update category
             bool result = await categoryService.UpdateCategoryAsync(currentUserId, category);
+
             if (result)
                 return Ok(true);
             else
                 return BadRequest();
         }
 
-        // GET api/apps/bankbook/[controller]/{id}
-        [HttpGet("{id:Guid}")]
+        // GET api/apps/bankbook/[controller]/get/{id}
+        [HttpGet("get/{id:Guid}")]
         public async Task<ActionResult<Category>> GetCategoryByIdAsync(Guid id)
         {
             // get user id
@@ -121,6 +127,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
 
             // get category by id for the current user
             var result = await categoryService.GetCategoryByIdAsync(currentUserId, id);
+
             if (result != null)
                 return Ok(result);
             else

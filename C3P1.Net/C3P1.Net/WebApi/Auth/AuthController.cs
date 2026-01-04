@@ -24,8 +24,7 @@ namespace C3P1.Net.WebApi.Auth
         private readonly RoleManager<IdentityRole> _roleManager = roleManager;
         private readonly IConfiguration _configuration = configuration;
 
-        [HttpPost]
-        [Route("login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             // Look for a match and check passwords
@@ -59,9 +58,8 @@ namespace C3P1.Net.WebApi.Auth
             return Unauthorized();
         }
 
-        [HttpPost]
         [Authorize(Roles = "Admin")]
-        [Route("register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             // Check if user already exists
@@ -86,9 +84,8 @@ namespace C3P1.Net.WebApi.Auth
                 return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 
-        [HttpPost]
         [Authorize(Roles = "Admin")]
-        [Route("register-admin")]
+        [HttpPost("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
         {
             var userExists = await _userManager.FindByNameAsync(model.Username!);

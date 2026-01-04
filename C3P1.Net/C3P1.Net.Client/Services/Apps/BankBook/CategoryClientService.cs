@@ -9,7 +9,7 @@ namespace C3P1.Net.Client.Services.Apps.BankBook
         private readonly HttpClient _httpClient = httpClient;
         public async Task<bool> AddCategoryAsync(Guid userId, Category category)
         {
-            var result = await _httpClient.PostAsJsonAsync($"/api/apps/bankbook/category", category);
+            var result = await _httpClient.PostAsJsonAsync($"/api/apps/bankbook/category/add", category);
 
             return result.IsSuccessStatusCode;
         }
@@ -18,7 +18,7 @@ namespace C3P1.Net.Client.Services.Apps.BankBook
 
         public async Task<bool> DeleteCategoryAsync(Guid userId, Guid categoryId)
         {
-            var result = await _httpClient.DeleteAsync($"/api/apps/bankbook/category/{categoryId}");
+            var result = await _httpClient.DeleteAsync($"/api/apps/bankbook/category/delete/{categoryId}");
 
             return result.IsSuccessStatusCode;
         }
@@ -27,14 +27,14 @@ namespace C3P1.Net.Client.Services.Apps.BankBook
 
         public async Task<List<Category>> GetCategoriesAsync(Guid userId)
         {
-            var result = await _httpClient.GetFromJsonAsync<List<Category>>($"/api/apps/bankbook/category");
+            var result = await _httpClient.GetFromJsonAsync<List<Category>>($"/api/apps/bankbook/category/list");
 
             return result!;
         }
 
         public async Task<Category?> GetCategoryByIdAsync(Guid userId, Guid categoryId)
         {
-            var result = await _httpClient.GetFromJsonAsync<Category?>($"/api/apps/bankbook/category/{categoryId}");
+            var result = await _httpClient.GetFromJsonAsync<Category?>($"/api/apps/bankbook/category/get/{categoryId}");
 
             return result;
         }
@@ -43,7 +43,7 @@ namespace C3P1.Net.Client.Services.Apps.BankBook
 
         public async Task<bool> UpdateCategoryAsync(Guid userId, Category category)
         {
-            var result = await _httpClient.PutAsJsonAsync($"/api/apps/bankbook/category", category);
+            var result = await _httpClient.PutAsJsonAsync($"/api/apps/bankbook/category/update", category);
 
             return result.IsSuccessStatusCode;
         }
