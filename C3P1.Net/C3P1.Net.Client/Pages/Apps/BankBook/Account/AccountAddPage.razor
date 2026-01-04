@@ -6,9 +6,9 @@
 
 @inject NavigationManager navManager;
 @inject NavBreadcrumbService navBreadcrumb;
-@inject IAccountService bankAccount;
+@inject IAccountService Account;
 
-<PageTitle>BankBook / Add Bank Account</PageTitle>
+<PageTitle>BankBook / Add Account</PageTitle>
 
 <Row>
     <Column>
@@ -122,7 +122,7 @@
         navBreadcrumb.SetBreadcrumbs(new List<Node>()
         {
             new Node {Text = "Accounts", Link = "bankbook/account"},
-            new Node {Text = "Add", Link = "bankbook/account/add", Active = true}
+            new Node {Text = "Add", Active = true}
         });
 
         // Load accounts from API or database here
@@ -137,7 +137,7 @@
             // get user id
             var user = (await authenticationStateTask).User;
             var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
-            if (await bankAccount.AddAccountAsync(currentUserId, newBankAccount!))
+            if (await Account.AddAccountAsync(currentUserId, newBankAccount!))
                 // navigate to bankbook/bank
                 navManager.NavigateTo("bankbook/account");
         }

@@ -1,6 +1,6 @@
 ﻿@using C3P1.Net.Shared.Data.Apps.Tasklist
 @using C3P1.Net.Shared.Services.Apps;
-@inject ITasklistService tasklistService
+@inject ITasklistService TasklistService
 
 @if (Item != null)
 {
@@ -26,7 +26,7 @@
     {
         // update item in database
         Item!.Completed = isChecked;
-        tasklistService.UpdateTaskAsync(Item!);
+        TasklistService.UpdateTaskAsync(Item!);
 
         return StatusChanged?.Invoke(isChecked) ?? Task.CompletedTask;
     }

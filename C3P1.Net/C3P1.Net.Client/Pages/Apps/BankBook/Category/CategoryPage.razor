@@ -1,0 +1,111 @@
+﻿@page "/bankbook/category"
+@using C3P1.Net.Shared.Data.Apps.BankBook
+@using C3P1.Net.Shared.Services.Apps.BankBook
+@using Blazorise
+@using Blazorise.DataGrid
+@layout Layouts.BankBookLayout
+
+@inject NavigationManager navManager
+@inject NavBreadcrumbService navBreadcrumb
+@inject ICategoryService CategoryService
+@inject ISubCategoryService SubCategoryService
+
+<PageTitle>BankBook / Categories</PageTitle>
+
+@if (Categories == null || SubCategories == null)
+{
+    <Paragraph><em>Loading...</em></Paragraph>
+}
+else if (Categories.Count == 0)
+{
+    <Paragraph><em>No categories found.</em></Paragraph>
+    <Paragraph>
+        <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/category/add"))">
+            <Icon Name="IconName.Add" /> Add Category
+        </Button>
+    </Paragraph>
+}
+else
+{
+    <Row>
+        <Column>
+            <Card>
+                <CardHeader>
+                    <Row>
+                        <Column>
+                           <Span>Categories</Span>
+                        </Column>
+                        <Column TextAlignment="TextAlignment.End">
+                            <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/category/add"))">
+                                <Icon Name="IconName.Add" /> Add Category
+                            </Button>
+                        </Column>
+                    </Row>
+                </CardHeader>
+                <CardBody>
+                    <!-- Category and SubCategory display logic goes here -->
+                </CardBody>
+            </Card>
+        </Column>
+    </Row>
+}
+
+@code {
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+    private List<Category>? Categories = null;
+    private List<SubCategory>? SubCategories = null;
+
+    private Category? CurrentCategory = null;
+    private SubCategory? CurrentSubCategory = null;
+
+    IEnumerable<SubCategory> CurrentCategorySubCategories => 
+        CurrentCategory!.Id == Guid.Empty ?
+            Enumerable.Empty<SubCategory>(): SubCategories!.Where(s => s.Category == CurrentCategory.Id);
+
+    protected override async Task OnInitializedAsync()
+    {
+        // NavState (breadcrumbs, etc) is Scoped, so it lives as long as our connection lives.
+        // So when a new page is visited, we need to clear navigation to prevent breadcrumbs from bleed-over, etc.
+        // This also makes the navbar invisible by default.
+        navBreadcrumb.SetBreadcrumbs(new List<Node>()
+        {
+            new Node { Text = "Category", Active = true }
+        });
+
+        // Load categories and subcategories
+        await LoadData();
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task LoadCategories()
+    {
+        // get user id
+        var user = (await authenticationStateTask).User;
+        var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+
+        // load categories from API or database
+        Categories = await CategoryService.GetCategoriesAsync(currentUserId);
+    }
+
+    private async Task LoadSubCategories()
+    {
+        // get user id
+        var user = (await authenticationStateTask).User;
+        var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+
+        // load subcategories from API or database
+        SubCategories = await SubCategoryService.GetSubCategoriesAsync(currentUserId);
+    }
+
+    private async Task LoadData()
+    {
+        // get user id
+        var user = (await authenticationStateTask).User;
+        var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+
+        // load categories and subcategories from API or database
+        Categories = await CategoryService.GetCategoriesAsync(currentUserId);
+        SubCategories = await SubCategoryService.GetSubCategoriesAsync(currentUserId);
+    }
+}

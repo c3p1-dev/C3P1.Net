@@ -26,7 +26,7 @@ namespace C3P1.Net.Client.Components.Admin.UserManagement
         }
 
         [Inject]
-        IUserService? UserManagementService { get; set; }
+        IUserService? UserService { get; set; }
         [Inject]
         IMessageService? MessageService { get; set; }
 
@@ -42,8 +42,8 @@ namespace C3P1.Net.Client.Components.Admin.UserManagement
                 users.Clear();
             }
 
-            var regularUsers = await UserManagementService!.GetUsersAsync();
-            var adminUsers = await UserManagementService!.GetUsersInRoleAsync("Admin");
+            var regularUsers = await UserService!.GetUsersAsync();
+            var adminUsers = await UserService!.GetUsersInRoleAsync("Admin");
 
             foreach (var user in adminUsers)
             {
@@ -61,7 +61,7 @@ namespace C3P1.Net.Client.Components.Admin.UserManagement
                 AppUserWithRoles a = new()
                 {
                     User = user,
-                    Roles = await UserManagementService!.GetUserRolesAsync(user)
+                    Roles = await UserService!.GetUserRolesAsync(user)
                 };
 
                 users.Add(a);
@@ -70,7 +70,7 @@ namespace C3P1.Net.Client.Components.Admin.UserManagement
 
         protected async Task MakeAdmin(Guid userId)
         {
-            await UserManagementService!.AddToRoleAsync(userId, "Admin");
+            await UserService!.AddToRoleAsync(userId, "Admin");
             await LoadData();
 
             await InvokeAsync(StateHasChanged);
@@ -78,7 +78,7 @@ namespace C3P1.Net.Client.Components.Admin.UserManagement
 
         protected async Task MakeRegular(Guid userId)
         {
-            await UserManagementService!.RemoveFromRoleAsync(userId, "Admin");
+            await UserService!.RemoveFromRoleAsync(userId, "Admin");
             await LoadData();
 
             await InvokeAsync(StateHasChanged);
@@ -87,7 +87,7 @@ namespace C3P1.Net.Client.Components.Admin.UserManagement
         {
             if (await MessageService!.Confirm($"Are you sure you want to delete {user.Email} ?", "Confirmation"))
             {
-                await UserManagementService!.DeleteUserAsync(user);
+                await UserService!.DeleteUserAsync(user);
                 await LoadData();
 
                 await InvokeAsync(StateHasChanged);

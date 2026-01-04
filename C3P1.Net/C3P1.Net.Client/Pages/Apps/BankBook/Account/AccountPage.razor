@@ -6,15 +6,15 @@
 
 @inject NavigationManager navManager
 @inject NavBreadcrumbService navBreadcrumb
-@inject IAccountService bankAccount
+@inject IAccountService AccountService
 
-<PageTitle>BankBook / Bank accounts</PageTitle>
+<PageTitle>BankBook / Accounts</PageTitle>
 
-@if (inMemoryData == null)
+@if (Accounts == null)
 {
     <Paragraph><em>Loading...</em></Paragraph>
 }
-else if (inMemoryData.Count == 0)
+else if (Accounts.Count == 0)
 {
     <Paragraph><em>No bank accounts found.</em></Paragraph>
     <Paragraph>
@@ -42,7 +42,7 @@ else
                     </Row>
                 </CardHeader>
                 <CardBody>
-                    <DataGrid TItem="Account" Data="inMemoryData" Responsive ShowPageSizes @bind-SelectedRow="@selectedBankAccount" Hoverable>
+                    <DataGrid TItem="Account" Data="Accounts" Responsive ShowPageSizes @bind-SelectedRow="@selectedAccount" Hoverable>
                         <DataGridColumns>
                             <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Account" Field="@nameof(Account.Code)" Caption="#" Width="60px" Sortable/>
                             <DataGridColumn TItem="Account" Field="@nameof(Account.Name)" Caption="Name" />
@@ -52,13 +52,13 @@ else
                     </DataGrid>
                 </CardBody>
                 <CardFooter>
-                    @if (selectedBankAccount != null)
+                    @if (selectedAccount != null)
                     {
                         <CardText>
                             <Row>
                                 <Column>
                                     <Div>Selected Account:</Div>
-                                    <Div> <strong>@selectedBankAccount.Name</strong> (Balance: @selectedBankAccount.Balance.ToString("C", new CultureInfo("fr-FR")))</Div>
+                                    <Div> <strong>@selectedAccount.Name</strong> (Balance: @selectedAccount.Balance.ToString("C", new CultureInfo("fr-FR")))</Div>
                                 </Column>
                                 <Column TextAlignment="TextAlignment.End">
                                     <Button Size="Size.Small" Color="Color.Primary" Clicked="EditSelectedAccount">Edit</Button>
@@ -82,8 +82,8 @@ else
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
-    private Account? selectedBankAccount = null;
-    private List<Account>? inMemoryData = null;
+    private Account? selectedAccount = null;
+    private List<Account>? Accounts = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -93,12 +93,12 @@ else
         // This also makes the navbar invisible by default.
         navBreadcrumb.SetBreadcrumbs(new List<Node>()
         {
-            new Node {Text = "Accounts", Link = "bankbook/account" , Active = true}
+            new Node {Text = "Accounts", Active = true}
         });
 
         // Load accounts from API or database here
-
         await LoadData();
+
         await base.OnInitializedAsync();
     }
 
@@ -109,21 +109,23 @@ else
         var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
 
         // load accounts from API or database
-        inMemoryData = await bankAccount.GetAccountsAsync(currentUserId);
+        Accounts = await AccountService.GetAccountsAsync(currentUserId);
     }
 
     private async Task DeleteSelectedAccount()
     {
-        if (selectedBankAccount != null)
+        if (selectedAccount != null)
         {
             // get user id
             var user = (await authenticationStateTask).User;
             var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
-            var success = await bankAccount.DeleteAccountAsync(currentUserId, selectedBankAccount.Id);
+
+            // delete account
+            var success = await AccountService.DeleteAccountAsync(currentUserId, selectedAccount.Id);
             if (success)
             {
                 await LoadData();
-                selectedBankAccount = null;
+                selectedAccount = null;
                 StateHasChanged();
             }
         }
@@ -131,9 +133,9 @@ else
 
     private void EditSelectedAccount()
     {
-        if (selectedBankAccount != null)
+        if (selectedAccount != null)
         {
-            navManager.NavigateTo($"/bankbook/account/edit/{selectedBankAccount.Id}");
+            navManager.NavigateTo($"/bankbook/account/edit/{selectedAccount.Id}");
         }
     }
 }
