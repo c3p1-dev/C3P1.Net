@@ -8,40 +8,37 @@
 @inject NavBreadcrumbService navBreadcrumb
 @inject IAccountService AccountService
 
-<PageTitle>BankBook / Edit Bank Account</PageTitle>
+<PageTitle>BankBook / Edit Account</PageTitle>
 
 <Row>
     <Column>
-        <Card>
+        <Card Style="max-width: 800px;margin: 0 auto;">
             <CardHeader>
-                @if (editBankAccount is null)
+                @if (editAccount is null)
                 {
-                    <CardTitle>Edit Bank Account</CardTitle>
+                    <CardTitle>Edit Account</CardTitle>
                 }
                 else
                 {
-                    <CardTitle>Edit Bank Account "@editBankAccount.Name"</CardTitle>
+                    <CardTitle>Edit Account "@editAccount.Name"</CardTitle>
                 }
             </CardHeader>
 
             <CardBody>
-                @if (editBankAccount is null)
+                @if (editAccount is null)
                 {
                     <Alert Color="Color.Danger">
-                        Bank account not found.
+                        Account not found.
                     </Alert>
                 }
                 else
                 {
-                    <Validations @ref="validations"
-                                 Mode="ValidationMode.Manual"
-                                 Model="@editBankAccount">
-
+                    <Validations @ref="validations" Mode="ValidationMode.Manual" Model="@editAccount">
                         <Validation>
                             <Field>
                                 <FieldLabel RequiredIndicator>Account Code</FieldLabel>
                                 <FieldBody>
-                                    <TextEdit @bind-Text="editBankAccount.Code">
+                                    <TextEdit @bind-Text="editAccount.Code">
                                         <Feedback>
                                             <ValidationError />
                                         </Feedback>
@@ -54,7 +51,7 @@
                             <Field>
                                 <FieldLabel RequiredIndicator>Account Name</FieldLabel>
                                 <FieldBody>
-                                    <TextEdit @bind-Text="editBankAccount.Name">
+                                    <TextEdit @bind-Text="editAccount.Name">
                                         <Feedback>
                                             <ValidationError />
                                         </Feedback>
@@ -67,7 +64,11 @@
                             <Field>
                                 <FieldLabel>Bank</FieldLabel>
                                 <FieldBody>
-                                    <TextEdit @bind-Text="editBankAccount.Bank" />
+                                    <TextEdit @bind-Text="editAccount.Bank">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
                                 </FieldBody>
                             </Field>
                         </Validation>
@@ -76,7 +77,11 @@
                             <Field>
                                 <FieldLabel>Description</FieldLabel>
                                 <FieldBody>
-                                    <TextEdit @bind-Text="editBankAccount.Description" />
+                                    <TextEdit @bind-Text="editAccount.Description">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
                                 </FieldBody>
                             </Field>
                         </Validation>
@@ -85,7 +90,11 @@
                             <Field>
                                 <FieldLabel>IBAN</FieldLabel>
                                 <FieldBody>
-                                    <TextEdit @bind-Text="editBankAccount.IBAN" />
+                                    <TextEdit @bind-Text="editAccount.IBAN">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
                                 </FieldBody>
                             </Field>
                         </Validation>
@@ -94,7 +103,11 @@
                             <Field>
                                 <FieldLabel>BIC / SWIFT</FieldLabel>
                                 <FieldBody>
-                                    <TextEdit @bind-Text="editBankAccount.Swift" />
+                                    <TextEdit @bind-Text="editAccount.Swift">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
                                 </FieldBody>
                             </Field>
                         </Validation>
@@ -103,7 +116,11 @@
                             <Field>
                                 <FieldLabel>Website</FieldLabel>
                                 <FieldBody>
-                                    <TextEdit @bind-Text="editBankAccount.Url" />
+                                    <TextEdit @bind-Text="editAccount.Url">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
                                 </FieldBody>
                             </Field>
                         </Validation>
@@ -112,8 +129,7 @@
                             Save changes
                         </Button>
 
-                        <Button Color="Color.Secondary"
-                                Clicked="@(() => navManager.NavigateTo("bankbook/account"))">
+                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/account"))">
                             Cancel
                         </Button>
 
@@ -132,7 +148,7 @@
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
 
     private Validations? validations;
-    private Account? editBankAccount;
+    private Account? editAccount;
 
     protected override async Task OnInitializedAsync()
     {
@@ -144,12 +160,9 @@
 
         // get current Account
         var user = (await authenticationStateTask).User;
-        var currentUserId = Guid.Parse(
-            user.Claims.First(x => x.Type.EndsWith("nameidentifier")).Value);
+        var currentUserId = Guid.Parse(user.Claims.First(x => x.Type.EndsWith("nameidentifier")).Value);
 
-        editBankAccount = await AccountService.GetAccountByIdAsync(
-            currentUserId,
-            AccountId);
+        editAccount = await AccountService.GetAccountByIdAsync(currentUserId, AccountId);
 
         await base.OnInitializedAsync();
     }
@@ -161,13 +174,10 @@
 
         // get user id
         var user = (await authenticationStateTask).User;
-        var currentUserId = Guid.Parse(
-            user.Claims.First(x => x.Type.EndsWith("nameidentifier")).Value);
+        var currentUserId = Guid.Parse(user.Claims.First(x => x.Type.EndsWith("nameidentifier")).Value);
 
         // update account
-        var success = await AccountService.UpdateAccountAsync(
-            currentUserId,
-            editBankAccount!);
+        var success = await AccountService.UpdateAccountAsync(currentUserId, editAccount!);
 
         if (success)
             navManager.NavigateTo("bankbook/account");

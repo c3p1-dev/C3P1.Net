@@ -28,7 +28,7 @@ else
 {
     <Row>
         <Column>
-            <Card>
+            <Card Style="max-width: 1200px;margin: 0 auto;">
                 <CardHeader>
                     <Row>
                         <Column>
@@ -42,7 +42,7 @@ else
                     </Row>
                 </CardHeader>
                 <CardBody>
-                    <DataGrid TItem="Account" Data="Accounts" Responsive ShowPageSizes @bind-SelectedRow="@selectedAccount" Hoverable>
+                    <DataGrid TItem="Account" Data="Accounts" Responsive @bind-SelectedRow="@selectedAccount" Hoverable PageSize="10" ShowPager ShowPageSizes>
                         <DataGridColumns>
                             <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Account" Field="@nameof(Account.Code)" Caption="#" Width="60px" Sortable/>
                             <DataGridColumn TItem="Account" Field="@nameof(Account.Name)" Caption="Name" />
@@ -58,7 +58,7 @@ else
                             <Row>
                                 <Column>
                                     <Div>Selected Account:</Div>
-                                    <Div> <strong>@selectedAccount.Name</strong> (Balance: @selectedAccount.Balance.ToString("C", new CultureInfo("fr-FR")))</Div>
+                                    <Div><strong>@selectedAccount.Name</strong> (Balance: @selectedAccount.Balance.ToString("C", new CultureInfo("fr-FR")))</Div>
                                 </Column>
                                 <Column TextAlignment="TextAlignment.End">
                                     <Button Size="Size.Small" Color="Color.Primary" Clicked="EditSelectedAccount">Edit</Button>

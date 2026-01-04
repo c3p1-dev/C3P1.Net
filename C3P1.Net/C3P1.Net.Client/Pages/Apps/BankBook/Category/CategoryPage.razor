@@ -29,7 +29,7 @@ else
 {
     <Row>
         <Column>
-            <Card>
+            <Card Style="max-width: 1200px;margin: 0 auto;">
                 <CardHeader>
                     <Row>
                         <Column>
@@ -43,8 +43,37 @@ else
                     </Row>
                 </CardHeader>
                 <CardBody>
-                    <!-- Category and SubCategory display logic goes here -->
+                    <DataGrid TItem="Category" Data="Categories" Responsive @bind-SelectedRow="@selectedCategory" Hoverable PageSize="10" ShowPager ShowPageSizes>
+                        <DataGridColumns>
+                            <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Category" Field="@nameof(Category.Code)" Caption="#" Width="60px" Sortable/>
+                            <DataGridColumn TItem="Category" Field="@nameof(Category.Name)" Caption="Name" />
+                            <DataGridColumn TItem="Category" Field="@nameof(Category.Description)" Caption="Description" />
+                        </DataGridColumns>
+                    </DataGrid>
                 </CardBody>
+                <CardFooter>
+                    @if (selectedCategory is not null)
+                    {
+                        <CardText>
+                            <Row>
+                                <Column>
+                                    <Div>Selected Category:</Div>
+                                    <Div><strong>@selectedCategory.Code</strong> (@selectedCategory.Name)</Div>
+                                </Column>
+                                <Column TextAlignment="TextAlignment.End">
+                                    <Button Size="Size.Small" Color="Color.Primary" Clicked="EditSelectedCategory">Edit</Button>
+                                    <Button Size="Size.Small" Color="Color.Danger" Clicked="DeleteSelectedCategory">Delete</Button>
+                                </Column>
+                            </Row>
+                        </CardText>
+                    }
+                    else
+                    {
+                        <CardText>
+                            No category selected.
+                        </CardText>
+                    }
+                </CardFooter>
             </Card>
         </Column>
     </Row>
@@ -55,12 +84,12 @@ else
     private List<Category>? Categories = null;
     private List<SubCategory>? SubCategories = null;
 
-    private Category? CurrentCategory = null;
-    private SubCategory? CurrentSubCategory = null;
+    private Category? selectedCategory = null;
+    private SubCategory? selectedSubCategory = null;
 
-    IEnumerable<SubCategory> CurrentCategorySubCategories => 
-        CurrentCategory!.Id == Guid.Empty ?
-            Enumerable.Empty<SubCategory>(): SubCategories!.Where(s => s.Category == CurrentCategory.Id);
+    IEnumerable<SubCategory> SelectedCategorySubCategories => 
+        selectedCategory!.Id == Guid.Empty ?
+            Enumerable.Empty<SubCategory>(): SubCategories!.Where(s => s.Category == selectedCategory.Id);
 
     protected override async Task OnInitializedAsync()
     {
@@ -107,5 +136,31 @@ else
         // load categories and subcategories from API or database
         Categories = await CategoryService.GetCategoriesAsync(currentUserId);
         SubCategories = await SubCategoryService.GetSubCategoriesAsync(currentUserId);
+    }
+
+    private async Task DeleteSelectedCategory()
+    {
+        if (selectedCategory is not null)
+        {
+            // get user id
+            var user = (await authenticationStateTask).User;
+            var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+
+            // delete category
+            var success = await CategoryService.DeleteCategoryAsync(currentUserId, selectedCategory.Id);
+            if (success)
+            {
+                // reload data
+                await LoadData();
+                selectedCategory = null;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task EditSelectedCategory()
+    {
+        if (selectedCategory is not null)
+            navManager.NavigateTo($"/bankbook/category/edit/{selectedCategory.Id}");
     }
 }

@@ -10,6 +10,58 @@
 
 <PageTitle>BankBook / Add Category</PageTitle>
 
+<Row>
+    <Column>
+        <Card Style="max-width: 800px;margin: 0 auto;">
+            <CardHeader>
+                <CardTitle>Add Category</CardTitle>
+            </CardHeader>
+            <CardBody>
+                <Validations @ref="validations" Mode="ValidationMode.Manual" Model="@newCategory">
+                    <Validation>
+                        <Field>
+                            <FieldLabel RequiredIndicator>Category Code</FieldLabel>
+                            <FieldBody>
+                                <TextEdit Placeholder="CAT" @bind-Text="newCategory!.Code">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel RequiredIndicator>Category Name</FieldLabel>
+                            <FieldBody>
+                                <TextEdit Placeholder="Category name" @bind-Text="newCategory!.Name">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel>Category Description</FieldLabel>
+                            <FieldBody>
+                                <TextEdit Placeholder="Description" @bind-Text="newCategory!.Description">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Button Color="Color.Primary" Clicked="AddCategory">Add Category</Button>
+                    <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category"))">Cancel</Button>
+                </Validations>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>
+
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
@@ -28,8 +80,19 @@
             new Node {Text = "Add", Active = true}
         });
 
-        // Load accounts from API or database here
-
         await base.OnInitializedAsync();
+    }
+
+    private async Task AddCategory()
+    {
+        if (await validations!.ValidateAll())
+        {
+            // get user id
+            var user = (await authenticationStateTask).User;
+            var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+
+            if (await CategoryService.AddCategoryAsync(currentUserId, newCategory!))
+                navManager.NavigateTo("bankbook/category"); // navigate to bankbook/category
+        }
     }
 }

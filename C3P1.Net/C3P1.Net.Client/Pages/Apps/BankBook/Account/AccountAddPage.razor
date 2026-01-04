@@ -12,17 +12,17 @@
 
 <Row>
     <Column>
-        <Card >
+        <Card Style="max-width: 800px;margin: 0 auto;">
             <CardHeader>
-                <CardTitle>Add Bank Account</CardTitle>
+                <CardTitle>Add Account</CardTitle>
             </CardHeader>
             <CardBody>
-                <Validations @ref="validations" Mode="ValidationMode.Manual" Model="@newBankAccount">
+                <Validations @ref="validations" Mode="ValidationMode.Manual" Model="@newAccount">
                     <Validation>
                         <Field>
                             <FieldLabel RequiredIndicator>Account Code</FieldLabel>
                             <FieldBody>
-                                <TextEdit Placeholder="CC" @bind-Text="newBankAccount!.Code">
+                                <TextEdit Placeholder="CC" @bind-Text="newAccount!.Code">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -34,7 +34,7 @@
                         <Field>
                             <FieldLabel RequiredIndicator>Account Name</FieldLabel>
                             <FieldBody>
-                                <TextEdit Placeholder="Account name" @bind-Text="newBankAccount!.Name">
+                                <TextEdit Placeholder="Account name" @bind-Text="newAccount!.Name">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -46,7 +46,7 @@
                         <Field>
                             <FieldLabel >Bank</FieldLabel>
                             <FieldBody>
-                                <TextEdit Placeholder="My bank" @bind-Text="newBankAccount!.Bank">
+                                <TextEdit Placeholder="My bank" @bind-Text="newAccount!.Bank">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -58,7 +58,7 @@
                         <Field>
                             <FieldLabel >Account Description</FieldLabel>
                             <FieldBody>
-                                <TextEdit Placeholder="My account" @bind-Text="newBankAccount!.Description">
+                                <TextEdit Placeholder="My account" @bind-Text="newAccount!.Description">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -70,7 +70,7 @@
                         <Field>
                             <FieldLabel >Account IBAN</FieldLabel>
                             <FieldBody>
-                                <TextEdit Placeholder="FR76 ..." @bind-Text="newBankAccount!.IBAN">
+                                <TextEdit Placeholder="FR76 ..." @bind-Text="newAccount!.IBAN">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -82,7 +82,7 @@
                         <Field>
                             <FieldLabel >BIC/SWIFT</FieldLabel>
                             <FieldBody>
-                                <TextEdit Placeholder="AFRIFRPP" @bind-Text="newBankAccount!.Swift">
+                                <TextEdit Placeholder="AFRIFRPP" @bind-Text="newAccount!.Swift">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -94,12 +94,21 @@
                         <Field>
                             <FieldLabel>Website</FieldLabel>
                             <FieldBody>
-                                <TextEdit Placeholder="https://" @bind-Text="newBankAccount!.Url" />
+                                <TextEdit Placeholder="https://" @bind-Text="newAccount!.Url">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
                             </FieldBody>
                         </Field>
                     </Validation>
-                    <Button Color="Color.Primary" Clicked="AddAccount">Add Account</Button>
-                    <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/account"))">Cancel</Button>
+
+                    <Button Color="Color.Primary" Clicked="AddAccount">
+                        Add Account
+                    </Button>
+                    <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/account"))">
+                        Cancel
+                   </Button>
                 </Validations>
 
             </CardBody>
@@ -112,7 +121,7 @@
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
 
     Validations? validations;
-    Account? newBankAccount = new ();
+    Account? newAccount = new ();
 
     protected override async Task OnInitializedAsync()
     {
@@ -136,7 +145,7 @@
             var user = (await authenticationStateTask).User;
             var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
 
-            if (await AccountService.AddAccountAsync(currentUserId, newBankAccount!))
+            if (await AccountService.AddAccountAsync(currentUserId, newAccount!))
                 navManager.NavigateTo("bankbook/account");  // navigate to bankbook/bank
         }
     }

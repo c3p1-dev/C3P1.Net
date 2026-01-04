@@ -1,4 +1,4 @@
-﻿@page "/bankbook/category/edit"
+﻿@page "/bankbook/category/edit/{CategoryId:guid}"
 @using C3P1.Net.Shared.Data.Apps.BankBook
 @using C3P1.Net.Shared.Services.Apps.BankBook
 @using System.ComponentModel.DataAnnotations
@@ -10,12 +10,92 @@
 
 <PageTitle>BankBook / Edit Category</PageTitle>
 
+<Row>
+    <Column>
+        <Card Style="max-width: 800px;margin: 0 auto;">
+            <CardHeader>
+                @if (editCategory is null)
+                {
+                    <CardTitle>Edit Category</CardTitle>
+                }
+                else
+                {
+                    <CardTitle>Edit Category "@editCategory.Code"</CardTitle>
+                }
+            </CardHeader>
+            <CardBody>
+                @if (editCategory is null)
+                {
+                    <Alert Color="Color.Danger">
+                        Category not found
+                    </Alert>
+                }
+                else
+                {
+                    <Validations @ref="validations" Mode="ValidationMode.Manual" Model="@editCategory">
+                        <Validation>
+                            <Field>
+                                <FieldLabel RequiredIndicator>Category Code</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit @bind-Text="editCategory.Code">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel RequiredIndicator>Category Name</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit @bind-Text="editCategory.Name">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel>Category Description</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit @bind-Text="editCategory.Description">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+
+                        <Button Color="Color.Primary" Clicked="SaveCategory">
+                            Save changes
+                        </Button>
+
+                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category"))">
+                            Cancel
+                        </Button>
+
+                    </Validations>
+                }
+            </CardBody>
+        </Card>
+    </Column>
+</Row>
+
 @code {
+    [Parameter]
+    public Guid CategoryId { get; set; }
+
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
 
     private Validations? validations;
-    private Category? newCategory = new();
+    private Category? editCategory = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -28,8 +108,28 @@
             new Node {Text = "Edit", Active = true}
         });
 
-        // Load accounts from API or database here
+        // get current Category
+        var user = (await authenticationStateTask).User;
+        var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+
+        editCategory = await CategoryService.GetCategoryByIdAsync(currentUserId, CategoryId);
 
         await base.OnInitializedAsync();
+    }
+
+    private async Task SaveCategory()
+    {
+        if (!await validations!.ValidateAll())
+            return;
+
+        // get user id
+        var user = (await authenticationStateTask).User;
+        var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+
+        // update category
+        var success = await CategoryService.UpdateCategoryAsync(currentUserId, editCategory!);
+
+        if (success)
+            navManager.NavigateTo("bankbook/category");
     }
 }
