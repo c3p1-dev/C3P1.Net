@@ -10,7 +10,7 @@
 
 <PageTitle>BankBook / Accounts</PageTitle>
 
-@if (Accounts == null)
+@if (Accounts is null)
 {
     <Paragraph><em>Loading...</em></Paragraph>
 }
@@ -52,7 +52,7 @@ else
                     </DataGrid>
                 </CardBody>
                 <CardFooter>
-                    @if (selectedAccount != null)
+                    @if (selectedAccount is not null)
                     {
                         <CardText>
                             <Row>
@@ -114,7 +114,7 @@ else
 
     private async Task DeleteSelectedAccount()
     {
-        if (selectedAccount != null)
+        if (selectedAccount is not null)
         {
             // get user id
             var user = (await authenticationStateTask).User;
@@ -133,7 +133,7 @@ else
 
     private void EditSelectedAccount()
     {
-        if (selectedAccount != null)
+        if (selectedAccount is not null)
         {
             navManager.NavigateTo($"/bankbook/account/edit/{selectedAccount.Id}");
         }

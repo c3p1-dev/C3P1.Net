@@ -11,6 +11,7 @@ namespace C3P1.Net.Services.Apps
 
         public async Task<List<TodoItem>> GetTasklistAsync(Guid userId)
         {
+            // get all tasks
             var result = await _context.Tasklist
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
@@ -21,6 +22,7 @@ namespace C3P1.Net.Services.Apps
         }
         public async Task<List<TodoItem>> GetTasklistTodoAsync(Guid userId)
         {
+            // get all todo tasks
             var result = await _context.Tasklist
                 .Where(x => x.UserId == userId && x.Completed == false)
                 .ToListAsync();
@@ -31,6 +33,7 @@ namespace C3P1.Net.Services.Apps
         }
         public async Task<List<TodoItem>> GetTasklistDoneAsync(Guid userId)
         {
+            // get all done tasks
             var result = await _context.Tasklist
                 .Where(x => x.UserId == userId && x.Completed == true)
                 .ToListAsync();
@@ -58,11 +61,9 @@ namespace C3P1.Net.Services.Apps
         {
             // try to get task from taskId
             var task = await _context.Tasklist.Where(x => x.UserId == userId && x.Id == taskId).FirstOrDefaultAsync();
-            if (task == null)
-            {
-                // task not found
-                return false;
-            }
+
+            if (task is null)
+                return false;  // task not found
 
             // delete task
             _context.Remove(task);
@@ -84,6 +85,7 @@ namespace C3P1.Net.Services.Apps
         {
             List<TodoItem> result = [];
 
+            // delete all done tasks
             foreach (var task in _context.Tasklist.Where(x => x.UserId == userId && x.Completed == true))
             {
                 _context.Remove(task);
@@ -99,6 +101,7 @@ namespace C3P1.Net.Services.Apps
         {
             List<TodoItem> result = [];
 
+            // mark all tasks as done
             foreach (var task in _context.Tasklist.Where(x => x.UserId == userId && x.Completed == false))
             {
                 task.Completed = true;

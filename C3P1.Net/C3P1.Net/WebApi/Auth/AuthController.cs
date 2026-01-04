@@ -29,7 +29,8 @@ namespace C3P1.Net.WebApi.Auth
         {
             // Look for a match and check passwords
             var user = await _userManager.FindByNameAsync(model.Username!);
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password!))
+
+            if (user is not null && await _userManager.CheckPasswordAsync(user, model.Password!))
             {
                 // Get roles and add Claim info
                 var userRoles = await _userManager.GetRolesAsync(user);
@@ -41,9 +42,7 @@ namespace C3P1.Net.WebApi.Auth
                 };
 
                 foreach (var userRole in userRoles)
-                {
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-                }
 
                 var token = GetToken(authClaims);
 
@@ -64,7 +63,7 @@ namespace C3P1.Net.WebApi.Auth
         {
             // Check if user already exists
             var userExists = await _userManager.FindByNameAsync(model.Username!);
-            if (userExists != null)
+            if (userExists is not null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
 
             // Create new user
@@ -88,33 +87,39 @@ namespace C3P1.Net.WebApi.Auth
         [HttpPost("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
         {
+            // Check if user already exists
             var userExists = await _userManager.FindByNameAsync(model.Username!);
-            if (userExists != null)
+            if (userExists is not null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
 
+            // Create new user
             AppUser user = new()
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.Username
             };
+
+            // Add user to database
             var result = await _userManager.CreateAsync(user, model.Password!);
+
+            // Check for creation errors
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
 
+            // Ensure roles exist
             if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+
             if (!await _roleManager.RoleExistsAsync(UserRoles.User))
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
 
             if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
-            {
                 await _userManager.AddToRoleAsync(user, UserRoles.Admin);
-            }
+
             if (await _roleManager.RoleExistsAsync(UserRoles.User))
-            {
                 await _userManager.AddToRoleAsync(user, UserRoles.User);
-            }
+
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 

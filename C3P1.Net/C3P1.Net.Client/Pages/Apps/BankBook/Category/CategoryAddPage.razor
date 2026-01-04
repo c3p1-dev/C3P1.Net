@@ -1,5 +1,35 @@
-﻿<h3>CategoryAdd</h3>
+﻿@page "/bankbook/category/add"
+@using C3P1.Net.Shared.Data.Apps.BankBook
+@using C3P1.Net.Shared.Services.Apps.BankBook
+@using System.ComponentModel.DataAnnotations
+@layout Layouts.BankBookLayout
+
+@inject NavigationManager navManager;
+@inject NavBreadcrumbService navBreadcrumb;
+@inject ICategoryService CategoryService;
+
+<PageTitle>BankBook / Add Category</PageTitle>
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
 
+    private Validations? validations;
+    private Category? newCategory = new ();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // NavState (breadcrumbs, etc) is Scoped, so it lives as long as our connection lives.
+        // So when a new page is visited, we need to clear navigation to prevent breadcrumbs from bleed-over, etc.
+        // This also makes the navbar invisible by default.
+        navBreadcrumb.SetBreadcrumbs(new List<Node>()
+        {
+            new Node {Text = "Category", Link = "bankbook/category"},
+            new Node {Text = "Add", Active = true}
+        });
+
+        // Load accounts from API or database here
+
+        await base.OnInitializedAsync();
+    }
 }

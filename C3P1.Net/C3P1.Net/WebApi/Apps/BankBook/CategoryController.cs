@@ -20,18 +20,16 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             // get user id
             var name = User.Identity?.Name;
             var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                // should not happen due to [Authorize] attribute
-                return Unauthorized();
-            }
+
+            if (user is null)
+                return Unauthorized();  // should not happen due to [Authorize] attribute
 
             var currentUserId = Guid.Parse(user.Id);
 
             // get all categories for the current user
             var result = await categoryService.GetCategoriesAsync(currentUserId);
 
-            if (result == null)
+            if (result is null)
                 return BadRequest();
             else
                 return Ok(result);
@@ -45,27 +43,23 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             // get user id
             var name = User.Identity?.Name;
             var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                // should not happen
-                return Unauthorized();
-            }
+
+            if (user is null)
+                return Unauthorized();  // should not happen
 
             var currentUserId = Guid.Parse(user.Id);
 
             // duplicate check
             var existingCategory = await categoryService.GetCategoryByCodeAsync(currentUserId, category.Code);
-            if (existingCategory != null)
-            {
-                // category with the same code already exists
-                return Conflict("A category with the same code already exists.");
-            }
+
+            if (existingCategory is not null)
+                return Conflict("A category with the same code already exists.");  // category with the same code already exists
 
             // add category
             bool result = await categoryService.AddCategoryAsync(currentUserId, category);
 
-            if (result)
-                return Ok(true);
+            if (result == true)
+                return Ok(result);
             else
                 return BadRequest();
         }
@@ -77,19 +71,17 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             // get user id
             var name = User.Identity?.Name;
             var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                // should not happen
-                return Unauthorized();
-            }
+
+            if (user is null)
+                return Unauthorized();  // should not happen
 
             var currentUserId = Guid.Parse(user.Id);
 
             // delete category from id
             bool result = await categoryService.DeleteCategoryAsync(currentUserId, id);
 
-            if (result)
-                return Ok(true);
+            if (result == true)
+                return Ok(result);
             else
                 return BadRequest();
         }
@@ -101,27 +93,23 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             // get user id
             var name = User.Identity?.Name;
             var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                // should not happen
-                return Unauthorized();
-            }
+
+            if (user is null)
+                return Unauthorized();  // should not happen
 
             var currentUserId = Guid.Parse(user.Id);
 
             // duplicate check
             var existingCategory = await categoryService.GetCategoryByCodeAsync(currentUserId, category.Code);
+
             if (existingCategory != null && existingCategory.Id != category.Id)
-            {
-                // category with the same code already exists
-                return Conflict("A category with the same code already exists.");
-            }
+                return Conflict("A category with the same code already exists.");  // category with the same code already exists
 
             // update category
             bool result = await categoryService.UpdateCategoryAsync(currentUserId, category);
 
-            if (result)
-                return Ok(true);
+            if (result == true)
+                return Ok(result);
             else
                 return BadRequest();
         }
@@ -133,18 +121,16 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             // get user id
             var name = User.Identity?.Name;
             var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                // should not happen due to [Authorize] attribute
-                return Unauthorized();
-            }
+
+            if (user is null)
+                return Unauthorized();  // should not happen due to [Authorize] attribute
 
             var currentUserId = Guid.Parse(user.Id);
 
             // get category by id for the current user
             var result = await categoryService.GetCategoryByIdAsync(currentUserId, id);
 
-            if (result != null)
+            if (result is not null)
                 return Ok(result);
             else
                 return NotFound();
@@ -158,18 +144,15 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             var name = User.Identity?.Name;
             var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
 
-            if (user == null)
-            {
-                // should not happen due to [Authorize] attribute
-                return Unauthorized();
-            }
+            if (user is null)
+                return Unauthorized();  // should not happen due to [Authorize] attribute
 
             var currentUserId = Guid.Parse(user.Id);
 
             // get category by code for the current user
             var result = await categoryService.GetCategoryByCodeAsync(currentUserId, code);
 
-            if (result != null)
+            if (result is not null)
                 return Ok(result);
             else
                 return NotFound();

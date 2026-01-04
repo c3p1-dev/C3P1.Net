@@ -17,7 +17,7 @@ namespace C3P1.Net.Client.Components.Apps.Tasklist
         {
             get
             {
-                if (tasklist != null)
+                if (tasklist is not null)
                 {
                     var query = from t in tasklist select t;
 
@@ -30,9 +30,7 @@ namespace C3P1.Net.Client.Components.Apps.Tasklist
                     return query;
                 }
                 else // return blank list during tasklist loading
-                {
                     return [];
-                }
             }
         }
 

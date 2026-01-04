@@ -6,7 +6,7 @@
 
 @inject NavigationManager navManager;
 @inject NavBreadcrumbService navBreadcrumb;
-@inject IAccountService Account;
+@inject IAccountService AccountService;
 
 <PageTitle>BankBook / Add Account</PageTitle>
 
@@ -112,7 +112,7 @@
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
 
     Validations? validations;
-    Account? newBankAccount = new Account();
+    Account? newBankAccount = new ();
 
     protected override async Task OnInitializedAsync()
     {
@@ -125,8 +125,6 @@
             new Node {Text = "Add", Active = true}
         });
 
-        // Load accounts from API or database here
-
         await base.OnInitializedAsync();
     }
 
@@ -137,9 +135,9 @@
             // get user id
             var user = (await authenticationStateTask).User;
             var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
-            if (await Account.AddAccountAsync(currentUserId, newBankAccount!))
-                // navigate to bankbook/bank
-                navManager.NavigateTo("bankbook/account");
+
+            if (await AccountService.AddAccountAsync(currentUserId, newBankAccount!))
+                navManager.NavigateTo("bankbook/account");  // navigate to bankbook/bank
         }
     }
 }

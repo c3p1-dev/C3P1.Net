@@ -38,7 +38,7 @@ namespace C3P1.Net.Services.Apps.BankBook
                 .FirstOrDefaultAsync(x => x.Id == subcategoryId && x.UserId == userId);
 
             // delete if found
-            if (subcategory != null)
+            if (subcategory is not null)
             {
                 _context.SubCategories.Remove(subcategory);
                 int recorded = await _context.SaveChangesAsync();
@@ -75,7 +75,7 @@ namespace C3P1.Net.Services.Apps.BankBook
                 .FirstOrDefaultAsync(x => x.Id == subCategory.Id && x.UserId == userId);
 
             // update if found
-            if (existingSubCategory != null)
+            if (existingSubCategory is not null)
             {
                 // check for code duplication
                 var duplicateSubcategory = await _context.SubCategories
@@ -125,12 +125,13 @@ namespace C3P1.Net.Services.Apps.BankBook
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == categoryCode);
 
-            if (category != null)
+            if (category is not null)
             {
                 // get subcategories by category id
                 var result = await _context.SubCategories
                     .Where(x => x.UserId == userId && x.Category == category.Id)
                     .ToListAsync();
+
                 return result;
             }
             else

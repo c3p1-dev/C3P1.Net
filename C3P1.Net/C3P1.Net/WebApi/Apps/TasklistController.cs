@@ -20,22 +20,21 @@ namespace C3P1.Net.WebApi.Apps
             // get user id
             var name = User.Identity?.Name;
             var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                // should not happen due to [Authorize] attribute
-                return Unauthorized();
-            }
+
+            if (user is null)
+                return Unauthorized();  // should not happen due to [Authorize] attribute
 
             var currentUserId = Guid.Parse(user.Id);
 
             // get all tasks from current user
             var result = await tasklistService.GetTasklistAsync(currentUserId);
 
-            if (result == null)
+            if (result is null)
                 return BadRequest();
             else
                 return Ok(result);
         }
+
         // GET : api/apps/[controller]/todo
         [HttpGet]
         [Route("todo")]
@@ -44,22 +43,21 @@ namespace C3P1.Net.WebApi.Apps
             // get user id
             var name = User.Identity?.Name;
             var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                // should not happen
-                return Unauthorized();
-            }
+
+            if (user is null)
+                return Unauthorized();  // should not happen
 
             var currentUserId = Guid.Parse(user.Id);
 
             // get all tasks from current user
             var result = await tasklistService.GetTasklistTodoAsync(currentUserId);
 
-            if (result == null)
+            if (result is null)
                 return BadRequest();
             else
                 return result;
         }
+
         // GET : api/apps/[controller]/done
         [HttpGet]
         [Route("done")]
@@ -68,18 +66,16 @@ namespace C3P1.Net.WebApi.Apps
             // get user id
             var name = User.Identity?.Name;
             var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                // should not happen
-                return Unauthorized();
-            }
+
+            if (user is null)
+                return Unauthorized();  // should not happen
 
             var currentUserId = Guid.Parse(user.Id);
 
             // get all tasks from current user
             var result = await tasklistService.GetTasklistDoneAsync(currentUserId);
 
-            if (result == null)
+            if (result is null)
                 return BadRequest();
             else
                 return result;
@@ -93,18 +89,16 @@ namespace C3P1.Net.WebApi.Apps
             // get user id
             var name = User.Identity?.Name;
             var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                // should not happen
-                return Unauthorized();
-            }
+
+            if (user is null)
+                return Unauthorized();  // should not happen
 
             var currentUserId = Guid.Parse(user.Id);
 
             // add a task
             bool result = await tasklistService.AddTaskAsync(currentUserId, task);
 
-            if (result)
+            if (result == true)
                 return Ok(result);
             else
                 return BadRequest(result);
@@ -117,18 +111,16 @@ namespace C3P1.Net.WebApi.Apps
             // get user id
             var name = User.Identity?.Name;
             var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                // should not happen
-                return Unauthorized();
-            }
+
+            if (user is null)
+                return Unauthorized();  // should not happen
 
             var currentUserId = Guid.Parse(user.Id);
 
             // delete task from id
             var result = await tasklistService.DeleteTaskAsync(currentUserId, id);
 
-            if (result)
+            if (result == true)
                 return Ok(result);
             else
                 return BadRequest(result);
@@ -142,7 +134,7 @@ namespace C3P1.Net.WebApi.Apps
             // update task
             var result = await tasklistService.UpdateTaskAsync(task);
 
-            if (result)
+            if (result == true)
                 return Ok(result);
             else
                 return BadRequest(result);
@@ -155,18 +147,16 @@ namespace C3P1.Net.WebApi.Apps
             // get user id
             var name = User.Identity?.Name;
             var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                // should not happen
-                return Unauthorized();
-            }
+
+            if (user is null)
+                return Unauthorized();  // should not happen
 
             var currentUserId = Guid.Parse(user.Id);
 
             // delete done tasks
             var result = await tasklistService.DeleteTasklistDoneAsync(currentUserId);
 
-            if (result == null)
+            if (result is null)
                 return BadRequest();
             else
                 return Ok(result);
@@ -179,18 +169,16 @@ namespace C3P1.Net.WebApi.Apps
             // get user id
             var name = User.Identity?.Name;
             var user = await userManager.Users.Where(x => x.UserName == name).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                // should not happen
-                return Unauthorized();
-            }
+
+            if (user is null)
+                return Unauthorized();  // should not happen
 
             var currentUserId = Guid.Parse(user.Id);
 
             // mark all todo as done
             var result = await tasklistService.MarkTasklistAsDoneAsync(currentUserId);
 
-            if (result == null)
+            if (result is null)
                 return BadRequest();
             else
                 return Ok(result);

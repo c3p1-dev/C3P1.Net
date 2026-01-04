@@ -19,24 +19,18 @@ namespace C3P1.Net.Data
         {
             // Create Admin Role
             bool alreadyExists = await roleManager.RoleExistsAsync("Admin");
-            if (!alreadyExists)
-            {
+            if (alreadyExists == false)
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
-            }
 
             // Create User Role
             alreadyExists = await roleManager.RoleExistsAsync("User");
-            if (!alreadyExists)
-            {
+            if (alreadyExists == false)
                 await roleManager.CreateAsync(new IdentityRole("User"));
-            }
 
             // Create BankBook Role
             alreadyExists = await roleManager.RoleExistsAsync("BankBook");
-            if (!alreadyExists)
-            {
+            if (alreadyExists == false)
                 await roleManager.CreateAsync(new IdentityRole("BankBook"));
-            }
 
         }
 

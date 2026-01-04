@@ -29,7 +29,6 @@ namespace C3P1.Net.Services.Apps.BankBook
 
             if (duplicateAccount is null)
             {
-
                 // add bank account
                 _context.Add(bankAccount);
                 int recorded = await _context.SaveChangesAsync();
@@ -47,7 +46,7 @@ namespace C3P1.Net.Services.Apps.BankBook
                 .FirstOrDefaultAsync(x => x.Id == bankAccountId && x.UserId == userId);
 
             // delete if found
-            if (bankAccount != null)
+            if (bankAccount is not null)
             {
                 _context.Accounts.Remove(bankAccount);
                 int recorded = await _context.SaveChangesAsync();
@@ -59,31 +58,34 @@ namespace C3P1.Net.Services.Apps.BankBook
 
         public async Task<bool> UpdateAccountAsync(Guid userId, Account bankAccount)
         {
-            // find existing bank account
             var existingBankAccount = await _context.Accounts
-                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == bankAccount.Id && x.UserId == userId);
 
-            // update if found
-            if (existingBankAccount != null)
-            {
-                // duplicate check
-                var duplicateAccount = await _context.Accounts
-                    .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == bankAccount.Code && x.Id != bankAccount.Id);
-                if (duplicateAccount is null)
-                {
-                    // ensure the userId is not changed
-                    bankAccount.UserId = userId;
-                    _context.Accounts.Update(bankAccount);
-                    int recorded = await _context.SaveChangesAsync();
-                    return (recorded == 1);
-                }
-                else
-                    return false; // duplicate found
-            }
+            if (existingBankAccount is null)
+                return false;
 
-            return false; // not found
+            var duplicateAccount = await _context.Accounts
+                .AnyAsync(x => x.UserId == userId
+                            && x.Code == bankAccount.Code
+                            && x.Id != bankAccount.Id);
+
+            if (duplicateAccount)
+                return false;
+
+            existingBankAccount.Code = bankAccount.Code;
+            existingBankAccount.Name = bankAccount.Name;
+            existingBankAccount.IBAN = bankAccount.IBAN;
+            existingBankAccount.Swift = bankAccount.Swift;
+            existingBankAccount.Bank = bankAccount.Bank;
+            existingBankAccount.Description = bankAccount.Description;
+            existingBankAccount.Url = bankAccount.Url;
+            existingBankAccount.Balance = bankAccount.Balance;
+            existingBankAccount.LockedAt = bankAccount.LockedAt;
+
+            await _context.SaveChangesAsync();
+            return true;
         }
+
 
         public async Task<Account?> GetAccountByIdAsync(Guid userId, Guid bankAccountId)
         {

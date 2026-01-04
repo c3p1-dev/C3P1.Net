@@ -38,7 +38,7 @@ namespace C3P1.Net.Services.Apps.BankBook
                 .FirstOrDefaultAsync(x => x.Id == categoryId && x.UserId == userId);
 
             // delete if found
-            if (category != null)
+            if (category is not null)
             {
                 _context.Categories.Remove(category);
                 int recorded = await _context.SaveChangesAsync();
@@ -75,7 +75,7 @@ namespace C3P1.Net.Services.Apps.BankBook
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == category.Id && x.UserId == userId);
 
-            if (existingCategory != null)
+            if (existingCategory is not null)
             {
                 // check duplicate code
                 var duplicateCategory = await _context.Categories

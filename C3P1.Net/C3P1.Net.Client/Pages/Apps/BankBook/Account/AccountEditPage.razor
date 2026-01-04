@@ -6,7 +6,7 @@
 
 @inject NavigationManager navManager
 @inject NavBreadcrumbService navBreadcrumb
-@inject IAccountService bankAccount
+@inject IAccountService AccountService
 
 <PageTitle>BankBook / Edit Bank Account</PageTitle>
 
@@ -142,11 +142,12 @@
             new Node { Text = "Edit", Active = true }
         });
 
+        // get current Account
         var user = (await authenticationStateTask).User;
         var currentUserId = Guid.Parse(
             user.Claims.First(x => x.Type.EndsWith("nameidentifier")).Value);
 
-        editBankAccount = await bankAccount.GetAccountByIdAsync(
+        editBankAccount = await AccountService.GetAccountByIdAsync(
             currentUserId,
             AccountId);
 
@@ -158,11 +159,13 @@
         if (!await validations!.ValidateAll())
             return;
 
+        // get user id
         var user = (await authenticationStateTask).User;
         var currentUserId = Guid.Parse(
             user.Claims.First(x => x.Type.EndsWith("nameidentifier")).Value);
 
-        var success = await bankAccount.UpdateAccountAsync(
+        // update account
+        var success = await AccountService.UpdateAccountAsync(
             currentUserId,
             editBankAccount!);
 

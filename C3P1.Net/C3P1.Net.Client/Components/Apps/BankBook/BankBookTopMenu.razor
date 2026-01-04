@@ -44,6 +44,7 @@
         </BarEnd>
     </BarMenu>
 </Bar>
+
 @code {
     void LocationChanged(object? sender, LocationChangedEventArgs e)
     {
@@ -72,7 +73,6 @@
     {
         // Subscribe to the event
         navManager.LocationChanged += LocationChanged;
-
         await SelectCulture("en-US");
 
         await base.OnInitializedAsync();
@@ -95,15 +95,10 @@
     }
 
     [Parameter] public EventCallback<bool> ThemeEnabledChanged { get; set; }
-
     [Parameter] public EventCallback<bool> ThemeGradientChanged { get; set; }
-
     [Parameter] public EventCallback<bool> ThemeRoundedChanged { get; set; }
-
     [Parameter] public EventCallback<string> ThemeColorChanged { get; set; }
-
     [Parameter] public string? LayoutType { get; set; }
-
     [Parameter] public EventCallback<string> LayoutTypeChanged { get; set; }
 
     [Inject] protected ITextLocalizerService? LocalizationService { get; set; }

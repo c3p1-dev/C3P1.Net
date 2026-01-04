@@ -19,14 +19,10 @@ namespace C3P1.Net.WebApi.Admin
         {
             var result = await _manageUserService.GetUsersAsync();
 
-            if (result != null)
-            {
+            if (result is not null)
                 return Ok(result);
-            }
             else
-            {
                 return BadRequest();
-            }
         }
 
         // GET : api/admin/[controller]/list/inrole/{role}
@@ -36,14 +32,10 @@ namespace C3P1.Net.WebApi.Admin
         {
             var result = await _manageUserService.GetUsersInRoleAsync(role);
 
-            if (result != null)
-            {
+            if (result is not null)
                 return Ok(result);
-            }
             else
-            {
                 return BadRequest();
-            }
         }
 
         // GET : api/admin/[controller]/list/roles
@@ -52,14 +44,10 @@ namespace C3P1.Net.WebApi.Admin
         {
             var result = await _manageUserService.GetRolesAsync();
 
-            if (result != null)
-            {
+            if (result is not null)
                 return Ok(result);
-            }
             else
-            {
                 return BadRequest();
-            }
         }
 
         // POST : api/admin/[controller]/user/roles
@@ -79,15 +67,13 @@ namespace C3P1.Net.WebApi.Admin
                 .Where(u => u.Id == roleEditModel.UserId.ToString())
                 .FirstOrDefault();
 
-            if (user != null)
+            if (user is not null)
             {
                 bool result = await _manageUserService.IsInRoleAsync(user, roleEditModel.Role!);
                 return Ok(result);
             }
             else
-            {
                 return BadRequest();
-            }
 
         }
 
