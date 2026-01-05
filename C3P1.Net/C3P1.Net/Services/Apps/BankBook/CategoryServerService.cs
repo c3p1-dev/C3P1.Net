@@ -72,29 +72,30 @@ namespace C3P1.Net.Services.Apps.BankBook
         {
             // find existing category
             var existingCategory = await _context.Categories
-                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == category.Id && x.UserId == userId);
 
-            if (existingCategory is not null)
-            {
-                // check duplicate code
-                var duplicateCategory = await _context.Categories
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == category.Code && x.Id != category.Id);
+            // if not found, return false
+            if (existingCategory is null)
+                return false;
 
-                if (duplicateCategory is null)
-                {
-                    // ensure the userId is not changed
-                    category.UserId = userId;
-                    _context.Categories.Update(category);
+            // check for duplicate code
+            var duplicateAccount = await _context.Accounts
+                .AnyAsync(x => x.UserId == userId
+                            && x.Code == category.Code
+                            && x.Id != category.Id);
 
-                    int recorded = await _context.SaveChangesAsync();
-                    return (recorded == 1);
-                }
-                else // category code duplicate case
-                    return false;
-            }
-            return false; // category not found
+            // if duplicate found, return false
+            if (duplicateAccount == true)
+                return false;
+
+            // update fields
+            existingCategory.Code = category.Code;
+            existingCategory.Name = category.Name;
+            existingCategory.Description = category.Description;
+
+            // save changes
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<Category?> GetCategoryByCodeAsync(Guid userId, string code)

@@ -69,34 +69,32 @@ namespace C3P1.Net.Services.Apps.BankBook
 
         public async Task<bool> UpdateSubCategoryAsync(Guid userId, SubCategory subCategory)
         {
-            // find existing subcategory
-            var existingSubCategory = await _context.SubCategories
-                .AsNoTracking()
+            // find existing sub category
+            var existingSubCategory = await _context.Categories
                 .FirstOrDefaultAsync(x => x.Id == subCategory.Id && x.UserId == userId);
 
-            // update if found
-            if (existingSubCategory is not null)
-            {
-                // check for code duplication
-                var duplicateSubcategory = await _context.SubCategories
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == subCategory.Code && x.Id != subCategory.Id);
+            // if not found, return false
+            if (existingSubCategory is null)
+                return false;
 
-                if (duplicateSubcategory is null)
-                {
-                    // ensure the userId is not changed
-                    subCategory.UserId = userId;
-                    _context.SubCategories.Update(subCategory);
+            // check for duplicate code
+            var duplicateAccount = await _context.Accounts
+                .AnyAsync(x => x.UserId == userId
+                            && x.Code == subCategory.Code
+                            && x.Id != subCategory.Id);
 
-                    int recorded = await _context.SaveChangesAsync();
+            // if duplicate found, return false
+            if (duplicateAccount == true)
+                return false;
 
-                    return (recorded == 1);
-                }
-                else
-                    return false; // duplication case
-            }
+            // update fields
+            existingSubCategory.Code = subCategory.Code;
+            existingSubCategory.Name = subCategory.Name;
+            existingSubCategory.Description = subCategory.Description;
 
-            return false; // not found
+            // save changes
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<SubCategory?> GetSubCategoryByCodeAsync(Guid userId, string code)
