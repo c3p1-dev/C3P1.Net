@@ -58,32 +58,31 @@ namespace C3P1.Net.Services.Apps.BankBook
 
         public async Task<bool> UpdateAccountAsync(Guid userId, Account bankAccount)
         {
-            var existingBankAccount = await _context.Accounts
+            // find existing category
+            var existingCategory = await _context.Accounts
+                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == bankAccount.Id && x.UserId == userId);
 
-            if (existingBankAccount is null)
-                return false;
+            if (existingCategory is not null)
+            {
+                // check duplicate code
+                var duplicateCategory = await _context.Accounts
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == bankAccount.Code && x.Id != bankAccount.Id);
 
-            var duplicateAccount = await _context.Accounts
-                .AnyAsync(x => x.UserId == userId
-                            && x.Code == bankAccount.Code
-                            && x.Id != bankAccount.Id);
+                if (duplicateCategory is null)
+                {
+                    // ensure the userId is not changed
+                    bankAccount.UserId = userId;
+                    _context.Accounts.Update(bankAccount);
 
-            if (duplicateAccount)
-                return false;
-
-            existingBankAccount.Code = bankAccount.Code;
-            existingBankAccount.Name = bankAccount.Name;
-            existingBankAccount.IBAN = bankAccount.IBAN;
-            existingBankAccount.Swift = bankAccount.Swift;
-            existingBankAccount.Bank = bankAccount.Bank;
-            existingBankAccount.Description = bankAccount.Description;
-            existingBankAccount.Url = bankAccount.Url;
-            existingBankAccount.Balance = bankAccount.Balance;
-            existingBankAccount.LockedAt = bankAccount.LockedAt;
-
-            await _context.SaveChangesAsync();
-            return true;
+                    int recorded = await _context.SaveChangesAsync();
+                    return (recorded == 1);
+                }
+                else // category code duplicate case
+                    return false;
+            }
+            return false; // category not found
         }
 
 
