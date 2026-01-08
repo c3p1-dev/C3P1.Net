@@ -42,14 +42,29 @@ else
                     </Row>
                 </CardHeader>
                 <CardBody>
-                    <DataGrid TItem="Account" Data="Accounts" Responsive @bind-SelectedRow="@selectedAccount" Hoverable PageSize="10" ShowPager ShowPageSizes>
-                        <DataGridColumns>
-                            <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Account" Field="@nameof(Account.Code)" Caption="#" Width="60px" Sortable/>
-                            <DataGridColumn TItem="Account" Field="@nameof(Account.Name)" Caption="Name" />
-                            <DataGridColumn TItem="Account" Field="@nameof(Account.Bank)" Caption="Bank" />
-                            <DataGridColumn TItem="Account" Field="@nameof(Account.Balance)" Caption="Balance" />
-                        </DataGridColumns>
-                    </DataGrid>
+                    @if (Accounts.Count > 10)
+                    {
+                        <DataGrid TItem="Account" Data="Accounts" Responsive @bind-SelectedRow="@selectedAccount" Hoverable ShowPager ShowPageSizes>
+                            <DataGridColumns>
+                                <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Account" Field="@nameof(Account.Code)" Caption="#" Width="60px" Sortable />
+                                <DataGridColumn TItem="Account" Field="@nameof(Account.Name)" Caption="Name" />
+                                <DataGridColumn TItem="Account" Field="@nameof(Account.Bank)" Caption="Bank" />
+                                <DataGridColumn TItem="Account" Field="@nameof(Account.Balance)" Caption="Balance" />
+                            </DataGridColumns>
+                        </DataGrid>
+                    }
+                    else
+                    {
+                        <DataGrid TItem="Account" Data="Accounts" Responsive @bind-SelectedRow="@selectedAccount" Hoverable>
+                            <DataGridColumns>
+                                <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Account" Field="@nameof(Account.Code)" Caption="#" Width="60px" Sortable />
+                                <DataGridColumn TItem="Account" Field="@nameof(Account.Name)" Caption="Name" />
+                                <DataGridColumn TItem="Account" Field="@nameof(Account.Bank)" Caption="Bank" />
+                                <DataGridColumn TItem="Account" Field="@nameof(Account.Balance)" Caption="Balance" />
+                            </DataGridColumns>
+                        </DataGrid>
+                    }
+
                 </CardBody>
                 <CardFooter>
                     @if (selectedAccount is not null)
