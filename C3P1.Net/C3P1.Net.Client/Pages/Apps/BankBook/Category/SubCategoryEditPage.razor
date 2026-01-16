@@ -1,4 +1,4 @@
-﻿@page "/bankbook/subcategory/edit/{CategoryId:guid}"
+﻿@page "/bankbook/subcategory/edit/{SubCategoryId:guid}"
 @using C3P1.Net.Shared.Data.Apps.BankBook
 @using C3P1.Net.Shared.Services.Apps.BankBook
 @using System.ComponentModel.DataAnnotations
@@ -112,7 +112,7 @@
 
 @code {
     [Parameter]
-    public Guid CategoryId { get; set; }
+    public Guid SubCategoryId { get; set; }
 
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
@@ -137,7 +137,7 @@
         var user = (await authenticationStateTask).User;
         var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
 
-        editSubCategory = await SubCategoryService.GetSubCategoryByIdAsync(currentUserId, CategoryId);
+        editSubCategory = await SubCategoryService.GetSubCategoryByIdAsync(currentUserId, SubCategoryId);
 
         await LoadCategories();
 
