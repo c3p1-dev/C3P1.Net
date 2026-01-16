@@ -23,7 +23,6 @@ else if (Accounts.Count == 0)
             <Icon Name="IconName.Add" /> Add Account
         </Button>
     </Paragraph>
-
 }
 else
 {
@@ -31,54 +30,32 @@ else
         <Column>
             <Card Style="max-width: 1200px;margin: 0 auto;">
                 <CardHeader>
-                    <Row>
-                        <Column>
-                           <Span>Bank Accounts</Span>
-                        </Column>
-                        <Column TextAlignment="TextAlignment.End">
-                            <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/account/add"))">
-                                <Icon Name="IconName.Add" /> Add Account
-                            </Button>
-                        </Column>
-                    </Row>
-                </CardHeader>
-                <CardBody>
-                    @if (Accounts.Count > 10)
-                    {
-                        <DataGrid TItem="Account" Data="Accounts" Responsive @bind-SelectedRow="@selectedAccount" Hoverable ShowPager ShowPageSizes>
-                            <DataGridColumns>
-                                <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Account" Field="@nameof(Account.Code)" Caption="#" Width="60px" Sortable />
-                                <DataGridColumn TItem="Account" Field="@nameof(Account.Name)" Caption="Name" />
-                                <DataGridColumn TItem="Account" Field="@nameof(Account.Bank)" Caption="Bank" />
-                                <DataGridColumn TItem="Account" Field="@nameof(Account.Balance)" Caption="Balance" />
-                            </DataGridColumns>
-                        </DataGrid>
-                    }
-                    else
-                    {
-                        <DataGrid TItem="Account" Data="Accounts" Responsive @bind-SelectedRow="@selectedAccount" Hoverable>
-                            <DataGridColumns>
-                                <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Account" Field="@nameof(Account.Code)" Caption="#" Width="60px" Sortable />
-                                <DataGridColumn TItem="Account" Field="@nameof(Account.Name)" Caption="Name" />
-                                <DataGridColumn TItem="Account" Field="@nameof(Account.Bank)" Caption="Bank" />
-                                <DataGridColumn TItem="Account" Field="@nameof(Account.Balance)" Caption="Balance" />
-                            </DataGridColumns>
-                        </DataGrid>
-                    }
-
-                </CardBody>
-                <CardFooter>
                     @if (selectedAccount is not null)
                     {
                         <CardText>
                             <Row>
                                 <Column>
                                     <Div>Selected Account:</Div>
-                                    <Div><strong>@selectedAccount.Name</strong> (Balance: @selectedAccount.Balance.ToString("C", new CultureInfo("fr-FR")))</Div>
+                                    <Div><Strong>@selectedAccount.Name</Strong> (Balance: @selectedAccount.Balance.ToString("C", new CultureInfo("fr-FR")))</Div>
                                 </Column>
                                 <Column TextAlignment="TextAlignment.End">
-                                    <Button Size="Size.Small" Color="Color.Primary" Clicked="EditSelectedAccount">Edit</Button>
-                                    <Button Size="Size.Small" Color="Color.Danger" Clicked="DeleteSelectedAccount">Delete</Button>
+                                    <Tooltip Text="Delete selected account" ShowDelay="1000" HideDelay="200">
+                                        <Button Size="Size.Small" Color="Color.Danger" Clicked="DeleteSelectedAccount">
+                                            <Icon Name="IconName.Delete" />
+                                        </Button>
+                                    </Tooltip>
+                                    <Buttons Role="ButtonsRole.Addons">
+                                        <Tooltip Text="Edit selected account" ShowDelay="1000" HideDelay="200">
+                                            <Button Size="Size.Small" Color="Color.Secondary" Clicked="EditSelectedAccount">
+                                                <Icon Name="IconName.Edit" />
+                                            </Button>
+                                        </Tooltip>
+                                        <Tooltip Text="Add new account" ShowDelay="1000" HideDelay="200">
+                                            <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/account/add"))">
+                                                <Icon Name="IconName.Add" />
+                                            </Button>
+                                        </Tooltip>
+                                    </Buttons>
                                 </Column>
                             </Row>
                         </CardText>
@@ -86,9 +63,62 @@ else
                     else
                     {
                         <CardText>
-                            No account selected.
+                            <Row>
+                                <Column>
+                                    <Div>Selected Account:</Div>
+                                    <Div>None</Div>
+                                </Column>
+                                <Column TextAlignment="TextAlignment.End">
+                                    <Tooltip Text="Add new account" ShowDelay="1000" HideDelay="200">
+                                        <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/account/add"))">
+                                            <Icon Name="IconName.Add" />
+                                        </Button>
+                                    </Tooltip>
+                                </Column>
+                            </Row>
                         </CardText>
                     }
+                </CardHeader>
+                <CardBody>
+                    @if (Accounts.Count > 10)
+                    {
+                        <DataGrid TItem="Account" Data="Accounts" Responsive @bind-SelectedRow="@selectedAccount" 
+                                  Hoverable 
+                                  ShowPager 
+                                  ShowPageSizes
+                                  Groupable
+                                  ShowGrouping
+                                  Resizable
+                                  Bordered>
+                            <DataGridColumns>
+                                <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Account" Field="@nameof(Account.Code)" Caption="#" Width="60px"/>
+                                <DataGridColumn TItem="Account" Field="@nameof(Account.Name)" Caption="Name"/>
+                                <DataGridColumn TItem="Account" Field="@nameof(Account.Bank)" Caption="Bank" Groupable />
+                                <DataGridColumn TItem="Account" Field="@nameof(Account.Balance)" Caption="Balance"/>
+                            </DataGridColumns>
+                        </DataGrid>
+                    }
+                    else
+                    {
+                        <DataGrid TItem="Account" Data="Accounts" Responsive @bind-SelectedRow="@selectedAccount" 
+                                  Hoverable
+                                  Groupable
+                                  ShowGrouping
+                                  Resizable
+                                  Bordered>
+                            <DataGridColumns>
+                                <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Account" Field="@nameof(Account.Code)" Caption="#" Width="60px"/>
+                                <DataGridColumn TItem="Account" Field="@nameof(Account.Name)" Caption="Name" />
+                                <DataGridColumn TItem="Account" Field="@nameof(Account.Bank)" Caption="Bank" Groupable />
+                                <DataGridColumn TItem="Account" Field="@nameof(Account.Balance)" Caption="Balance" />
+                            </DataGridColumns>
+                        </DataGrid>
+                    }
+                </CardBody>
+                <CardFooter>
+                    <CardText>
+                        <Paragraph TextAlignment="TextAlignment.End">Total balance : @totalBalance.ToString("C", new CultureInfo("fr-FR"))</Paragraph>
+                    </CardText>
                 </CardFooter>
             </Card>
         </Column>
@@ -100,6 +130,8 @@ else
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
     private Account? selectedAccount = null;
     private List<Account>? Accounts = null;
+
+    private decimal totalBalance => Accounts?.Sum(a => a.Balance) ?? 0;
 
     protected override async Task OnInitializedAsync()
     {

@@ -20,7 +20,7 @@
                 }
                 else
                 {
-                    <CardTitle>Edit Category "@editCategory.Code"</CardTitle>
+                    <CardTitle>Edit Category <Strong>@editCategory.Code</Strong></CardTitle>
                 }
             </CardHeader>
             <CardBody>
@@ -69,16 +69,12 @@
                                 </FieldBody>
                             </Field>
                         </Validation>
-
-                        <Button Color="Color.Primary" Clicked="SaveCategory">
-                            Save changes
-                        </Button>
-
-                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=categories"))">
-                            Cancel
-                        </Button>
-
                     </Validations>
+
+                    <Div TextAlignment="TextAlignment.End">
+                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=categories"))">Cancel</Button>
+                        <Button Color="Color.Primary" Clicked="SaveCategory">Save changes</Button>
+                    </Div>
                 }
             </CardBody>
         </Card>

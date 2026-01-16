@@ -20,7 +20,7 @@
                 }
                 else
                 {
-                    <CardTitle>Edit Account "@editAccount.Name"</CardTitle>
+                    <CardTitle>Edit Account <Strong>@editAccount.Name</Strong></CardTitle>
                 }
             </CardHeader>
 
@@ -125,14 +125,10 @@
                             </Field>
                         </Validation>
 
-                        <Button Color="Color.Primary" Clicked="SaveAccount">
-                            Save changes
-                        </Button>
-
-                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/account"))">
-                            Cancel
-                        </Button>
-
+                        <Div TextAlignment="TextAlignment.End">
+                            <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/account"))">Cancel</Button>
+                            <Button Color="Color.Primary" Clicked="SaveAccount">Save changes</Button>
+                        </Div>
                     </Validations>
                 }
             </CardBody>

@@ -30,7 +30,7 @@
         {
             <Card Style="max-width: 800px;margin: 0 auto;">
                 <CardHeader>
-                    <CardTitle>Add SubCategory</CardTitle>
+                    <CardTitle>Add new SubCategory</CardTitle>
                 </CardHeader>
                 <CardBody>
                     <Field>
@@ -44,6 +44,7 @@
                             </Select>
                         </FieldBody>
                     </Field>
+
                     <Validations @ref="validations" Mode="ValidationMode.Manual" Model="@newSubCategory">
                         <Validation>
                             <Field>
@@ -57,6 +58,7 @@
                                 </FieldBody>
                             </Field>
                         </Validation>
+
                         <Validation>
                             <Field>
                                 <FieldLabel RequiredIndicator>SubCategory Name</FieldLabel>
@@ -69,6 +71,7 @@
                                 </FieldBody>
                             </Field>
                         </Validation>
+
                         <Validation>
                             <Field>
                                 <FieldLabel>SubCategory Description</FieldLabel>
@@ -81,9 +84,12 @@
                                 </FieldBody>
                             </Field>
                         </Validation>
-                        <Button Color="Color.Primary" Clicked="AddSubCategory">Add SubCategory</Button>
-                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=subcategories"))">Cancel</Button>
                     </Validations>
+
+                    <Div TextAlignment="TextAlignment.End">
+                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=subcategories"))">Cancel</Button>
+                        <Button Color="Color.Primary" Clicked="AddSubCategory">Add SubCategory</Button>
+                    </Div>
                 </CardBody>
             </Card>
         }

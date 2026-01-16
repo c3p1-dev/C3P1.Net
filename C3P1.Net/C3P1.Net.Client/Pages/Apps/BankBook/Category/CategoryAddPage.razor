@@ -14,7 +14,7 @@
     <Column>
         <Card Style="max-width: 800px;margin: 0 auto;">
             <CardHeader>
-                <CardTitle>Add Category</CardTitle>
+                <CardTitle>Add new Category</CardTitle>
             </CardHeader>
             <CardBody>
                 <Validations @ref="validations" Mode="ValidationMode.Manual" Model="@newCategory">
@@ -54,8 +54,10 @@
                             </FieldBody>
                         </Field>
                     </Validation>
-                    <Button Color="Color.Primary" Clicked="AddCategory">Add Category</Button>
-                    <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=categories"))">Cancel</Button>
+                    <Div TextAlignment="TextAlignment.End">
+                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=categories"))">Cancel</Button>
+                        <Button Color="Color.Primary" Clicked="AddCategory">Add Category</Button>
+                    </Div>
                 </Validations>
             </CardBody>
         </Card>

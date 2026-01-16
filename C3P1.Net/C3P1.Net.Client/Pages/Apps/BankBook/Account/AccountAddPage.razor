@@ -14,7 +14,7 @@
     <Column>
         <Card Style="max-width: 800px;margin: 0 auto;">
             <CardHeader>
-                <CardTitle>Add Account</CardTitle>
+                <CardTitle>Add new Account</CardTitle>
             </CardHeader>
             <CardBody>
                 <Validations @ref="validations" Mode="ValidationMode.Manual" Model="@newAccount">
@@ -103,12 +103,10 @@
                         </Field>
                     </Validation>
 
-                    <Button Color="Color.Primary" Clicked="AddAccount">
-                        Add Account
-                    </Button>
-                    <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/account"))">
-                        Cancel
-                   </Button>
+                    <Div TextAlignment="TextAlignment.End">
+                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/account"))">Cancel</Button>
+                        <Button Color="Color.Primary" Clicked="AddAccount">Add Account</Button>
+                    </Div>
                 </Validations>
 
             </CardBody>

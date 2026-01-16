@@ -32,11 +32,11 @@
                 <CardHeader>
                     @if (editSubCategory is null)
                     {
-                        <CardTitle>Edit Category</CardTitle>
+                        <CardTitle>Edit SubCategory</CardTitle>
                     }
                     else
                     {
-                        <CardTitle>Edit Category "@editSubCategory.Code"</CardTitle>
+                        <CardTitle>Edit SubCategory <Strong>@editSubCategory.Code</Strong></CardTitle>
                     }
                 </CardHeader>
                 <CardBody>
@@ -57,6 +57,7 @@
                                 </Select>
                             </FieldBody>
                         </Field>
+
                         <Validations @ref="validations" Mode="ValidationMode.Manual" Model="@editSubCategory">
                             <Validation>
                                 <Field>
@@ -96,16 +97,12 @@
                                     </FieldBody>
                                 </Field>
                             </Validation>
-
-                            <Button Color="Color.Primary" Clicked="SaveSubCategory">
-                                Save changes
-                            </Button>
-
-                            <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=subcategories"))">
-                                Cancel
-                            </Button>
-
                         </Validations>
+
+                        <Div TextAlignment="TextAlignment.End">
+                            <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=subcategories"))">Cancel</Button>
+                            <Button Color="Color.Primary" Clicked="SaveSubCategory">Save changes</Button>
+                        </Div>
                     }
                 </CardBody>
             </Card>
@@ -133,7 +130,7 @@
         navBreadcrumb.SetBreadcrumbs(new List<Node>()
         {
             new Node {Text = "Category", Link = "bankbook/category?tab=subcategories"},
-            new Node {Text = "Edit", Active = true}
+            new Node {Text = "Edit SubCategory", Active = true}
         });
 
         // get current Category

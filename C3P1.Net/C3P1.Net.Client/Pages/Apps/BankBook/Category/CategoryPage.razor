@@ -46,19 +46,25 @@ else
                                         <Row>
                                             <Column>
                                                 <Div>Selected Category:</Div>
-                                                <Div><strong>@selectedCategory.Code</strong> (@selectedCategory.Name)</Div>
+                                                <Div><Strong>@selectedCategory.Code</Strong> (@selectedCategory.Name)</Div>
                                             </Column>
                                             <Column TextAlignment="TextAlignment.End">
-                                                <Buttons Role="ButtonsRole.Addons">
+                                                <Tooltip Text="Delete selected category" ShowDelay="1000" HideDelay="200">
                                                     <Button Size="Size.Small" Color="Color.Danger" Clicked="DeleteSelectedCategory">
                                                         <Icon Name="IconName.Delete" />
                                                     </Button>
-                                                    <Button Size="Size.Small" Color="Color.Secondary" Clicked="EditSelectedCategory">
-                                                        <Icon Name="IconName.Edit" />
-                                                    </Button>
-                                                    <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/category/add"))">
-                                                        <Icon Name="IconName.Add" />
-                                                    </Button>
+                                                </Tooltip>
+                                                <Buttons Role="ButtonsRole.Addons">
+                                                    <Tooltip Text="Edit selected category" ShowDelay="1000" HideDelay="200">
+                                                        <Button Size="Size.Small" Color="Color.Secondary" Clicked="EditSelectedCategory">
+                                                            <Icon Name="IconName.Edit" />
+                                                        </Button>
+                                                    </Tooltip>
+                                                    <Tooltip Text="Add new category" ShowDelay="1000" HideDelay="200">
+                                                        <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/category/add"))">
+                                                            <Icon Name="IconName.Add" />
+                                                        </Button>
+                                                    </Tooltip>
                                                 </Buttons>
                                             </Column>
                                         </Row>
@@ -73,9 +79,11 @@ else
                                                 <Div>None</Div>
                                             </Column>
                                             <Column TextAlignment="TextAlignment.End">
-                                                <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/category/add"))">
-                                                    <Icon Name="IconName.Add" />
-                                                </Button>
+                                                <Tooltip Text="Add new category" ShowDelay="1000" HideDelay="200">
+                                                    <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/category/add"))">
+                                                        <Icon Name="IconName.Add" />
+                                                    </Button>
+                                                </Tooltip>
                                             </Column>
                                         </Row>
                                     </CardText>
@@ -84,7 +92,13 @@ else
                             <CardBody>
                                 @if (Categories.Count > 10)
                                 {
-                                    <DataGrid TItem="Category" Data="Categories" Responsive @bind-SelectedRow="@selectedCategory" Hoverable ShowPager ShowPageSizes Narrow>
+                                    <DataGrid TItem="Category" Data="Categories" Responsive @bind-SelectedRow="@selectedCategory" 
+                                              Hoverable 
+                                              ShowPager 
+                                              ShowPageSizes 
+                                              Narrow 
+                                              Resizable 
+                                              Bordered>
                                         <DataGridColumns>
                                             <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Category" Field="@nameof(Category.Code)" Caption="#" Width="60px" Sortable />
                                             <DataGridColumn TItem="Category" Field="@nameof(Category.Name)" Caption="Name" />
@@ -94,7 +108,11 @@ else
                                 }
                                 else
                                 {
-                                    <DataGrid TItem="Category" Data="Categories" Responsive @bind-SelectedRow="@selectedCategory" Hoverable Narrow>
+                                    <DataGrid TItem="Category" Data="Categories" Responsive @bind-SelectedRow="@selectedCategory" 
+                                              Hoverable 
+                                              Narrow 
+                                              Resizable
+                                              Bordered>
                                         <DataGridColumns>
                                             <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Category" Field="@nameof(Category.Code)" Caption="#" Width="60px" Sortable />
                                             <DataGridColumn TItem="Category" Field="@nameof(Category.Name)" Caption="Name" />
@@ -129,19 +147,25 @@ else
                                             <Row>
                                                 <Column>
                                                     <Div>Selected SubCategory:</Div>
-                                                    <Div><strong>@selectedSubCategory.Code</strong> (@selectedSubCategory.Name)</Div>
+                                                    <Div><Strong>@selectedSubCategory.Code</Strong> (@selectedSubCategory.Name)</Div>
                                                 </Column>
                                                 <Column TextAlignment="TextAlignment.End">
-                                                    <Buttons Role="ButtonsRole.Addons">
+                                                    <Tooltip Text="Delete selected subcategory" ShowDelay="1000" HideDelay="200">
                                                         <Button Size="Size.Small" Color="Color.Danger" Clicked="DeleteSelectedSubCategory">
                                                             <Icon Name="IconName.Delete" />
                                                         </Button>
-                                                        <Button Size="Size.Small" Color="Color.Secondary" Clicked="EditSelectedSubCategory">
-                                                            <Icon Name="IconName.Edit" />
-                                                        </Button>
-                                                        <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/subcategory/add"))">
-                                                            <Icon Name="IconName.Add" />
-                                                        </Button>
+                                                    </Tooltip>
+                                                    <Buttons Role="ButtonsRole.Addons">
+                                                        <Tooltip Text="Edit selected subcategory" ShowDelay="1000" HideDelay="200">
+                                                            <Button Size="Size.Small" Color="Color.Secondary" Clicked="EditSelectedSubCategory">
+                                                                <Icon Name="IconName.Edit" />
+                                                            </Button>
+                                                        </Tooltip>
+                                                        <Tooltip Text="Add new subcategory" ShowDelay="1000" HideDelay="200">
+                                                            <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/subcategory/add"))">
+                                                                <Icon Name="IconName.Add" />
+                                                            </Button>
+                                                        </Tooltip>
                                                     </Buttons>
                                                 </Column>
                                             </Row>
@@ -156,9 +180,11 @@ else
                                                     <Div>None</Div>
                                                 </Column>
                                                 <Column TextAlignment="TextAlignment.End">
-                                                    <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/subcategory/add"))">
-                                                        <Icon Name="IconName.Add" />
-                                                    </Button>
+                                                    <Tooltip Text="Add new subcategory" ShowDelay="1000" HideDelay="200">
+                                                        <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/subcategory/add"))">
+                                                            <Icon Name="IconName.Add" />
+                                                        </Button>
+                                                    </Tooltip>
                                                 </Column>
                                             </Row>
                                         </CardText>
@@ -167,7 +193,15 @@ else
                                 <CardBody>
                                     @if (SubCategories.Count > 10)
                                     {
-                                        <DataGrid TItem="SubCategoryWithCategoryInfoDto" Data="SubCategories" Responsive @bind-SelectedRow="@selectedSubCategory" Hoverable ShowPager ShowPageSizes Groupable ShowGrouping Narrow>
+                                        <DataGrid TItem="SubCategoryWithCategoryInfoDto" Data="SubCategories" Responsive @bind-SelectedRow="@selectedSubCategory" 
+                                                  Hoverable 
+                                                  ShowPager 
+                                                  ShowPageSizes 
+                                                  Groupable 
+                                                  ShowGrouping 
+                                                  Narrow 
+                                                  Resizable 
+                                                  Bordered>
                                             <DataGridColumns>
                                                 <DataGridColumn TextAlignment="TextAlignment.Center" TItem="SubCategoryWithCategoryInfoDto" Field="@nameof(SubCategoryWithCategoryInfoDto.Code)" Caption="#" Width="60px" Sortable />
                                                 <DataGridColumn TItem="SubCategoryWithCategoryInfoDto" Field="@nameof(SubCategoryWithCategoryInfoDto.Name)" Caption="Name" />
@@ -178,7 +212,13 @@ else
                                     }
                                     else
                                     {
-                                        <DataGrid TItem="SubCategoryWithCategoryInfoDto" Data="SubCategories" Responsive @bind-SelectedRow="@selectedSubCategory" Hoverable Groupable ShowGrouping Narrow>
+                                        <DataGrid TItem="SubCategoryWithCategoryInfoDto" Data="SubCategories" Responsive @bind-SelectedRow="@selectedSubCategory" 
+                                                  Hoverable 
+                                                  Groupable 
+                                                  ShowGrouping 
+                                                  Narrow 
+                                                  Resizable 
+                                                  Bordered>
                                             <DataGridColumns>
                                                 <DataGridColumn TextAlignment="TextAlignment.Center" TItem="SubCategoryWithCategoryInfoDto" Field="@nameof(SubCategoryWithCategoryInfoDto.Code)" Caption="#" Width="60px" Sortable />
                                                 <DataGridColumn TItem="SubCategoryWithCategoryInfoDto" Field="@nameof(SubCategoryWithCategoryInfoDto.Name)" Caption="Name" />
