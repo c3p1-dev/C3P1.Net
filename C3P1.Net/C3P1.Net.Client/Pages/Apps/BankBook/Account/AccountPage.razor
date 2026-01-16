@@ -7,6 +7,7 @@
 @inject NavigationManager navManager
 @inject NavBreadcrumbService navBreadcrumb
 @inject IAccountService AccountService
+@inject IMessageService MessageService
 
 <PageTitle>BankBook / Accounts</PageTitle>
 
@@ -135,13 +136,19 @@ else
             var user = (await authenticationStateTask).User;
             var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
 
-            // delete account
-            var success = await AccountService.DeleteAccountAsync(currentUserId, selectedAccount.Id);
-            if (success)
+            // confirm deletion
+            bool result = await MessageService.Confirm($"Are you sure you want to delete <strong>{selectedAccount.Name}</strong> account?", "Confirm Deletion");
+            if (result == true)
             {
-                await LoadData();
-                selectedAccount = null;
-                StateHasChanged();
+                // delete account
+                var success = await AccountService.DeleteAccountAsync(currentUserId, selectedAccount.Id);
+                if (success)
+                {
+                    await LoadData();
+                    selectedAccount = null;
+                    StateHasChanged();
+                }
+                // todo : manage account deletion attempt while holding transaction records
             }
         }
     }

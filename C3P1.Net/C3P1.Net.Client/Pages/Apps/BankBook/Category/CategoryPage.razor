@@ -312,18 +312,23 @@ else
             var user = (await authenticationStateTask).User;
             var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
 
-            // delete category
-            var success = await CategoryService.DeleteCategoryAsync(currentUserId, selectedCategory.Id);
-            if (success)
+            // get confirmation
+            bool result = await MessageService.Confirm($"Are you sure you want to delete <strong>{selectedCategory.Name}</strong> category?", "Confirm Deletion");
+            if (result == true)
             {
-                // reload data
-                await LoadData();
-                selectedCategory = null;
-                StateHasChanged();
-            }
-            else // category does not exists or has bound subcategories
-            {
-                await MessageService.Error("The category could not be deleted. It may have sub-categories associated with it.", "Cannot delete category");
+                // delete category
+                var success = await CategoryService.DeleteCategoryAsync(currentUserId, selectedCategory.Id);
+                if (success)
+                {
+                    // reload data
+                    await LoadData();
+                    selectedCategory = null;
+                    StateHasChanged();
+                }
+                else // category does not exists or has bound subcategories
+                {
+                    await MessageService.Error($"The category <strong>{selectedCategory.Name}</strong> could not be deleted. It may have sub-categories associated with it.", "Cannot delete category");
+                }
             }
         }
     }
@@ -335,14 +340,20 @@ else
             // get user id
             var user = (await authenticationStateTask).User;
             var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
-            // delete subcategory
-            var success = await SubCategoryService.DeleteSubCategoryAsync(currentUserId, selectedSubCategory.Id);
-            if (success)
+            // get confirmation
+            bool result = await MessageService.Confirm($"Are you sure you want to delete <strong>{selectedSubCategory.Name}</strong> sub-category?", "Confirm Deletion");
+            if (result == true)
             {
-                // reload data
-                await LoadData();
-                selectedSubCategory = null;
-                StateHasChanged();
+                // delete subcategory
+                var success = await SubCategoryService.DeleteSubCategoryAsync(currentUserId, selectedSubCategory.Id);
+                if (success)
+                {
+                    // reload data
+                    await LoadData();
+                    selectedSubCategory = null;
+                    StateHasChanged();
+                }
+                // todo : add line owner management there 
             }
         }
     }
