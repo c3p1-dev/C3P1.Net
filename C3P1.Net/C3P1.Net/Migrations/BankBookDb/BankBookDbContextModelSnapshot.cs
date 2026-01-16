@@ -15,7 +15,7 @@ namespace C3P1.Net.Migrations.BankBookDb
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
 
             modelBuilder.Entity("C3P1.Net.Shared.Data.Apps.BankBook.Account", b =>
                 {
@@ -107,7 +107,7 @@ namespace C3P1.Net.Migrations.BankBookDb
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("Category")
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Code")

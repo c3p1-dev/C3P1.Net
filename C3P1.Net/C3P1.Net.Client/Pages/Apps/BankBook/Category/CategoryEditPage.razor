@@ -26,9 +26,7 @@
             <CardBody>
                 @if (editCategory is null)
                 {
-                    <Alert Color="Color.Danger">
-                        Category not found
-                    </Alert>
+                    <Paragraph><em>SubCategory not found</em></Paragraph>
                 }
                 else
                 {
@@ -76,7 +74,7 @@
                             Save changes
                         </Button>
 
-                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category"))">
+                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=categories"))">
                             Cancel
                         </Button>
 
@@ -104,7 +102,7 @@
         // This also makes the navbar invisible by default.
         navBreadcrumb.SetBreadcrumbs(new List<Node>()
         {
-            new Node {Text = "Category", Link = "bankbook/category"},
+            new Node {Text = "Category", Link = "bankbook/category?tab=categories"},
             new Node {Text = "Edit", Active = true}
         });
 
@@ -130,6 +128,6 @@
         var success = await CategoryService.UpdateCategoryAsync(currentUserId, editCategory!);
 
         if (success)
-            navManager.NavigateTo("bankbook/category");
+            navManager.NavigateTo("bankbook/category?tab=categories");
     }
 }

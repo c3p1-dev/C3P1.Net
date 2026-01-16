@@ -55,7 +55,7 @@
                         </Field>
                     </Validation>
                     <Button Color="Color.Primary" Clicked="AddCategory">Add Category</Button>
-                    <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category"))">Cancel</Button>
+                    <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=categories"))">Cancel</Button>
                 </Validations>
             </CardBody>
         </Card>
@@ -76,7 +76,7 @@
         // This also makes the navbar invisible by default.
         navBreadcrumb.SetBreadcrumbs(new List<Node>()
         {
-            new Node {Text = "Category", Link = "bankbook/category"},
+            new Node {Text = "Category", Link = "bankbook/category?tab=categories"},
             new Node {Text = "Add", Active = true}
         });
 
@@ -92,7 +92,7 @@
             var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
 
             if (await CategoryService.AddCategoryAsync(currentUserId, newCategory!))
-                navManager.NavigateTo("bankbook/category"); // navigate to bankbook/category
+                navManager.NavigateTo("bankbook/category?tab=categories"); // navigate to bankbook/category
         }
     }
 }

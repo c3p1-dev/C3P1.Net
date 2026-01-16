@@ -1,0 +1,147 @@
+﻿@page "/bankbook/subcategory/add"
+@using C3P1.Net.Shared.Data.Apps.BankBook
+@using C3P1.Net.Shared.Services.Apps.BankBook
+@using System.ComponentModel.DataAnnotations
+@layout Layouts.BankBookLayout
+
+@inject NavigationManager navManager;
+@inject NavBreadcrumbService navBreadcrumb;
+@inject ISubCategoryService SubCategoryService;
+@inject ICategoryService CategoryService;
+
+<PageTitle>BankBook / Add SubCategory</PageTitle>
+
+<Row>
+    <Column>
+        @if (Categories is null)
+        {
+            <Paragraph><em>Loading...</em></Paragraph>
+        }
+        else if (Categories.Count == 0)
+        {
+            <Paragraph><em>No categories found.</em></Paragraph>
+            <Paragraph>
+                <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/category/add"))">
+                    <Icon Name="IconName.Add" /> Add Category
+                </Button>
+            </Paragraph>
+        }
+        else
+        {
+            <Card Style="max-width: 800px;margin: 0 auto;">
+                <CardHeader>
+                    <CardTitle>Add SubCategory</CardTitle>
+                </CardHeader>
+                <CardBody>
+                    <Field>
+                        <FieldLabel RequiredIndicator>Parent Category</FieldLabel>
+                        <FieldBody>
+                            <Select TValue="Guid" @bind-SelectedValue="newSubCategory!.CategoryId">
+                                @foreach (var category in Categories)
+                                {
+                                    <SelectItem Value="@category.Id">@category.Code - @category.Name</SelectItem>
+                                }
+                            </Select>
+                        </FieldBody>
+                    </Field>
+                    <Validations @ref="validations" Mode="ValidationMode.Manual" Model="@newSubCategory">
+                        <Validation>
+                            <Field>
+                                <FieldLabel RequiredIndicator>SubCategory Code</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit Placeholder="CAT" @bind-Text="newSubCategory!.Code">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel RequiredIndicator>SubCategory Name</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit Placeholder="SubCategory name" @bind-Text="newSubCategory!.Name">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>SubCategory Description</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit Placeholder="Description" @bind-Text="newSubCategory!.Description">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+                        <Button Color="Color.Primary" Clicked="AddSubCategory">Add SubCategory</Button>
+                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=subcategories"))">Cancel</Button>
+                    </Validations>
+                </CardBody>
+            </Card>
+        }
+    </Column>
+</Row>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+
+    private Validations? validations;
+    private SubCategory? newSubCategory = new();
+
+    private List<Category>? Categories = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // NavState (breadcrumbs, etc) is Scoped, so it lives as long as our connection lives.
+        // So when a new page is visited, we need to clear navigation to prevent breadcrumbs from bleed-over, etc.
+        // This also makes the navbar invisible by default.
+        navBreadcrumb.SetBreadcrumbs(new List<Node>()
+        {
+            new Node {Text = "Category", Link = "bankbook/category?tab=subcategories"},
+            new Node {Text = "Add SubCategory", Active = true}
+        });
+
+        // load categories
+        await LoadCategories();
+
+        // Init newSubCategory with first category if available
+        if (Categories != null && Categories.Count > 0)
+        {
+            newSubCategory!.CategoryId = Categories[0].Id;
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task AddSubCategory()
+    {
+        if (await validations!.ValidateAll())
+        {
+            // get user id
+            var user = (await authenticationStateTask).User;
+            var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+
+            if (await SubCategoryService.AddSubCategoryAsync(currentUserId, newSubCategory!))
+                navManager.NavigateTo("bankbook/category?tab=subcategories"); // navigate to bankbook/category
+        }
+    }
+
+    private async Task LoadCategories()
+    {
+        // get user id
+        var user = (await authenticationStateTask).User;
+        var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+
+        // load categories from API or database
+        Categories = await CategoryService.GetCategoriesAsync(currentUserId);
+    }
+}

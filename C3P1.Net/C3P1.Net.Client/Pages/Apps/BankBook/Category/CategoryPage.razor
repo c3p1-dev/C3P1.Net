@@ -1,6 +1,7 @@
 ﻿@page "/bankbook/category"
 @using C3P1.Net.Shared.Data.Apps.BankBook
 @using C3P1.Net.Shared.Services.Apps.BankBook
+@using C3P1.Net.Shared.Data.Apps.BankBook.Dto
 @using Blazorise
 @using Blazorise.DataGrid
 @layout Layouts.BankBookLayout
@@ -9,10 +10,11 @@
 @inject NavBreadcrumbService navBreadcrumb
 @inject ICategoryService CategoryService
 @inject ISubCategoryService SubCategoryService
+@inject IMessageService MessageService
 
 <PageTitle>BankBook / Categories</PageTitle>
 
-@if (Categories is null || SubCategories is null)
+@if (Categories is null)
 {
     <Paragraph><em>Loading...</em></Paragraph>
 }
@@ -28,66 +30,170 @@ else if (Categories.Count == 0)
 else
 {
     <Row>
-        <Column>
-            <Card Style="max-width: 1200px;margin: 0 auto;">
-                <CardHeader>
-                    <Row>
-                        <Column>
-                           <Span>Categories</Span>
-                        </Column>
-                        <Column TextAlignment="TextAlignment.End">
-                            <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/category/add"))">
-                                <Icon Name="IconName.Add" /> Add Category
-                            </Button>
-                        </Column>
-                    </Row>
-                </CardHeader>
-                <CardBody>
-                    @if (Categories.Count > 10)
-                    {
-                        <DataGrid TItem="Category" Data="Categories" Responsive @bind-SelectedRow="@selectedCategory" Hoverable ShowPager ShowPageSizes>
-                            <DataGridColumns>
-                                <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Category" Field="@nameof(Category.Code)" Caption="#" Width="60px" Sortable/>
-                                <DataGridColumn TItem="Category" Field="@nameof(Category.Name)" Caption="Name" />
-                                <DataGridColumn TItem="Category" Field="@nameof(Category.Description)" Caption="Description" />
-                            </DataGridColumns>
-                        </DataGrid>
-                    }
-                    else
-                    {
-                        <DataGrid TItem="Category" Data="Categories" Responsive @bind-SelectedRow="@selectedCategory" Hoverable>
-                            <DataGridColumns>
-                                <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Category" Field="@nameof(Category.Code)" Caption="#" Width="60px" Sortable />
-                                <DataGridColumn TItem="Category" Field="@nameof(Category.Name)" Caption="Name" />
-                                <DataGridColumn TItem="Category" Field="@nameof(Category.Description)" Caption="Description" />
-                            </DataGridColumns>
-                        </DataGrid>
-                    }
-                </CardBody>
-                <CardFooter>
-                    @if (selectedCategory is not null)
-                    {
-                        <CardText>
-                            <Row>
-                                <Column>
-                                    <Div>Selected Category:</Div>
-                                    <Div><strong>@selectedCategory.Code</strong> (@selectedCategory.Name)</Div>
-                                </Column>
-                                <Column TextAlignment="TextAlignment.End">
-                                    <Button Size="Size.Small" Color="Color.Primary" Clicked="EditSelectedCategory">Edit</Button>
-                                    <Button Size="Size.Small" Color="Color.Danger" Clicked="DeleteSelectedCategory">Delete</Button>
-                                </Column>
-                            </Row>
-                        </CardText>
-                    }
-                    else
-                    {
-                        <CardText>
-                            No category selected.
-                        </CardText>
-                    }
-                </CardFooter>
-            </Card>
+        <Column Style="max-width: 1200px;margin: 0 auto;">
+            <Tabs SelectedTab="@selectedTab" SelectedTabChanged="OnSelectedTabChanged">
+                <Items>
+                    <Tab Name="categories">Categories</Tab>
+                    <Tab Name="subcategories">Sub-Categories</Tab>
+                </Items>
+                <Content>
+                    <TabPanel Name="categories">
+                        <Card>
+                            <CardHeader>
+                                @if (selectedCategory is not null)
+                                {
+                                    <CardText>
+                                        <Row>
+                                            <Column>
+                                                <Div>Selected Category:</Div>
+                                                <Div><strong>@selectedCategory.Code</strong> (@selectedCategory.Name)</Div>
+                                            </Column>
+                                            <Column TextAlignment="TextAlignment.End">
+                                                <Buttons Role="ButtonsRole.Addons">
+                                                    <Button Size="Size.Small" Color="Color.Danger" Clicked="DeleteSelectedCategory">
+                                                        <Icon Name="IconName.Delete" />
+                                                    </Button>
+                                                    <Button Size="Size.Small" Color="Color.Secondary" Clicked="EditSelectedCategory">
+                                                        <Icon Name="IconName.Edit" />
+                                                    </Button>
+                                                    <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/category/add"))">
+                                                        <Icon Name="IconName.Add" />
+                                                    </Button>
+                                                </Buttons>
+                                            </Column>
+                                        </Row>
+                                    </CardText>
+                                }
+                                else
+                                {
+                                    <CardText>
+                                        <Row>
+                                            <Column>
+                                                <Div>Selected Category:</Div>
+                                                <Div>None</Div>
+                                            </Column>
+                                            <Column TextAlignment="TextAlignment.End">
+                                                <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/category/add"))">
+                                                    <Icon Name="IconName.Add" />
+                                                </Button>
+                                            </Column>
+                                        </Row>
+                                    </CardText>
+                                }
+                            </CardHeader>
+                            <CardBody>
+                                @if (Categories.Count > 10)
+                                {
+                                    <DataGrid TItem="Category" Data="Categories" Responsive @bind-SelectedRow="@selectedCategory" Hoverable ShowPager ShowPageSizes Narrow>
+                                        <DataGridColumns>
+                                            <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Category" Field="@nameof(Category.Code)" Caption="#" Width="60px" Sortable />
+                                            <DataGridColumn TItem="Category" Field="@nameof(Category.Name)" Caption="Name" />
+                                            <DataGridColumn TItem="Category" Field="@nameof(Category.Description)" Caption="Description" />
+                                        </DataGridColumns>
+                                    </DataGrid>
+                                }
+                                else
+                                {
+                                    <DataGrid TItem="Category" Data="Categories" Responsive @bind-SelectedRow="@selectedCategory" Hoverable Narrow>
+                                        <DataGridColumns>
+                                            <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Category" Field="@nameof(Category.Code)" Caption="#" Width="60px" Sortable />
+                                            <DataGridColumn TItem="Category" Field="@nameof(Category.Name)" Caption="Name" />
+                                            <DataGridColumn TItem="Category" Field="@nameof(Category.Description)" Caption="Description" />
+                                        </DataGridColumns>
+                                    </DataGrid>
+                                }
+                            </CardBody>
+                        </Card>
+                    </TabPanel>
+                    <TabPanel Name="subcategories">
+                        @if (SubCategories is null)
+                        {
+                            <Paragraph><em>Loading...</em></Paragraph>
+                        }
+                        else if (SubCategories.Count == 0)
+                        {
+                            <Paragraph><em>No subcategories found.</em></Paragraph>
+                            <Paragraph>
+                                <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/subcategory/add"))">
+                                    <Icon Name="IconName.Add" /> Add SubCategory
+                                </Button>
+                            </Paragraph>
+                        }
+                        else
+                        {
+                            <Card>
+                                <CardHeader>
+                                    @if (selectedSubCategory is not null)
+                                    {
+                                        <CardText>
+                                            <Row>
+                                                <Column>
+                                                    <Div>Selected SubCategory:</Div>
+                                                    <Div><strong>@selectedSubCategory.Code</strong> (@selectedSubCategory.Name)</Div>
+                                                </Column>
+                                                <Column TextAlignment="TextAlignment.End">
+                                                    <Buttons Role="ButtonsRole.Addons">
+                                                        <Button Size="Size.Small" Color="Color.Danger" Clicked="DeleteSelectedSubCategory">
+                                                            <Icon Name="IconName.Delete" />
+                                                        </Button>
+                                                        <Button Size="Size.Small" Color="Color.Secondary" Clicked="EditSelectedSubCategory">
+                                                            <Icon Name="IconName.Edit" />
+                                                        </Button>
+                                                        <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/subcategory/add"))">
+                                                            <Icon Name="IconName.Add" />
+                                                        </Button>
+                                                    </Buttons>
+                                                </Column>
+                                            </Row>
+                                        </CardText>
+                                    }
+                                    else
+                                    {
+                                        <CardText>
+                                            <Row>
+                                                <Column>
+                                                    <Div>Selected Category:</Div>
+                                                    <Div>None</Div>
+                                                </Column>
+                                                <Column TextAlignment="TextAlignment.End">
+                                                    <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/subcategory/add"))">
+                                                        <Icon Name="IconName.Add" />
+                                                    </Button>
+                                                </Column>
+                                            </Row>
+                                        </CardText>
+                                    }
+                                </CardHeader>
+                                <CardBody>
+                                    @if (SubCategories.Count > 10)
+                                    {
+                                        <DataGrid TItem="SubCategoryWithCategoryInfoDto" Data="SubCategories" Responsive @bind-SelectedRow="@selectedSubCategory" Hoverable ShowPager ShowPageSizes Groupable ShowGrouping Narrow>
+                                            <DataGridColumns>
+                                                <DataGridColumn TextAlignment="TextAlignment.Center" TItem="SubCategoryWithCategoryInfoDto" Field="@nameof(SubCategoryWithCategoryInfoDto.Code)" Caption="#" Width="60px" Sortable />
+                                                <DataGridColumn TItem="SubCategoryWithCategoryInfoDto" Field="@nameof(SubCategoryWithCategoryInfoDto.Name)" Caption="Name" />
+                                                <DataGridColumn TItem="SubCategoryWithCategoryInfoDto" Field="@nameof(SubCategoryWithCategoryInfoDto.CategoryCode)" Caption="Category Code" Groupable />
+                                                <DataGridColumn TItem="SubCategoryWithCategoryInfoDto" Field="@nameof(SubCategoryWithCategoryInfoDto.Description)" Caption="Description" />
+                                            </DataGridColumns>
+                                        </DataGrid>
+                                    }
+                                    else
+                                    {
+                                        <DataGrid TItem="SubCategoryWithCategoryInfoDto" Data="SubCategories" Responsive @bind-SelectedRow="@selectedSubCategory" Hoverable Groupable ShowGrouping Narrow>
+                                            <DataGridColumns>
+                                                <DataGridColumn TextAlignment="TextAlignment.Center" TItem="SubCategoryWithCategoryInfoDto" Field="@nameof(SubCategoryWithCategoryInfoDto.Code)" Caption="#" Width="60px" Sortable />
+                                                <DataGridColumn TItem="SubCategoryWithCategoryInfoDto" Field="@nameof(SubCategoryWithCategoryInfoDto.Name)" Caption="Name" />
+                                                <DataGridColumn TItem="SubCategoryWithCategoryInfoDto" Field="@nameof(SubCategoryWithCategoryInfoDto.CategoryCode)" Caption="Category Code" Groupable />
+                                                <DataGridColumn TItem="SubCategoryWithCategoryInfoDto" Field="@nameof(SubCategoryWithCategoryInfoDto.Description)" Caption="Description" />
+                                            </DataGridColumns>
+                                        </DataGrid>
+                                    }
+                                </CardBody>
+                            </Card>
+                        }
+                    </TabPanel>
+                </Content>
+            </Tabs>
+            
         </Column>
     </Row>
 }
@@ -95,14 +201,14 @@ else
 @code {
     [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
     private List<Category>? Categories = null;
-    private List<SubCategory>? SubCategories = null;
+    private List<SubCategoryWithCategoryInfoDto>? SubCategories = null;
 
     private Category? selectedCategory = null;
-    private SubCategory? selectedSubCategory = null;
+    private SubCategoryWithCategoryInfoDto? selectedSubCategory = null;
 
-    IEnumerable<SubCategory> SelectedCategorySubCategories => 
-        selectedCategory!.Id == Guid.Empty ?
-            Enumerable.Empty<SubCategory>(): SubCategories!.Where(s => s.Category == selectedCategory.Id);
+
+    [Parameter][SupplyParameterFromQuery(Name = "tab")] public string? Tab { get; set; } = null;
+    private string selectedTab = String.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -114,10 +220,20 @@ else
             new Node { Text = "Category", Active = true }
         });
 
+        // set selected tab based on parameter
+        if (!string.IsNullOrWhiteSpace(Tab) &&
+            (Tab == "categories" || Tab == "subcategories"))
+        {
+            selectedTab = Tab;
+        }
+        else
+        {
+            selectedTab = "categories";
+        }
+
         // Load categories and subcategories
         await LoadData();
-
-        await base.OnInitializedAsync();
+        // await base.OnInitializedAsync();
     }
 
     private async Task LoadCategories()
@@ -134,10 +250,40 @@ else
     {
         // get user id
         var user = (await authenticationStateTask).User;
-        var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+        var currentUserId = Guid.Parse(
+            user.Claims.First(x => x.Type.EndsWith("nameidentifier")).Value
+        );
 
         // load subcategories from API or database
-        SubCategories = await SubCategoryService.GetSubCategoriesAsync(currentUserId);
+        var subcat = await SubCategoryService.GetSubCategoriesAsync(currentUserId);
+
+        if (SubCategories is null)
+            SubCategories = new List<SubCategoryWithCategoryInfoDto>();
+        else
+            SubCategories.Clear();
+
+
+
+        foreach (var item in subcat)
+        {
+            var category = Categories!.FirstOrDefault(c => c.Id == item.CategoryId);
+
+            if (category == null)
+            {
+                Console.WriteLine($"SubCategory {item.Name} a un CategoryId {item.CategoryId} introuvable !");
+            }
+
+            SubCategories.Add(new SubCategoryWithCategoryInfoDto
+            {
+                Id = item.Id,
+                Code = item.Code,
+                Name = item.Name,
+                Description = item.Description,
+                CategoryId = item.CategoryId,
+                CategoryCode = category?.Code,
+                CategoryName = category?.Name
+            });
+        }
     }
 
     private async Task LoadData()
@@ -147,8 +293,15 @@ else
         var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
 
         // load categories and subcategories from API or database
-        Categories = await CategoryService.GetCategoriesAsync(currentUserId);
-        SubCategories = await SubCategoryService.GetSubCategoriesAsync(currentUserId);
+        await LoadCategories();
+        await LoadSubCategories();
+    }
+
+    private Task OnSelectedTabChanged(string name)
+    {
+        selectedTab = name;
+        navManager.NavigateTo($"/bankbook/category?tab={name}", replace: true);
+        return Task.CompletedTask;
     }
 
     private async Task DeleteSelectedCategory()
@@ -168,12 +321,43 @@ else
                 selectedCategory = null;
                 StateHasChanged();
             }
+            else // category does not exists or has bound subcategories
+            {
+                await MessageService.Error("The category could not be deleted. It may have sub-categories associated with it.", "Cannot delete category");
+            }
+        }
+    }
+
+    private async Task DeleteSelectedSubCategory()
+    {
+        if (selectedSubCategory is not null)
+        {
+            // get user id
+            var user = (await authenticationStateTask).User;
+            var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+            // delete subcategory
+            var success = await SubCategoryService.DeleteSubCategoryAsync(currentUserId, selectedSubCategory.Id);
+            if (success)
+            {
+                // reload data
+                await LoadData();
+                selectedSubCategory = null;
+                StateHasChanged();
+            }
         }
     }
 
     private async Task EditSelectedCategory()
     {
+        // navigate to edit page
         if (selectedCategory is not null)
             navManager.NavigateTo($"/bankbook/category/edit/{selectedCategory.Id}");
+    }
+
+    private async Task EditSelectedSubCategory()
+    {
+        // navigate to edit page
+        if (selectedSubCategory is not null)
+            navManager.NavigateTo($"/bankbook/subcategory/edit/{selectedSubCategory.Id}");
     }
 }

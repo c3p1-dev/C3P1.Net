@@ -33,19 +33,22 @@ namespace C3P1.Net.Services.Apps.BankBook
 
         public async Task<bool> DeleteCategoryAsync(Guid userId, Guid categoryId)
         {
-            // find category
+            // find category and verify ownership
             var category = await _context.Categories
                 .FirstOrDefaultAsync(x => x.Id == categoryId && x.UserId == userId);
+            var subcategioriesBound = await _context.SubCategories
+                .AsNoTracking()
+                .AnyAsync(x => x.CategoryId == categoryId && x.UserId == userId);
 
-            // delete if found
-            if (category is not null)
+            // delete if found and no subcategories bound to it
+            if (category is not null && subcategioriesBound == false)
             {
                 _context.Categories.Remove(category);
                 int recorded = await _context.SaveChangesAsync();
                 return (recorded == 1);
             }
-
-            return false;
+            else
+                return false; // not found or subcategories bound
         }
 
         public async Task<List<Category>> GetCategoriesAsync(Guid userId)

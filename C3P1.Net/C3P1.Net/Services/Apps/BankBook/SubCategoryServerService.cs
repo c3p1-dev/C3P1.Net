@@ -70,7 +70,7 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<bool> UpdateSubCategoryAsync(Guid userId, SubCategory subCategory)
         {
             // find existing sub category
-            var existingSubCategory = await _context.Categories
+            var existingSubCategory = await _context.SubCategories
                 .FirstOrDefaultAsync(x => x.Id == subCategory.Id && x.UserId == userId);
 
             // if not found, return false
@@ -110,7 +110,7 @@ namespace C3P1.Net.Services.Apps.BankBook
         {
             // get subcategories by category id
             var result = await _context.SubCategories
-                .Where(x => x.UserId == userId && x.Category == categoryId)
+                .Where(x => x.UserId == userId && x.CategoryId == categoryId)
                 .ToListAsync();
 
             return result;
@@ -127,13 +127,13 @@ namespace C3P1.Net.Services.Apps.BankBook
             {
                 // get subcategories by category id
                 var result = await _context.SubCategories
-                    .Where(x => x.UserId == userId && x.Category == category.Id)
+                    .Where(x => x.UserId == userId && x.CategoryId == category.Id)
                     .ToListAsync();
 
                 return result;
             }
             else
-                return new List<SubCategory>();
+                return [];
         }
     }
 }

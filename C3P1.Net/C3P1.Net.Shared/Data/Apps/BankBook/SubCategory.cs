@@ -20,7 +20,7 @@ namespace C3P1.Net.Shared.Data.Apps.BankBook
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Category Id is required")]
-        public Guid Category { get; set; }
+        public Guid CategoryId { get; set; }
 
         [StringLength(100, ErrorMessage = "Description is at most 100 characters")]
         public string Description { get; set; } = string.Empty;

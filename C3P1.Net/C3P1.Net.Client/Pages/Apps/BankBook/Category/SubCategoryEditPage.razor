@@ -1,0 +1,175 @@
+﻿@page "/bankbook/subcategory/edit/{CategoryId:guid}"
+@using C3P1.Net.Shared.Data.Apps.BankBook
+@using C3P1.Net.Shared.Services.Apps.BankBook
+@using System.ComponentModel.DataAnnotations
+@layout Layouts.BankBookLayout
+
+@inject NavigationManager navManager;
+@inject NavBreadcrumbService navBreadcrumb;
+@inject ISubCategoryService SubCategoryService;
+@inject ICategoryService CategoryService;
+
+<PageTitle>BankBook / Edit SubCategory</PageTitle>
+
+<Row>
+    <Column>
+        @if (Categories is null)
+        {
+            <Paragraph><em>Loading...</em></Paragraph>
+        }
+        else if (Categories.Count == 0)
+        {
+            <Paragraph><em>No categories found.</em></Paragraph>
+            <Paragraph>
+                <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/category/add"))">
+                    <Icon Name="IconName.Add" /> Add Category
+                </Button>
+            </Paragraph>
+        }
+        else
+        {
+            <Card Style="max-width: 800px;margin: 0 auto;">
+                <CardHeader>
+                    @if (editSubCategory is null)
+                    {
+                        <CardTitle>Edit Category</CardTitle>
+                    }
+                    else
+                    {
+                        <CardTitle>Edit Category "@editSubCategory.Code"</CardTitle>
+                    }
+                </CardHeader>
+                <CardBody>
+                    @if (editSubCategory is null)
+                    {
+                        <Paragraph><em>SubCategory not found</em></Paragraph>
+                    }
+                    else
+                    {
+                        <Field>
+                            <FieldLabel RequiredIndicator>Parent Category</FieldLabel>
+                            <FieldBody>
+                                <Select TValue="Guid" @bind-SelectedValue="editSubCategory!.CategoryId">
+                                    @foreach (var category in Categories)
+                                    {
+                                        <SelectItem Value="@category.Id">@category.Code - @category.Name</SelectItem>
+                                    }
+                                </Select>
+                            </FieldBody>
+                        </Field>
+                        <Validations @ref="validations" Mode="ValidationMode.Manual" Model="@editSubCategory">
+                            <Validation>
+                                <Field>
+                                    <FieldLabel RequiredIndicator>SubCategory Code</FieldLabel>
+                                    <FieldBody>
+                                        <TextEdit @bind-Text="editSubCategory.Code">
+                                            <Feedback>
+                                                <ValidationError />
+                                            </Feedback>
+                                        </TextEdit>
+                                    </FieldBody>
+                                </Field>
+                            </Validation>
+
+                            <Validation>
+                                <Field>
+                                    <FieldLabel RequiredIndicator>SubCategory Name</FieldLabel>
+                                    <FieldBody>
+                                        <TextEdit @bind-Text="editSubCategory.Name">
+                                            <Feedback>
+                                                <ValidationError />
+                                            </Feedback>
+                                        </TextEdit>
+                                    </FieldBody>
+                                </Field>
+                            </Validation>
+
+                            <Validation>
+                                <Field>
+                                    <FieldLabel>SubCategory Description</FieldLabel>
+                                    <FieldBody>
+                                        <TextEdit @bind-Text="editSubCategory.Description">
+                                            <Feedback>
+                                                <ValidationError />
+                                            </Feedback>
+                                        </TextEdit>
+                                    </FieldBody>
+                                </Field>
+                            </Validation>
+
+                            <Button Color="Color.Primary" Clicked="SaveSubCategory">
+                                Save changes
+                            </Button>
+
+                            <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=subcategories"))">
+                                Cancel
+                            </Button>
+
+                        </Validations>
+                    }
+                </CardBody>
+            </Card>
+        }
+    </Column>
+</Row>
+
+@code {
+    [Parameter]
+    public Guid CategoryId { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+
+    private Validations? validations;
+    private SubCategory? editSubCategory = new();
+
+    private List<Category>? Categories = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // NavState (breadcrumbs, etc) is Scoped, so it lives as long as our connection lives.
+        // So when a new page is visited, we need to clear navigation to prevent breadcrumbs from bleed-over, etc.
+        // This also makes the navbar invisible by default.
+        navBreadcrumb.SetBreadcrumbs(new List<Node>()
+        {
+            new Node {Text = "Category", Link = "bankbook/category?tab=subcategories"},
+            new Node {Text = "Edit", Active = true}
+        });
+
+        // get current Category
+        var user = (await authenticationStateTask).User;
+        var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+
+        editSubCategory = await SubCategoryService.GetSubCategoryByIdAsync(currentUserId, CategoryId);
+
+        await LoadCategories();
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task LoadCategories()
+    {
+        // get user id
+        var user = (await authenticationStateTask).User;
+        var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+
+        // load categories from API or database
+        Categories = await CategoryService.GetCategoriesAsync(currentUserId);
+    }
+
+    private async Task SaveSubCategory()
+    {
+        if (!await validations!.ValidateAll())
+            return;
+
+        // get user id
+        var user = (await authenticationStateTask).User;
+        var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+
+        // update category
+        var success = await SubCategoryService.UpdateSubCategoryAsync(currentUserId, editSubCategory!);
+
+        if (success)
+            navManager.NavigateTo("bankbook/category?tab=subcategories");
+    }
+}

@@ -83,7 +83,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             if (result == true)
                 return Ok(result);
             else
-                return BadRequest();
+                return BadRequest("Category does not exist or has SubCategories bound to it.");
         }
 
         // UPDATE : api/apps/bankbook/[controller]/update
