@@ -10,6 +10,15 @@ html, body {
     color: white; /* make breadcrumb white */
 }
 
+.breadcrumb-overflow {
+    overflow: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    .barbrand-overflow::-webkit-scrollbar {
+        display: none; /* Safari and Chrome */
+    }
+}
+
 /* Responsives design rules for main content div */
 @media only screen and (min-width:1500px) {
     .main-layout {

@@ -8,12 +8,12 @@
 @rendermode InteractiveAuto
 
 <Bar @bind-Visible="@topbarVisible" Breakpoint="Breakpoint.Desktop" Background="Background.Primary" Shadow="Shadow.Default" Padding="Padding.Is3.OnX" ThemeContrast="ThemeContrast.Dark">
-    <BarBrand Margin="Margin.Is1" Style="text-overflow: ellipsis;overflow: scroll;">
+    <BarBrand Margin="Margin.Is1" Class="breadcrumb-overflow">
         <BarItem>
             <NavBreadcrumb />
         </BarItem>
     </BarBrand>
-    <BarToggler/>
+    <BarToggler />
     <BarMenu>
         <BarStart>
 

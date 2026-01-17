@@ -91,6 +91,7 @@ namespace C3P1.Net.Services.Apps.BankBook
             existingSubCategory.Code = subCategory.Code;
             existingSubCategory.Name = subCategory.Name;
             existingSubCategory.Description = subCategory.Description;
+            existingSubCategory.CategoryId = subCategory.CategoryId;
 
             // save changes
             await _context.SaveChangesAsync();
