@@ -84,7 +84,7 @@ namespace C3P1.Net.Services.Apps.BankBook
             existingBankAccount.Bank = bankAccount.Bank;
             existingBankAccount.Description = bankAccount.Description;
             existingBankAccount.Url = bankAccount.Url;
-            existingBankAccount.Balance = bankAccount.Balance;
+            existingBankAccount.InitialBalance = bankAccount.InitialBalance;
             existingBankAccount.LockedAt = bankAccount.LockedAt;
 
             // save changes

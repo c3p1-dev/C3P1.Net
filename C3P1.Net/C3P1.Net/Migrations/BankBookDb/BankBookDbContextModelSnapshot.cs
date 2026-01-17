@@ -23,9 +23,6 @@ namespace C3P1.Net.Migrations.BankBookDb
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("Balance")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Bank")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -44,6 +41,9 @@ namespace C3P1.Net.Migrations.BankBookDb
                     b.Property<string>("IBAN")
                         .IsRequired()
                         .HasMaxLength(34)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("InitialBalance")
                         .HasColumnType("TEXT");
 
                     b.Property<DateOnly?>("LockedAt")

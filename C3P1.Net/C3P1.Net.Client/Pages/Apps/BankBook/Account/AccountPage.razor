@@ -36,7 +36,7 @@ else
                             <Row>
                                 <Column>
                                     <Div>Selected Account:</Div>
-                                    <Div><Strong>@selectedAccount.Name</Strong> (Balance: @selectedAccount.Balance.ToString("C", new CultureInfo("fr-FR")))</Div>
+                                    <Div><Strong>@selectedAccount.Name</Strong> (Balance: @selectedAccount.InitialBalance.ToString("C", new CultureInfo("fr-FR")))</Div>
                                 </Column>
                                 <Column TextAlignment="TextAlignment.End">
                                     <Tooltip Text="Delete selected account" ShowDelay="1000" HideDelay="200">
@@ -94,7 +94,7 @@ else
                                 <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Account" Field="@nameof(Account.Code)" Caption="#" Width="80px"/>
                                 <DataGridColumn TItem="Account" Field="@nameof(Account.Name)" Caption="Name"/>
                                 <DataGridColumn TItem="Account" Field="@nameof(Account.Bank)" Caption="Bank" Groupable />
-                                <DataGridColumn TItem="Account" Field="@nameof(Account.Balance)" Caption="Balance"/>
+                                <DataGridColumn TItem="Account" Field="@nameof(Account.InitialBalance)" Caption="Balance"/>
                             </DataGridColumns>
                         </DataGrid>
                     }
@@ -110,7 +110,7 @@ else
                                 <DataGridColumn TextAlignment="TextAlignment.Center" TItem="Account" Field="@nameof(Account.Code)" Caption="#" Width="80px"/>
                                 <DataGridColumn TItem="Account" Field="@nameof(Account.Name)" Caption="Name" />
                                 <DataGridColumn TItem="Account" Field="@nameof(Account.Bank)" Caption="Bank" Groupable />
-                                <DataGridColumn TItem="Account" Field="@nameof(Account.Balance)" Caption="Balance" />
+                                <DataGridColumn TItem="Account" Field="@nameof(Account.InitialBalance)" Caption="Balance" />
                             </DataGridColumns>
                         </DataGrid>
                     }
@@ -131,7 +131,7 @@ else
     private Account? selectedAccount = null;
     private List<Account>? Accounts = null;
 
-    private decimal totalBalance => Accounts?.Sum(a => a.Balance) ?? 0;
+    private decimal totalBalance => Accounts?.Sum(a => a.InitialBalance) ?? 0;
 
     protected override async Task OnInitializedAsync()
     {

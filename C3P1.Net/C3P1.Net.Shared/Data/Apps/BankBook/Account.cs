@@ -37,7 +37,7 @@ namespace C3P1.Net.Shared.Data.Apps.BankBook
         [StringLength(2083, ErrorMessage = "URL too long (max 2083 characters)")]
         public string Url { get; set; } = string.Empty;
 
-        public decimal Balance { get; set; } = decimal.Zero;
+        public decimal InitialBalance { get; set; } = decimal.Zero;
 
         public DateOnly? LockedAt { get; set; }
     }

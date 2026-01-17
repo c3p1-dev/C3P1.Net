@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C3P1.Net.Migrations.BankBookDb
 {
     [DbContext(typeof(BankBookDbContext))]
-    [Migration("20260115222905_CreateCategoriesAndSubCategoriesTables")]
-    partial class CreateCategoriesAndSubCategoriesTables
+    [Migration("20260117135257_CreateAccountsCategoriesAndSubCategoriesTables")]
+    partial class CreateAccountsCategoriesAndSubCategoriesTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,9 +24,6 @@ namespace C3P1.Net.Migrations.BankBookDb
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Balance")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Bank")
@@ -47,6 +44,9 @@ namespace C3P1.Net.Migrations.BankBookDb
                     b.Property<string>("IBAN")
                         .IsRequired()
                         .HasMaxLength(34)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("InitialBalance")
                         .HasColumnType("TEXT");
 
                     b.Property<DateOnly?>("LockedAt")
