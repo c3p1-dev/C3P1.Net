@@ -7,12 +7,10 @@ namespace C3P1.Net.Services.Apps
 {
     public class TasklistServerService(AppDbContext context) : ITasklistService
     {
-        private readonly AppDbContext _context = context;
-
         public async Task<List<TodoItem>> GetTasklistAsync(Guid userId)
         {
             // get all tasks
-            var result = await _context.Tasklist
+            var result = await context.Tasklist
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
 
@@ -23,7 +21,7 @@ namespace C3P1.Net.Services.Apps
         public async Task<List<TodoItem>> GetTasklistTodoAsync(Guid userId)
         {
             // get all todo tasks
-            var result = await _context.Tasklist
+            var result = await context.Tasklist
                 .Where(x => x.UserId == userId && x.Completed == false)
                 .ToListAsync();
 
@@ -34,7 +32,7 @@ namespace C3P1.Net.Services.Apps
         public async Task<List<TodoItem>> GetTasklistDoneAsync(Guid userId)
         {
             // get all done tasks
-            var result = await _context.Tasklist
+            var result = await context.Tasklist
                 .Where(x => x.UserId == userId && x.Completed == true)
                 .ToListAsync();
 
@@ -51,8 +49,8 @@ namespace C3P1.Net.Services.Apps
             task.Completed = false;
 
             // add task
-            _context.Add(task);
-            int recorded = await _context.SaveChangesAsync();
+            context.Add(task);
+            int recorded = await context.SaveChangesAsync();
 
             return (recorded == 1);
         }
@@ -60,14 +58,14 @@ namespace C3P1.Net.Services.Apps
         public async Task<bool> DeleteTaskAsync(Guid userId, Guid taskId)
         {
             // try to get task from taskId
-            var task = await _context.Tasklist.Where(x => x.UserId == userId && x.Id == taskId).FirstOrDefaultAsync();
+            var task = await context.Tasklist.Where(x => x.UserId == userId && x.Id == taskId).FirstOrDefaultAsync();
 
             if (task is null)
                 return false;  // task not found
 
             // delete task
-            _context.Remove(task);
-            int recorded = await _context.SaveChangesAsync();
+            context.Remove(task);
+            int recorded = await context.SaveChangesAsync();
 
             return (recorded == 1);
         }
@@ -75,8 +73,8 @@ namespace C3P1.Net.Services.Apps
         public async Task<bool> UpdateTaskAsync(TodoItem task)
         {
             // update item
-            _context.Update(task);
-            int recorded = await _context.SaveChangesAsync();
+            context.Update(task);
+            int recorded = await context.SaveChangesAsync();
 
             return (recorded == 1);
         }
@@ -86,13 +84,13 @@ namespace C3P1.Net.Services.Apps
             List<TodoItem> result = [];
 
             // delete all done tasks
-            foreach (var task in _context.Tasklist.Where(x => x.UserId == userId && x.Completed == true))
+            foreach (var task in context.Tasklist.Where(x => x.UserId == userId && x.Completed == true))
             {
-                _context.Remove(task);
+                context.Remove(task);
                 result.Add(task);
             }
 
-            int recorded = await _context.SaveChangesAsync();
+            int recorded = await context.SaveChangesAsync();
 
             return result;
         }
@@ -102,13 +100,13 @@ namespace C3P1.Net.Services.Apps
             List<TodoItem> result = [];
 
             // mark all tasks as done
-            foreach (var task in _context.Tasklist.Where(x => x.UserId == userId && x.Completed == false))
+            foreach (var task in context.Tasklist.Where(x => x.UserId == userId && x.Completed == false))
             {
                 task.Completed = true;
                 result.Add(task);
             }
 
-            int recorded = await _context.SaveChangesAsync();
+            int recorded = await context.SaveChangesAsync();
 
             return result;
         }

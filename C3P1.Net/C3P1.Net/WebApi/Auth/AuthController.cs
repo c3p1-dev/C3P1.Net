@@ -15,25 +15,18 @@ namespace C3P1.Net.WebApi.Auth
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(
-        UserManager<AppUser> userManager,
-        RoleManager<IdentityRole> roleManager,
-        IConfiguration configuration) : ControllerBase
+    public class AuthController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration) : ControllerBase
     {
-        private readonly UserManager<AppUser> _userManager = userManager;
-        private readonly RoleManager<IdentityRole> _roleManager = roleManager;
-        private readonly IConfiguration _configuration = configuration;
-
-        [HttpPost("login")]
+            [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             // Look for a match and check passwords
-            var user = await _userManager.FindByNameAsync(model.Username!);
+            var user = await userManager.FindByNameAsync(model.Username!);
 
-            if (user is not null && await _userManager.CheckPasswordAsync(user, model.Password!))
+            if (user is not null && await userManager.CheckPasswordAsync(user, model.Password!))
             {
                 // Get roles and add Claim info
-                var userRoles = await _userManager.GetRolesAsync(user);
+                var userRoles = await userManager.GetRolesAsync(user);
 
                 var authClaims = new List<Claim>
                 {
@@ -62,7 +55,7 @@ namespace C3P1.Net.WebApi.Auth
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             // Check if user already exists
-            var userExists = await _userManager.FindByNameAsync(model.Username!);
+            var userExists = await userManager.FindByNameAsync(model.Username!);
             if (userExists is not null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
 
@@ -75,7 +68,7 @@ namespace C3P1.Net.WebApi.Auth
             };
 
             // Add user to database
-            var result = await _userManager.CreateAsync(user, model.Password!);
+            var result = await userManager.CreateAsync(user, model.Password!);
 
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
@@ -88,7 +81,7 @@ namespace C3P1.Net.WebApi.Auth
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
         {
             // Check if user already exists
-            var userExists = await _userManager.FindByNameAsync(model.Username!);
+            var userExists = await userManager.FindByNameAsync(model.Username!);
             if (userExists is not null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
 
@@ -101,35 +94,35 @@ namespace C3P1.Net.WebApi.Auth
             };
 
             // Add user to database
-            var result = await _userManager.CreateAsync(user, model.Password!);
+            var result = await userManager.CreateAsync(user, model.Password!);
 
             // Check for creation errors
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
 
             // Ensure roles exist
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+            if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
+                await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+            if (!await roleManager.RoleExistsAsync(UserRoles.User))
+                await roleManager.CreateAsync(new IdentityRole(UserRoles.User));
 
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
-                await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+            if (await roleManager.RoleExistsAsync(UserRoles.Admin))
+                await userManager.AddToRoleAsync(user, UserRoles.Admin);
 
-            if (await _roleManager.RoleExistsAsync(UserRoles.User))
-                await _userManager.AddToRoleAsync(user, UserRoles.User);
+            if (await roleManager.RoleExistsAsync(UserRoles.User))
+                await userManager.AddToRoleAsync(user, UserRoles.User);
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]!));
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]!));
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
+                issuer: configuration["JWT:ValidIssuer"],
+                audience: configuration["JWT:ValidAudience"],
                 expires: DateTime.Now.AddHours(3),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)

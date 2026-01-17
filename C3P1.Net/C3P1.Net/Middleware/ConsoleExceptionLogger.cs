@@ -3,13 +3,13 @@
     // Usage :
     // app.UseMiddleware<ConsoleExceptionLogger>();
     // in Program.cs, before classic Middlewares
-    public class ConsoleExceptionLogger(RequestDelegate _next)
+    public class ConsoleExceptionLogger(RequestDelegate next)
     {
         public async Task InvokeAsync(HttpContext context)
         {
             try
             {
-                await _next(context);
+                await next(context);
             }
             catch (UriFormatException ex)
             {

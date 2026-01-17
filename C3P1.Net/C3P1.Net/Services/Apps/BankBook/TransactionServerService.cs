@@ -7,7 +7,6 @@ namespace C3P1.Net.Services.Apps.BankBook
 {
     public class TransactionServerService(BankBookDbContext context) : ITransactionService
     {
-        private readonly BankBookDbContext _context = context;
         public async Task<bool> AddTransactionAsync(Guid userId, Transaction transaction)
         {
             // fill data
@@ -16,8 +15,8 @@ namespace C3P1.Net.Services.Apps.BankBook
             transaction.CreatedAt = DateTime.UtcNow;
 
             // add to db
-            _context.Add(transaction);
-            int recorded = await _context.SaveChangesAsync();
+            context.Add(transaction);
+            int recorded = await context.SaveChangesAsync();
 
             return (recorded == 1) ;
         }
@@ -25,14 +24,14 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<bool> DeleteTransactionAsync(Guid userId, Guid transactionId)
         {
             // find transaction
-            var transaction = await _context.Transactions
+            var transaction = await context.Transactions
                 .FirstOrDefaultAsync(x => x.Id == transactionId && x.UserId == userId);
 
             // delete if found
             if (transaction is not null)
             {
-                _context.Remove(transaction);
-                int recorded = await _context.SaveChangesAsync();
+                context.Remove(transaction);
+                int recorded = await context.SaveChangesAsync();
                 return (recorded == 1);
             }
 
@@ -42,7 +41,7 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<Transaction?> GetTransactionByIdAsync(Guid userId, Guid transactionId)
         {
             // find transaction
-            var transaction = await _context.Transactions
+            var transaction = await context.Transactions
                 .FirstOrDefaultAsync(x => x.Id == transactionId && x.UserId == userId);
 
             return transaction;
@@ -51,7 +50,7 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<List<Transaction>> GetTransactionsAsync(Guid userId)
         {
             // get transactions
-            var result = await _context.Transactions
+            var result = await context.Transactions
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
 
@@ -61,7 +60,7 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<List<Transaction>> GetTransactionsByAccountIdAsync(Guid userId, Guid accountId)
         {
             // get transactions by account id
-            var result = await _context.Transactions
+            var result = await context.Transactions
                 .Where(x => x.UserId == userId && x.AccountId == accountId)
                 .ToListAsync();
 
@@ -71,7 +70,7 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<List<Transaction>> GetTransactionsBySubCategoryIdAsync(Guid userId, Guid subCategoryId)
         {
             // get transactions by subcategory id
-            var result = await _context.Transactions
+            var result = await context.Transactions
                 .Where(x => x.UserId == userId && x.SubCategoryId == subCategoryId)
                 .ToListAsync();
             return result;
@@ -80,7 +79,7 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<bool> UpdateTransactionAsync(Guid userId, Transaction transaction)
         {
             // find existing transaction
-            var existingTransaction = await _context.Transactions
+            var existingTransaction = await context.Transactions
                 .FirstOrDefaultAsync(x => x.Id == transaction.Id && x.UserId == userId);
             if (existingTransaction is not null)
             {
@@ -96,7 +95,7 @@ namespace C3P1.Net.Services.Apps.BankBook
                 existingTransaction.CheckNumber = transaction.CheckNumber;
 
                 // save changes
-                int recorded = await _context.SaveChangesAsync();
+                int recorded = await context.SaveChangesAsync();
                 return (recorded == 1);
             }
 

@@ -3,7 +3,7 @@
     // Usage :
     // app.UseMiddleware<DenyEmptyHost>();
     // in Program.cs, before classic Middlewares
-    public class DenyEmptyHost(RequestDelegate _next)
+    public class DenyEmptyHost(RequestDelegate next)
     {
         public async Task Invoke(HttpContext context)
         {
@@ -15,7 +15,7 @@
                 return;
             }
 
-            await _next(context);
+            await next(context);
         }
     }
 }

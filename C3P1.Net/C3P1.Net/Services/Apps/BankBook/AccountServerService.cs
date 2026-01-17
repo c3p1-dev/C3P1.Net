@@ -7,11 +7,10 @@ namespace C3P1.Net.Services.Apps.BankBook
 {
     public class AccountServerService(BankBookDbContext context) : IAccountService
     {
-        private readonly BankBookDbContext _context = context;
         public async Task<List<Account>> GetAccountsAsync(Guid userId)
         {
             // get all bank accounts for the user
-            var result = await _context.Accounts
+            var result = await context.Accounts
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
 
@@ -24,14 +23,14 @@ namespace C3P1.Net.Services.Apps.BankBook
             bankAccount.UserId = userId;
 
             // duplicate check
-            var duplicateAccount = await _context.Accounts
+            var duplicateAccount = await context.Accounts
                 .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == bankAccount.Code);
 
             if (duplicateAccount is null)
             {
                 // add bank account
-                _context.Add(bankAccount);
-                int recorded = await _context.SaveChangesAsync();
+                context.Add(bankAccount);
+                int recorded = await context.SaveChangesAsync();
 
                 return (recorded == 1);
             }
@@ -43,11 +42,11 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<bool> DeleteAccountAsync(Guid userId, Guid bankAccountId)
         {
             // find bank account
-            var bankAccount = await _context.Accounts
+            var bankAccount = await context.Accounts
                 .FirstOrDefaultAsync(x => x.Id == bankAccountId && x.UserId == userId);
 
             // check transaction ownership
-            var ownedTransactions = await _context.Transactions.AnyAsync(c => c.UserId == userId && c.AccountId == bankAccountId);
+            var ownedTransactions = await context.Transactions.AnyAsync(c => c.UserId == userId && c.AccountId == bankAccountId);
 
             if (ownedTransactions == true)
                 return false;   // can't delete an account that holds transactions
@@ -55,8 +54,8 @@ namespace C3P1.Net.Services.Apps.BankBook
             // delete if found
             if (bankAccount is not null)
             {
-                _context.Accounts.Remove(bankAccount);
-                int recorded = await _context.SaveChangesAsync();
+                context.Accounts.Remove(bankAccount);
+                int recorded = await context.SaveChangesAsync();
                 return (recorded == 1);
             }
 
@@ -66,7 +65,7 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<bool> UpdateAccountAsync(Guid userId, Account bankAccount)
         {
             // find existing bank account
-            var existingBankAccount = await _context.Accounts
+            var existingBankAccount = await context.Accounts
                 .FirstOrDefaultAsync(x => x.Id == bankAccount.Id && x.UserId == userId);
 
             // if not found, return false
@@ -74,7 +73,7 @@ namespace C3P1.Net.Services.Apps.BankBook
                 return false;
 
             // check for duplicate code
-            var duplicateAccount = await _context.Accounts
+            var duplicateAccount = await context.Accounts
                 .AnyAsync(x => x.UserId == userId
                             && x.Code == bankAccount.Code
                             && x.Id != bankAccount.Id);
@@ -95,7 +94,7 @@ namespace C3P1.Net.Services.Apps.BankBook
             existingBankAccount.LockedAt = bankAccount.LockedAt;
 
             // save changes
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
 
@@ -103,7 +102,7 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<Account?> GetAccountByIdAsync(Guid userId, Guid bankAccountId)
         {
             // get bank account by id
-            var result = await _context.Accounts
+            var result = await context.Accounts
                 .FirstOrDefaultAsync(x => x.Id == bankAccountId && x.UserId == userId);
 
             return result;
@@ -112,7 +111,7 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<Account?> GetAccountByCodeAsync(Guid userId, string code)
         {
             // get bank account by code
-            var result = await _context.Accounts
+            var result = await context.Accounts
                 .FirstOrDefaultAsync(x => x.Code == code && x.UserId == userId);
 
             return result;

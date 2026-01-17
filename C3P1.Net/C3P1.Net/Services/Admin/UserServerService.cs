@@ -8,13 +8,9 @@ namespace C3P1.Net.Services.Admin
 {
     public class UserServerService(AppDbContext context, UserManager<AppUser> userManager) : IUserService
     {
-
-        private readonly AppDbContext _context = context;
-        private readonly UserManager<AppUser> _userManager = userManager;
-
         public async Task<List<AppUserDto>> GetUsersAsync()
         {
-            var result = await _userManager.Users.ToListAsync();
+            var result = await userManager.Users.ToListAsync();
             List<AppUserDto> users = [];
             foreach (var item in result)
                 users.Add(ToDto(item));
@@ -25,9 +21,9 @@ namespace C3P1.Net.Services.Admin
         public async Task<List<AppUserDto>> GetUsersInRoleAsync(string role)
         {
             List<AppUserDto> result = [];
-            foreach (var user in _userManager.Users)
+            foreach (var user in userManager.Users)
             {
-                bool isInRole = await _userManager.IsInRoleAsync(user, role);
+                bool isInRole = await userManager.IsInRoleAsync(user, role);
                 if (isInRole)
                     result.Add(ToDto(user));
             }
@@ -37,7 +33,7 @@ namespace C3P1.Net.Services.Admin
 
         public async Task<List<string>> GetRolesAsync()
         {
-            var roles = await _context.Roles.ToListAsync();
+            var roles = await context.Roles.ToListAsync();
             List<string> result = [];
             foreach (var role in roles)
                 result.Add(role.Name!);
@@ -47,30 +43,30 @@ namespace C3P1.Net.Services.Admin
 
         public async Task<List<string>> GetUserRolesAsync(AppUserDto user)
         {
-            var roles = (await _userManager.GetRolesAsync(FromDto(user))).ToList();
+            var roles = (await userManager.GetRolesAsync(FromDto(user))).ToList();
             return roles;
         }
 
         public async Task<bool> IsInRoleAsync(AppUserDto user, string role)
         {
-            return await _userManager.IsInRoleAsync(FromDto(user), role);
+            return await userManager.IsInRoleAsync(FromDto(user), role);
         }
 
         public async Task<bool> AddToRoleAsync(Guid userId, string role)
         {
             // get user from id
-            var user = await _userManager.Users.Where(u => u.Id == userId.ToString()).FirstOrDefaultAsync();
+            var user = await userManager.Users.Where(u => u.Id == userId.ToString()).FirstOrDefaultAsync();
 
             if (user is null)
                 return false;
 
             // check is user is already in role
-            bool check = await _userManager.IsInRoleAsync(user, role);
+            bool check = await userManager.IsInRoleAsync(user, role);
 
             if (check == false)
             {
                 // add to role
-                var result = await _userManager.AddToRoleAsync(user, role);
+                var result = await userManager.AddToRoleAsync(user, role);
                 return result.Succeeded;
             }
             else
@@ -80,18 +76,18 @@ namespace C3P1.Net.Services.Admin
         public async Task<bool> RemoveFromRoleAsync(Guid userId, string role)
         {
             // get user from id
-            var user = await _userManager.Users.Where(u => u.Id == userId.ToString()).FirstOrDefaultAsync();
+            var user = await userManager.Users.Where(u => u.Id == userId.ToString()).FirstOrDefaultAsync();
 
             if (user is null)
                 return false;
 
             // check if user is in role
-            bool check = await _userManager.IsInRoleAsync(user, role);
+            bool check = await userManager.IsInRoleAsync(user, role);
 
             if (check == true)
             {
                 // remove from role
-                var result = await _userManager.RemoveFromRoleAsync(user, role);
+                var result = await userManager.RemoveFromRoleAsync(user, role);
                 return result.Succeeded;
             }
             else
@@ -105,14 +101,14 @@ namespace C3P1.Net.Services.Admin
 
             // delete user
             // var result = await _userManager.DeleteAsync(FromDto(user));
-            var existing = await _userManager.FindByIdAsync(user.Id);
+            var existing = await userManager.FindByIdAsync(user.Id);
 
             if (existing is null)
                 return false;
             else
             {
-                var result = await _userManager.DeleteAsync(existing);
-                await _context.SaveChangesAsync();
+                var result = await userManager.DeleteAsync(existing);
+                await context.SaveChangesAsync();
 
                 return result.Succeeded;
             }

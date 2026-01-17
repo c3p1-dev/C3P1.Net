@@ -7,7 +7,6 @@ namespace C3P1.Net.Services.Apps.BankBook
 {
     public class SubCategoryServerService(BankBookDbContext context) : ISubCategoryService
     {
-        private readonly BankBookDbContext _context = context;
         public async Task<bool> AddSubCategoryAsync(Guid userId, SubCategory subcategory)
         {
             // fill data
@@ -15,15 +14,15 @@ namespace C3P1.Net.Services.Apps.BankBook
             subcategory.UserId = userId;
 
             // duplicate check
-            var duplicateSubcategory = await _context.SubCategories
+            var duplicateSubcategory = await context.SubCategories
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == subcategory.Code);
 
             if (duplicateSubcategory is null)
             {
                 // add category
-                _context.Add(subcategory);
-                int recorded = await _context.SaveChangesAsync();
+                context.Add(subcategory);
+                int recorded = await context.SaveChangesAsync();
 
                 return (recorded == 1);
             }
@@ -35,11 +34,11 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<bool> DeleteSubCategoryAsync(Guid userId, Guid subcategoryId)
         {
             // find subcategory
-            var subcategory = await _context.SubCategories
+            var subcategory = await context.SubCategories
                 .FirstOrDefaultAsync(x => x.Id == subcategoryId && x.UserId == userId);
 
             // verify transaction ownership
-            var ownedTransactions = await _context.Transactions
+            var ownedTransactions = await context.Transactions
                 .AsNoTracking()
                 .AnyAsync(t => t.SubCategoryId == subcategoryId);
 
@@ -50,8 +49,8 @@ namespace C3P1.Net.Services.Apps.BankBook
             // delete if found
             if (subcategory is not null)
             {
-                _context.SubCategories.Remove(subcategory);
-                int recorded = await _context.SaveChangesAsync();
+                context.SubCategories.Remove(subcategory);
+                int recorded = await context.SaveChangesAsync();
                 return (recorded == 1);
             }
 
@@ -61,7 +60,7 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<List<SubCategory>> GetSubCategoriesAsync(Guid userId)
         {
             // get subcategories
-            var result = await _context.SubCategories
+            var result = await context.SubCategories
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
 
@@ -71,7 +70,7 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<SubCategory?> GetSubCategoryByIdAsync(Guid userId, Guid subCategoryId)
         {
             // get subcategory
-            var subcategory = await _context.SubCategories
+            var subcategory = await context.SubCategories
                 .FirstOrDefaultAsync(x => x.Id == subCategoryId && x.UserId == userId);
 
             return subcategory;
@@ -80,7 +79,7 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<bool> UpdateSubCategoryAsync(Guid userId, SubCategory subCategory)
         {
             // find existing sub category
-            var existingSubCategory = await _context.SubCategories
+            var existingSubCategory = await context.SubCategories
                 .FirstOrDefaultAsync(x => x.Id == subCategory.Id && x.UserId == userId);
 
             // if not found, return false
@@ -88,7 +87,7 @@ namespace C3P1.Net.Services.Apps.BankBook
                 return false;
 
             // check for duplicate code
-            var duplicateAccount = await _context.SubCategories
+            var duplicateAccount = await context.SubCategories
                 .AnyAsync(x => x.UserId == userId
                             && x.Code == subCategory.Code
                             && x.Id != subCategory.Id);
@@ -104,14 +103,14 @@ namespace C3P1.Net.Services.Apps.BankBook
             existingSubCategory.CategoryId = subCategory.CategoryId;
 
             // save changes
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
 
         public async Task<SubCategory?> GetSubCategoryByCodeAsync(Guid userId, string code)
         {
             // get subcategory by code
-            var subcategory = await _context.SubCategories
+            var subcategory = await context.SubCategories
                 .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == code);
 
             return subcategory;
@@ -120,7 +119,7 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<List<SubCategory>> GetSubCategoriesByCategoryIdAsync(Guid userId, Guid categoryId)
         {
             // get subcategories by category id
-            var result = await _context.SubCategories
+            var result = await context.SubCategories
                 .Where(x => x.UserId == userId && x.CategoryId == categoryId)
                 .ToListAsync();
 
@@ -130,14 +129,14 @@ namespace C3P1.Net.Services.Apps.BankBook
         public async Task<List<SubCategory>> GetSubCategoriesByCategoryCodeAsync(Guid userId, string categoryCode)
         {
             // get category by code
-            var category = await _context.Categories
+            var category = await context.Categories
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.UserId == userId && x.Code == categoryCode);
 
             if (category is not null)
             {
                 // get subcategories by category id
-                var result = await _context.SubCategories
+                var result = await context.SubCategories
                     .Where(x => x.UserId == userId && x.CategoryId == category.Id)
                     .ToListAsync();
 

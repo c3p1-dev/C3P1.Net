@@ -11,13 +11,12 @@ namespace C3P1.Net.WebApi.Admin
     [ApiController]
     public class UserController(IUserService userManagementService) : ControllerBase
     {
-        private readonly IUserService _manageUserService = userManagementService;
 
         // GET : api/admin/[controller]
         [HttpGet("list")]
         public async Task<ActionResult<IEnumerable<AppUserDto>>> GetUsersAsync()
         {
-            var result = await _manageUserService.GetUsersAsync();
+            var result = await userManagementService.GetUsersAsync();
 
             if (result is not null)
                 return Ok(result);
@@ -30,7 +29,7 @@ namespace C3P1.Net.WebApi.Admin
         //public async Task<ActionResult<IEnumerable<TodoItem>>> GetUsersInRoleAsync(string role)
         public async Task<ActionResult<IEnumerable<AppUserDto>>> GetUsersInRoleAsync(string role)
         {
-            var result = await _manageUserService.GetUsersInRoleAsync(role);
+            var result = await userManagementService.GetUsersInRoleAsync(role);
 
             if (result is not null)
                 return Ok(result);
@@ -42,7 +41,7 @@ namespace C3P1.Net.WebApi.Admin
         [HttpGet("list/roles")]
         public async Task<ActionResult<IEnumerable<string>>> GetRolesAsync()
         {
-            var result = await _manageUserService.GetRolesAsync();
+            var result = await userManagementService.GetRolesAsync();
 
             if (result is not null)
                 return Ok(result);
@@ -54,7 +53,7 @@ namespace C3P1.Net.WebApi.Admin
         [HttpPost("roles")]
         public async Task<ActionResult<List<string>>> GetUserRolesAsync([FromBody] AppUserDto user)
         {
-            var result = await _manageUserService.GetUserRolesAsync(user);
+            var result = await userManagementService.GetUserRolesAsync(user);
 
             return Ok(result);
         }
@@ -63,13 +62,13 @@ namespace C3P1.Net.WebApi.Admin
         [HttpPost("inrole")]
         public async Task<ActionResult<bool>> IsInRoleAsync([FromBody] RoleEditModel roleEditModel)
         {
-            var user = (await _manageUserService.GetUsersAsync())
+            var user = (await userManagementService.GetUsersAsync())
                 .Where(u => u.Id == roleEditModel.UserId.ToString())
                 .FirstOrDefault();
 
             if (user is not null)
             {
-                bool result = await _manageUserService.IsInRoleAsync(user, roleEditModel.Role!);
+                bool result = await userManagementService.IsInRoleAsync(user, roleEditModel.Role!);
                 return Ok(result);
             }
             else
@@ -81,7 +80,7 @@ namespace C3P1.Net.WebApi.Admin
         [HttpPost("addrole")]
         public async Task<ActionResult<bool>> AddToRoleAsync([FromBody] RoleEditModel roleEditModel)
         {
-            bool result = await _manageUserService.AddToRoleAsync(roleEditModel.UserId, roleEditModel.Role!);
+            bool result = await userManagementService.AddToRoleAsync(roleEditModel.UserId, roleEditModel.Role!);
 
             return Ok(result);
         }
@@ -90,7 +89,7 @@ namespace C3P1.Net.WebApi.Admin
         [HttpPost("removerole")]
         public async Task<ActionResult<bool>> RemoveFromRoleAsync([FromBody] RoleEditModel roleEditModel)
         {
-            bool result = await _manageUserService.RemoveFromRoleAsync(roleEditModel.UserId, roleEditModel.Role!);
+            bool result = await userManagementService.RemoveFromRoleAsync(roleEditModel.UserId, roleEditModel.Role!);
 
             return Ok(result);
         }
@@ -99,7 +98,7 @@ namespace C3P1.Net.WebApi.Admin
         [HttpPost("delete")]
         public async Task<ActionResult<bool>> DeleteUserAsync([FromBody] AppUserDto user)
         {
-            bool result = await _manageUserService.DeleteUserAsync(user);
+            bool result = await userManagementService.DeleteUserAsync(user);
 
             return result;
         }
