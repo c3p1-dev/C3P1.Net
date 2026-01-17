@@ -8,5 +8,6 @@ namespace C3P1.Net.Data
         public DbSet<Account> Accounts => Set<Account>();
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<SubCategory> SubCategories => Set<SubCategory>();
+        public DbSet<Transaction> Transactions => Set<Transaction>();
     }
 }
