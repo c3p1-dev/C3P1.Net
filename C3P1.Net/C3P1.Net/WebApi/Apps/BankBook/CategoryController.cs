@@ -53,7 +53,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             var existingCategory = await categoryService.GetCategoryByCodeAsync(currentUserId, category.Code);
 
             if (existingCategory is not null)
-                return Conflict("A category with the same code already exists.");  // category with the same code already exists
+                return Conflict("A category with the same code already exists");  // category with the same code already exists
 
             // add category
             bool result = await categoryService.AddCategoryAsync(currentUserId, category);
@@ -83,7 +83,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             if (result == true)
                 return Ok(result);
             else
-                return BadRequest("Category does not exist or has SubCategories bound to it.");
+                return BadRequest("Category does not exist or has SubCategories bound to it");
         }
 
         // UPDATE : api/apps/bankbook/[controller]/update
@@ -103,7 +103,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             var existingCategory = await categoryService.GetCategoryByCodeAsync(currentUserId, category.Code);
 
             if (existingCategory != null && existingCategory.Id != category.Id)
-                return Conflict("A category with the same code already exists.");  // category with the same code already exists
+                return Conflict("A category with the same code already exists");  // category with the same code already exists
 
             // update category
             bool result = await categoryService.UpdateCategoryAsync(currentUserId, category);

@@ -148,6 +148,10 @@ namespace C3P1.Net.Migrations.BankBookDb
                     b.Property<decimal>("Amount")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("CheckNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 

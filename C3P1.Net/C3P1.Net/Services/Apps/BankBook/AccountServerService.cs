@@ -46,6 +46,12 @@ namespace C3P1.Net.Services.Apps.BankBook
             var bankAccount = await _context.Accounts
                 .FirstOrDefaultAsync(x => x.Id == bankAccountId && x.UserId == userId);
 
+            // check transaction ownership
+            var ownedTransactions = await _context.Transactions.AnyAsync(c => c.UserId == userId && c.AccountId == bankAccountId);
+
+            if (ownedTransactions == true)
+                return false;   // can't delete an account that holds transactions
+
             // delete if found
             if (bankAccount is not null)
             {

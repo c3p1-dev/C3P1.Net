@@ -93,6 +93,7 @@ namespace C3P1.Net.Services.Apps.BankBook
                 existingTransaction.IsReconciled = transaction.IsReconciled;
                 existingTransaction.Amount = transaction.Amount;
                 existingTransaction.SubCategoryId = transaction.SubCategoryId;
+                existingTransaction.CheckNumber = transaction.CheckNumber;
 
                 // save changes
                 int recorded = await _context.SaveChangesAsync();

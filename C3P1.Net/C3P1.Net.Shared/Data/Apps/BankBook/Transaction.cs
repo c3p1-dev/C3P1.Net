@@ -45,5 +45,9 @@ namespace C3P1.Net.Shared.Data.Apps.BankBook
 
         [Required(ErrorMessage = "Amount must be defined")]
         public decimal Amount { get; set; }
+        [StringLength(20, ErrorMessage = "CheckNumber is at most 20 characters")]
+        [RegularExpression(@"^[A-Za-z0-9\-]+$")]
+        public string? CheckNumber { get; set; }
+
     }
 }

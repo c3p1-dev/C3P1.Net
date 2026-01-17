@@ -52,7 +52,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             // duplicate check
             var existingSubCategory = await subcategoryService.GetSubCategoryByCodeAsync(currentUserId, subCategory.Code);
             if (existingSubCategory is not null)
-                return Conflict("A subcategory with the same code already exists.");  // subcategory with the same code already exists
+                return Conflict("A subcategory with the same code already exists");  // subcategory with the same code already exists
 
             // add subcategory for the current user
             bool result = await subcategoryService.AddSubCategoryAsync(currentUserId, subCategory);

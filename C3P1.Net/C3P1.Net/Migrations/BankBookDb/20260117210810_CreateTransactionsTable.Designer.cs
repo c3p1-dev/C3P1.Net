@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C3P1.Net.Migrations.BankBookDb
 {
     [DbContext(typeof(BankBookDbContext))]
-    [Migration("20260117145149_CreateTransactionsTable")]
+    [Migration("20260117210810_CreateTransactionsTable")]
     partial class CreateTransactionsTable
     {
         /// <inheritdoc />
@@ -149,6 +149,10 @@ namespace C3P1.Net.Migrations.BankBookDb
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Amount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CheckNumber")
+                        .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")

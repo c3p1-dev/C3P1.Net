@@ -4,6 +4,7 @@ using C3P1.Net.Shared.Services.Apps.BankBook;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 
 namespace C3P1.Net.WebApi.Apps.BankBook
@@ -11,10 +12,8 @@ namespace C3P1.Net.WebApi.Apps.BankBook
     [Authorize]
     [Route("api/apps/bankbook/[controller]")]
     [ApiController]
-    public class AccountController(IAccountService bankAccountService, UserManager<AppUser> userManager) : ControllerBase
+    public class AccountController(IAccountService bankAccountService, ITransactionService transactionService, UserManager<AppUser> userManager) : ControllerBase
     {
-
-
         // GET : api/apps/bankbook/[controller]/list
         [HttpGet("list")]
         public async Task<ActionResult<IEnumerable<Account>>> GetAccountsAsync()
@@ -55,7 +54,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             var existingAccount = await bankAccountService.GetAccountByCodeAsync(currentUserId, bankAccount.Code);
 
             if (existingAccount is not null)
-                return Conflict("An account with the same code already exists.");
+                return Conflict("An account with the same code already exists");
 
             // add bank account
             bool result = await bankAccountService.AddAccountAsync(currentUserId, bankAccount);
@@ -78,6 +77,13 @@ namespace C3P1.Net.WebApi.Apps.BankBook
                 return Unauthorized();  // should not happen
 
             var currentUserId = Guid.Parse(user.Id);
+
+            // check if the account hold transactions
+            var ownedTransactions = await transactionService.GetTransactionsByAccountIdAsync(currentUserId, id);
+            if (ownedTransactions is null)
+                return BadRequest();
+            else if (ownedTransactions.Count() > 0)
+                return Conflict("Transactions may be bound to this account");
 
             // delete task from id
             var result = await bankAccountService.DeleteAccountAsync(currentUserId, id);
@@ -149,7 +155,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
             var existingAccount = await bankAccountService.GetAccountByCodeAsync(currentUserId, bankAccount.Code);
 
             if (existingAccount is not null && existingAccount.Id != bankAccount.Id)
-                return Conflict("An account with the same code already exists.");
+                return Conflict("An account with the same code already exists");
 
             // update bank account
             bool result = await bankAccountService.UpdateAccountAsync(currentUserId, bankAccount);

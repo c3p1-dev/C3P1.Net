@@ -180,7 +180,8 @@ else
                     selectedAccount = null;
                     StateHasChanged();
                 }
-                // todo : manage account deletion attempt while holding transaction records
+                else                    // todo : manage account deletion attempt while holding transaction records
+                    await MessageService.Error($"<strong>{selectedAccount.Name}</strong> can't be deleted as long has it holds transaction records", "Cannot delete account");
             }
         }
     }

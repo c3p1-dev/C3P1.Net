@@ -26,7 +26,8 @@ namespace C3P1.Net.Migrations.BankBookDb
                     ValueDate = table.Column<DateOnly>(type: "TEXT", nullable: true),
                     PaymentMethod = table.Column<int>(type: "INTEGER", nullable: false),
                     IsReconciled = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Amount = table.Column<decimal>(type: "TEXT", nullable: false)
+                    Amount = table.Column<decimal>(type: "TEXT", nullable: false),
+                    CheckNumber = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true)
                 },
                 constraints: table =>
                 {
