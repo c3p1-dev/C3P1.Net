@@ -393,7 +393,8 @@ else
                     selectedSubCategory = null;
                     StateHasChanged();
                 }
-                // todo : add line owner management there 
+                else
+                    await MessageService.Error($"The subcategory <strong>{selectedSubCategory.Name}</strong> cannot be deleted as long as it holds transaction records", "Cannot delete subcategory");
             }
         }
     }

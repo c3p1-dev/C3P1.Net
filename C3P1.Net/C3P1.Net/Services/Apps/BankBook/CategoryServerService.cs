@@ -37,6 +37,7 @@ namespace C3P1.Net.Services.Apps.BankBook
             // find category and verify ownership
             var category = await _context.Categories
                 .FirstOrDefaultAsync(x => x.Id == categoryId && x.UserId == userId);
+
             var subcategioriesBound = await _context.SubCategories
                 .AsNoTracking()
                 .AnyAsync(x => x.CategoryId == categoryId && x.UserId == userId);

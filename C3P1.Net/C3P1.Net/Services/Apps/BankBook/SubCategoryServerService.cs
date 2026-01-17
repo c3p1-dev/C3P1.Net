@@ -38,6 +38,15 @@ namespace C3P1.Net.Services.Apps.BankBook
             var subcategory = await _context.SubCategories
                 .FirstOrDefaultAsync(x => x.Id == subcategoryId && x.UserId == userId);
 
+            // verify transaction ownership
+            var ownedTransactions = await _context.Transactions
+                .AsNoTracking()
+                .AnyAsync(t => t.SubCategoryId == subcategoryId);
+
+            // abort deletion if the subcategory holds transactions
+            if (ownedTransactions == true)
+                return false;
+
             // delete if found
             if (subcategory is not null)
             {

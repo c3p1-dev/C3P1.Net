@@ -11,7 +11,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
     [Authorize]
     [Route("api/apps/bankbook/[controller]")]
     [ApiController]
-    public class SubCategoryController(ISubCategoryService subcategoryService, UserManager<AppUser> userManager) : ControllerBase
+    public class SubCategoryController(ISubCategoryService subcategoryService, ITransactionService transactionService, UserManager<AppUser> userManager) : ControllerBase
     {
         // GET api/apps/bankbook/[controller]/list
         [HttpGet("list")]
@@ -75,6 +75,11 @@ namespace C3P1.Net.WebApi.Apps.BankBook
                 return Unauthorized();  // should not happen
 
             var currentUserId = Guid.Parse(user.Id);
+
+            // abort deletion if the subcategory holds transactions
+            var ownedTransactions = await transactionService.GetTransactionsBySubCategoryIdAsync(currentUserId, id);
+            if (ownedTransactions.Count() > 0)
+                return Conflict("The subcategory cannot be deleted as long as it holds transaction records");
 
             // delete subcategory from id
             bool result = await subcategoryService.DeleteSubCategoryAsync(currentUserId, id);
