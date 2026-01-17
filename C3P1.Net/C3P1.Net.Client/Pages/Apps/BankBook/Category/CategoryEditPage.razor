@@ -70,7 +70,16 @@
                             </Field>
                         </Validation>
                     </Validations>
-
+                    <Div>
+                        @if (errorMessage != string.Empty)
+                        {
+                            <Paragraph TextColor="TextColor.Danger">@errorMessage</Paragraph>
+                        }
+                        else
+                        {
+                            <Paragraph>The category code must be unique</Paragraph>
+                        }
+                    </Div>
                     <Div TextAlignment="TextAlignment.End">
                         <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=categories"))">Cancel</Button>
                         <Button Color="Color.Primary" Clicked="SaveCategory">Save changes</Button>
@@ -90,6 +99,7 @@
 
     private Validations? validations;
     private Category? editCategory = new();
+    private string errorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -113,6 +123,9 @@
 
     private async Task SaveCategory()
     {
+        // reinit error message
+        errorMessage = string.Empty;
+
         if (!await validations!.ValidateAll())
             return;
 
@@ -125,5 +138,8 @@
 
         if (success)
             navManager.NavigateTo("bankbook/category?tab=categories");
+        else // set error message
+            errorMessage = $"The category code {editCategory!.Code} already exists, the category code must be unique";
+
     }
 }

@@ -98,6 +98,7 @@ namespace C3P1.Net.Services.Apps.BankBook
                 int recorded = await _context.SaveChangesAsync();
                 return (recorded == 1);
             }
+
             return false;
         }
     }

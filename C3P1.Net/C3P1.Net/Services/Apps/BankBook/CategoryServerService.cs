@@ -27,8 +27,9 @@ namespace C3P1.Net.Services.Apps.BankBook
 
                 return (recorded == 1);
             }
-            else // category code duplicate case
-                return false;
+            
+            // category code duplicate case
+            return false;
         }
 
         public async Task<bool> DeleteCategoryAsync(Guid userId, Guid categoryId)
@@ -47,8 +48,9 @@ namespace C3P1.Net.Services.Apps.BankBook
                 int recorded = await _context.SaveChangesAsync();
                 return (recorded == 1);
             }
-            else
-                return false; // not found or subcategories bound
+
+            // not found or subcategories bound
+            return false;
         }
 
         public async Task<List<Category>> GetCategoriesAsync(Guid userId)
@@ -82,7 +84,7 @@ namespace C3P1.Net.Services.Apps.BankBook
                 return false;
 
             // check for duplicate code
-            var duplicateAccount = await _context.Accounts
+            var duplicateAccount = await _context.Categories
                 .AnyAsync(x => x.UserId == userId
                             && x.Code == category.Code
                             && x.Id != category.Id);

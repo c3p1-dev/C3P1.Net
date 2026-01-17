@@ -102,13 +102,21 @@
                             </FieldBody>
                         </Field>
                     </Validation>
-
-                    <Div TextAlignment="TextAlignment.End">
-                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/account"))">Cancel</Button>
-                        <Button Color="Color.Primary" Clicked="AddAccount">Add Account</Button>
-                    </Div>
                 </Validations>
-
+                <Div>
+                    @if (errorMessage != string.Empty)
+                    {
+                        <Paragraph TextColor="TextColor.Danger">@errorMessage</Paragraph>
+                    }
+                    else
+                    {
+                        <Paragraph>The category code must be unique</Paragraph>
+                    }
+                </Div>
+                <Div TextAlignment="TextAlignment.End">
+                    <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/account"))">Cancel</Button>
+                    <Button Color="Color.Primary" Clicked="AddAccount">Add Account</Button>
+                </Div>
             </CardBody>
         </Card>
     </Column>
@@ -120,6 +128,8 @@
 
     Validations? validations;
     Account? newAccount = new ();
+
+    private string errorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -143,8 +153,11 @@
             var user = (await authenticationStateTask).User;
             var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
 
-            if (await AccountService.AddAccountAsync(currentUserId, newAccount!))
+            var success = await AccountService.AddAccountAsync(currentUserId, newAccount!);
+            if (success == true)
                 navManager.NavigateTo("bankbook/account");  // navigate to bankbook/bank
+            else
+                errorMessage = $"The account code {newAccount!.Code} already exists, the account code must be unique";
         }
     }
 }

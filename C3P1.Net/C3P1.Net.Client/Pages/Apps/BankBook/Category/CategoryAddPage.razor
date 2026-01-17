@@ -54,11 +54,21 @@
                             </FieldBody>
                         </Field>
                     </Validation>
-                    <Div TextAlignment="TextAlignment.End">
-                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=categories"))">Cancel</Button>
-                        <Button Color="Color.Primary" Clicked="AddCategory">Add Category</Button>
-                    </Div>
                 </Validations>
+                <Div>
+                    @if (errorMessage != string.Empty)
+                    {
+                        <Paragraph TextColor="TextColor.Danger">@errorMessage</Paragraph>
+                    }
+                    else
+                    {
+                        <Paragraph>The category code must be unique</Paragraph>
+                    }
+                </Div>
+                <Div TextAlignment="TextAlignment.End">
+                    <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=categories"))">Cancel</Button>
+                    <Button Color="Color.Primary" Clicked="AddCategory">Add Category</Button>
+                </Div>
             </CardBody>
         </Card>
     </Column>
@@ -70,6 +80,8 @@
 
     private Validations? validations;
     private Category? newCategory = new ();
+
+    private string errorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -93,8 +105,12 @@
             var user = (await authenticationStateTask).User;
             var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
 
-            if (await CategoryService.AddCategoryAsync(currentUserId, newCategory!))
+
+            var success = await CategoryService.AddCategoryAsync(currentUserId, newCategory!);
+            if (success == true)
                 navManager.NavigateTo("bankbook/category?tab=categories"); // navigate to bankbook/category
+            else
+                errorMessage = $"The category code {newCategory!.Code} already exists, the category code must be unique";
         }
     }
 }

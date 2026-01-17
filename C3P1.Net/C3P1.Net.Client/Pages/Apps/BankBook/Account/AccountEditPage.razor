@@ -124,12 +124,21 @@
                                 </FieldBody>
                             </Field>
                         </Validation>
-
-                        <Div TextAlignment="TextAlignment.End">
-                            <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/account"))">Cancel</Button>
-                            <Button Color="Color.Primary" Clicked="SaveAccount">Save changes</Button>
-                        </Div>
                     </Validations>
+                    <Div>
+                        @if (errorMessage != string.Empty)
+                        {
+                            <Paragraph TextColor="TextColor.Danger">@errorMessage</Paragraph>
+                        }
+                        else
+                        {
+                            <Paragraph>The category code must be unique</Paragraph>
+                        }
+                    </Div>
+                    <Div TextAlignment="TextAlignment.End">
+                        <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/account"))">Cancel</Button>
+                        <Button Color="Color.Primary" Clicked="SaveAccount">Save changes</Button>
+                    </Div>
                 }
             </CardBody>
         </Card>
@@ -145,6 +154,8 @@
 
     private Validations? validations;
     private Account? editAccount;
+
+    private string errorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -175,7 +186,9 @@
         // update account
         var success = await AccountService.UpdateAccountAsync(currentUserId, editAccount!);
 
-        if (success)
+        if (success == true)
             navManager.NavigateTo("bankbook/account");
+        else
+            errorMessage = $"The account code {editAccount!.Code} already exists, the account code must be unique";
     }
 }

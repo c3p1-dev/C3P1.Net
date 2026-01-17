@@ -98,7 +98,16 @@
                                 </Field>
                             </Validation>
                         </Validations>
-
+                        <Div>
+                            @if (errorMessage != string.Empty)
+                            {
+                                <Paragraph TextColor="TextColor.Danger">@errorMessage</Paragraph>
+                            }
+                            else
+                            {
+                                <Paragraph>The category code must be unique</Paragraph>
+                            }
+                        </Div>
                         <Div TextAlignment="TextAlignment.End">
                             <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=subcategories"))">Cancel</Button>
                             <Button Color="Color.Primary" Clicked="SaveSubCategory">Save changes</Button>
@@ -121,6 +130,8 @@
     private SubCategory? editSubCategory = null;
 
     private List<Category>? Categories = null;
+
+    private string errorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -166,7 +177,9 @@
         // update category
         var success = await SubCategoryService.UpdateSubCategoryAsync(currentUserId, editSubCategory!);
 
-        if (success)
+        if (success == true)
             navManager.NavigateTo("bankbook/category?tab=subcategories");
+        else
+            errorMessage = $"The subcategory code {editSubCategory!.Code} already exists, the category code must be unique";
     }
 }

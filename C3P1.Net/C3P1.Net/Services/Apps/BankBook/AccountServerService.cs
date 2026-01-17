@@ -35,8 +35,9 @@ namespace C3P1.Net.Services.Apps.BankBook
 
                 return (recorded == 1);
             }
-            else
-                return false; // duplicate found
+
+            // duplicate found
+            return false;
         }
 
         public async Task<bool> DeleteAccountAsync(Guid userId, Guid bankAccountId)

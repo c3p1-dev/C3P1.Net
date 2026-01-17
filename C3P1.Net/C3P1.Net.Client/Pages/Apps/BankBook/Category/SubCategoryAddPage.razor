@@ -85,7 +85,16 @@
                             </Field>
                         </Validation>
                     </Validations>
-
+                    <Div>
+                        @if (errorMessage != string.Empty)
+                        {
+                            <Paragraph TextColor="TextColor.Danger">@errorMessage</Paragraph>
+                        }
+                        else
+                        {
+                            <Paragraph>The category code must be unique</Paragraph>
+                        }
+                    </Div>
                     <Div TextAlignment="TextAlignment.End">
                         <Button Color="Color.Secondary" Clicked="@(() => navManager.NavigateTo("bankbook/category?tab=subcategories"))">Cancel</Button>
                         <Button Color="Color.Primary" Clicked="AddSubCategory">Add SubCategory</Button>
@@ -104,6 +113,8 @@
     private SubCategory? newSubCategory = new();
 
     private List<Category>? Categories = null;
+
+    private string errorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -136,8 +147,11 @@
             var user = (await authenticationStateTask).User;
             var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
 
-            if (await SubCategoryService.AddSubCategoryAsync(currentUserId, newSubCategory!))
-                navManager.NavigateTo("bankbook/category?tab=subcategories"); // navigate to bankbook/category
+            var success = await SubCategoryService.AddSubCategoryAsync(currentUserId, newSubCategory!);
+            if (success == true)
+                navManager.NavigateTo("bankbook/category?tab=subcategories"); // navigate to bankbook/subcategory
+            else
+                errorMessage = $"The subcategory code {newSubCategory!.Code} already exists, the category code must be unique";
         }
     }
 
