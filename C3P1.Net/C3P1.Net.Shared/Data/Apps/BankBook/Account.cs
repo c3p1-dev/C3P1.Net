@@ -5,7 +5,6 @@ namespace C3P1.Net.Shared.Data.Apps.BankBook
     public class Account
     {
         [Key]
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
         [Required(ErrorMessage = "User ID must be defined")]
@@ -13,6 +12,7 @@ namespace C3P1.Net.Shared.Data.Apps.BankBook
 
         [Required(ErrorMessage = "Account Code must be defined")]
         [StringLength(150, ErrorMessage = "Account Code too long (max 10 characters)")]
+        [RegularExpression("^[A-Z0-9_\\-!?@€$%]{1,10}$", ErrorMessage = "Invalid format : A-Z, 0-9, !?@€$% only, at most 10 characters")]
         public string Code { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Account Name must be defined")]

@@ -86,6 +86,7 @@ namespace C3P1.Net.WebApi.Apps.BankBook
         }
 
         // UPDATE api/apps/bankbook/[controller]/update
+        // data [FromBody]
         [HttpPut("update")]
         public async Task<ActionResult<bool>> UpdateSubCategoryAsync([FromBody] SubCategory subCategory)
         {

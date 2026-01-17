@@ -144,6 +144,7 @@ namespace C3P1.Net
             builder.Services.AddTransient<IAccountService, AccountServerService>();
             builder.Services.AddTransient<ICategoryService, CategoryServerService>();
             builder.Services.AddTransient<ISubCategoryService, SubCategoryServerService>();
+            builder.Services.AddTransient<ITransactionService, TransactionServerService>();
 
 
             var app = builder.Build();

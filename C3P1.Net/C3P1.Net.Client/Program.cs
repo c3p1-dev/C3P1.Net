@@ -54,6 +54,7 @@ namespace C3P1.Net.Client
             builder.Services.AddTransient<IAccountService, AccountClientService>();
             builder.Services.AddTransient<ICategoryService, CategoryClientService>();
             builder.Services.AddTransient<ISubCategoryService, SubCategoryClientService>();
+            builder.Services.AddTransient<ITransactionService, TransactionClientService>();
 
             // Run the app
             await builder.Build().RunAsync();
