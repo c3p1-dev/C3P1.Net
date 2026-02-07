@@ -189,8 +189,6 @@ else
     private void EditSelectedAccount()
     {
         if (selectedAccount is not null)
-        {
             navManager.NavigateTo($"/bankbook/account/edit/{selectedAccount.Id}");
-        }
     }
 }

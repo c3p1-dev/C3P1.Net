@@ -1,0 +1,208 @@
+﻿@page "/bankbook/ledger"
+@using C3P1.Net.Shared.Data.Apps.BankBook
+@using C3P1.Net.Shared.Services.Apps.BankBook
+@using C3P1.Net.Shared.Data.Apps.BankBook.Dto
+@using Blazorise
+@using Blazorise.DataGrid
+@layout Layouts.BankBookLayout
+
+@inject NavigationManager navManager
+@inject NavBreadcrumbService navBreadcrumb
+@inject ICategoryService CategoryService
+@inject ISubCategoryService SubCategoryService
+@inject ITransactionService TransactionService
+@inject IAccountService AccountService
+@inject IMessageService MessageService
+
+<PageTitle>BankBook / Ledger</PageTitle>
+
+@if (Accounts is null || Categories is null || SubCategories is null || Transactions is null)
+{
+    <Paragraph><em>Loading...</em></Paragraph>
+}
+else if (Accounts.Count == 0)
+{
+    <Paragraph><em>No bank accounts found.</em></Paragraph>
+    <Paragraph>
+        <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/account/add"))">
+            <Icon Name="IconName.Add" /> Add Account
+        </Button>
+    </Paragraph>
+}
+else if (SubCategories.Count == 0)
+{
+    <Paragraph><em>No subcategories found.</em></Paragraph>
+    <Paragraph>
+        <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => navManager.NavigateTo("/bankbook/category"))">
+            <Icon Name="IconName.Add" /> Add Category and/or SubCategory
+        </Button>
+    </Paragraph>
+}
+else
+{
+    <Row>
+        <Column>
+            <Card Style="max-width: 1200px; margin: 0 auto;">
+                <CardHeader>
+                    <Select TValue="Guid" SelectedValue="@selectedAccountId" SelectedValueChanged="OnAccountChanged">
+                        @foreach (var account in Accounts)
+                        {
+                            <SelectItem Value="@account.Id">@account.Code - @account.Name</SelectItem>
+                        }
+                    </Select>
+                </CardHeader>
+                <CardBody>
+                    <DataGrid TItem="TransactionGridDto" Data="@FilteredTransactions"
+                              Editable
+                              EditMode="@DataGridEditMode.Cell"
+                              EditModeOptions="new DataGridEditModeOptions(){ CellEditSelectTextOnEdit = true }"
+                              Responsive
+                              Bordered
+                              Hoverable
+                              Narrow
+                              Resizable
+                              ResizeMode="TableResizeMode.Columns"
+                              NewItemCreator="() => new TransactionGridDto { AccountingDate = DateOnly.FromDateTime(DateTime.Today) }">
+
+                        <DataGridColumns>
+                            <DataGridColumn Field="@nameof(TransactionGridDto.AccountingDate)" Caption="Accounting Date" Editable />
+                            <DataGridColumn Field="@nameof(TransactionGridDto.Label)" Caption="Label" Editable />
+                            <DataGridColumn Field="@nameof(TransactionGridDto.SubCategoryCode)" Caption="SubCategory" Editable />
+                            <DataGridColumn Field="@nameof(TransactionGridDto.CategoryCode)" Caption="Category" Editable="false" />
+                            <DataGridColumn Field="@nameof(TransactionGridDto.PaymentMethod)" Caption="Payment Method" Editable />
+                            <DataGridColumn Field="@nameof(TransactionGridDto.CheckNumber)" Caption="Check No" Editable />
+                            <DataGridColumn Field="@nameof(TransactionGridDto.Amount)" Caption="Amount" />
+                            <DataGridCommandColumn Caption="Command" PreventRowClick>
+                                <NewCommandTemplate>
+                                    <Button Size="Size.Small" Color="Color.Success" Clicked="@context.Clicked">
+                                        <Icon Name="IconName.Add" />
+                                    </Button>
+                                </NewCommandTemplate>
+                                <EditCommandTemplate>
+                                    <Button Size="Size.Small" Color="Color.Primary" Clicked="@context.Clicked">
+                                        <Icon Name="IconName.Edit" />
+                                    </Button>
+                                </EditCommandTemplate>
+                                <SaveCommandTemplate>
+                                    <Button Size="Size.Small" Type="ButtonType.Submit" PreventDefaultOnSubmit Color="Color.Primary" Clicked="@context.Clicked">
+                                        <Icon Name="IconName.Save" />
+                                    </Button>
+                                </SaveCommandTemplate>
+                                <DeleteCommandTemplate>
+                                    <Button Size="Size.Small" Color="Color.Danger" Clicked="@context.Clicked">
+                                        <Icon Name="IconName.Delete" />
+                                    </Button>
+                                </DeleteCommandTemplate>
+                                <CancelCommandTemplate>
+                                    <Button Size="Size.Small" Color="Color.Secondary" Clicked="@context.Clicked">
+                                        <Icon Name="IconName.Backspace" />
+                                    </Button>
+                                </CancelCommandTemplate>
+                                <ClearFilterCommandTemplate>
+                                    <Button Size="Size.Small" Color="Color.Warning" Clicked="@context.Clicked">
+                                        <Icon Name="IconName.Clear" />
+                                    </Button>
+                                </ClearFilterCommandTemplate>
+                            </DataGridCommandColumn>
+                        </DataGridColumns>
+                    </DataGrid>
+                </CardBody>
+            </Card>
+        </Column>
+    </Row>
+}
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+
+    private List<Account>? Accounts = null;
+    private List<Category>? Categories = null;
+    private List<SubCategory>? SubCategories = null;
+    private List<Transaction>? Transactions = null;
+
+    // ✅ Maintenant c'est une List modifiable
+    private List<TransactionGridDto> FilteredTransactions { get; set; } = new();
+
+    private Account? selectedAccount = null;
+    private Guid selectedAccountId;
+
+
+    private TransactionGridDto MapToDto(Transaction t)
+    {
+        var subCat = SubCategories!.FirstOrDefault(sc => sc.Id == t.SubCategoryId);
+        var cat = Categories!.FirstOrDefault(c => c.Id == subCat?.CategoryId);
+
+        return new TransactionGridDto
+        {
+
+            SubCategoryCode = subCat?.Code ?? "",
+            CategoryCode = cat?.Code ?? "",
+            Label = t.Label,
+            Note = t.Note,
+            AccountingDate = t.AccountingDate,
+            ValueDate = t.ValueDate,
+            PaymentMethod = t.PaymentMethod,
+            IsReconciled = t.IsReconciled,
+            Amount = t.Amount,
+            CheckNumber = t.CheckNumber
+        };
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        navBreadcrumb.SetBreadcrumbs(new List<Node>()
+        {
+            new Node {Text = "Ledger", Active = true}
+        });
+
+        await LoadData();
+
+        selectedAccount = Accounts!.FirstOrDefault();
+        selectedAccountId = selectedAccount!.Id;
+
+        // ✅ Initialiser FilteredTransactions
+        FilteredTransactions = Transactions!
+            .Where(t => t.AccountId == selectedAccountId)
+            .Select(t => MapToDto(t))
+            .ToList();
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task LoadData()
+    {
+        var user = (await authenticationStateTask).User;
+        var currentUserId = Guid.Parse(user.Claims.Where(x => x.Type.EndsWith("nameidentifier")).First().Value);
+
+        Accounts = await AccountService.GetAccountsAsync(currentUserId);
+        Categories = await CategoryService.GetCategoriesAsync(currentUserId);
+        SubCategories = await SubCategoryService.GetSubCategoriesAsync(currentUserId);
+        Transactions = await TransactionService.GetTransactionsAsync(currentUserId);
+    }
+
+    private void OnAccountChanged(Guid id)
+    {
+        selectedAccountId = id;
+        selectedAccount = Accounts!.FirstOrDefault(a => a.Id == id);
+
+        // ✅ Mettre à jour FilteredTransactions pour le nouveau compte
+        FilteredTransactions = Transactions!
+            .Where(t => t.AccountId == selectedAccountId)
+            .Select(t => MapToDto(t))
+            .ToList();
+    }
+
+    private async Task SaveRow(TransactionGridDto dto)
+    {
+        /*try
+        {
+            await TransactionService.UpdateTransactionFromDto(dto);
+            await MessageService.ShowMessageAsync("Transaction saved successfully.");
+        }
+        catch (Exception ex)
+        {
+            await MessageService.ShowMessageAsync($"Error saving transaction: {ex.Message}");
+        }*/
+    }
+}

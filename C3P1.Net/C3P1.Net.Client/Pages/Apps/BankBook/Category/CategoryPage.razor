@@ -261,15 +261,10 @@ else
         });
 
         // set selected tab based on parameter
-        if (!string.IsNullOrWhiteSpace(Tab) &&
-            (Tab == "categories" || Tab == "subcategories"))
-        {
+        if (!string.IsNullOrWhiteSpace(Tab) && (Tab == "categories" || Tab == "subcategories"))
             selectedTab = Tab;
-        }
         else
-        {
             selectedTab = "categories";
-        }
 
         // Load categories and subcategories
         await LoadData();
