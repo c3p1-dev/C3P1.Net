@@ -234,5 +234,3 @@ namespace C3P1.Net
         }
     }
 }
-
-// TEST DELETION FOR GIT
