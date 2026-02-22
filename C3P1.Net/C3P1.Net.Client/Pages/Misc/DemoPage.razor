@@ -15,7 +15,7 @@
             <CardGroup Margin="Margin.Is2.FromBottom">
                 <Card>
                     <CardHeader>
-                        <CardTitle Size="5">Buttons</CardTitle>
+                        <CardTitle Size="HeadingSize.Is5">Buttons</CardTitle>
                     </CardHeader>
                     <CardBody>
                         <CardText>
@@ -49,21 +49,21 @@
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle Size="5">Inputs</CardTitle>
+                        <CardTitle Size="HeadingSize.Is5">Inputs</CardTitle>
                     </CardHeader>
                     <CardBody>
                         <CardText>
                             <Div>
-                                <TextEdit>TextEdit</TextEdit>
+                                <TextInput>TextInput</TextInput>
                             </Div>
                             <Div>
-                                <MemoEdit>MemoEdit</MemoEdit>
+                                <MemoInput>MemoEdit</MemoInput>
                             </Div>
                             <Div>
-                                <NumericEdit TValue="int">NumericEdit (int)</NumericEdit>
+                                <NumericInput TValue="int">NumericEdit (int)</NumericInput>
                             </Div>
                             <Div>
-                                <NumericEdit TValue="double">NumericEdit (double)</NumericEdit>
+                                <NumericInput TValue="double">NumericEdit (double)</NumericInput>
                             </Div>
                         </CardText>
                     </CardBody>
@@ -72,7 +72,7 @@
             <CardGroup Margin="Margin.Is2.FromBottom">
                 <Card>
                     <CardHeader>
-                        <CardTitle Size="5">Badges</CardTitle>
+                        <CardTitle Size="HeadingSize.Is5">Badges</CardTitle>
                     </CardHeader>
                     <CardBody>
                         <Div>
@@ -99,7 +99,7 @@
                             <Badge Margin="Margin.Is1.OnAll" Color="Color.Default" Pill>Default</Badge>
                         </Div>
                         <Divider />
-                        <CardTitle Size="5">Background & TextColor</CardTitle>
+                        <CardTitle Size="HeadingSize.Is5">Background & TextColor</CardTitle>
                         <Table Bordered>
                             <TableRow>
                                 <TableRowCell Background="Background.Primary">Primary</TableRowCell>
@@ -142,7 +142,7 @@
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle Size="5">Alerts</CardTitle>
+                        <CardTitle Size="HeadingSize.Is5">Alerts</CardTitle>
                     </CardHeader>
                     <CardBody>
                         <Div>
@@ -166,7 +166,7 @@
             <CardGroup Margin="Margin.Is2.FromBottom">
                 <Card>
                     <CardHeader>
-                        <CardTitle Size="5">LineChart</CardTitle>
+                        <CardTitle Size="HeadingSize.Is5">LineChart</CardTitle>
                     </CardHeader>
                     <CardBody>
                         <CardText>
@@ -177,7 +177,7 @@
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle Size="5">BarChart</CardTitle>
+                        <CardTitle Size="HeadingSize.Is5">BarChart</CardTitle>
                     </CardHeader>
                     <CardBody>
                         <CardText>
@@ -190,7 +190,7 @@
             <CardGroup Margin="Margin.Is2.FromBottom">
                 <Card>
                     <CardHeader>
-                        <CardTitle Size="5">PieChart</CardTitle>
+                        <CardTitle Size="HeadingSize.Is5">PieChart</CardTitle>
                     </CardHeader>
                     <CardBody>
                         <CardText>
@@ -201,7 +201,7 @@
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle Size="5">DoughnutChart</CardTitle>
+                        <CardTitle Size="HeadingSize.Is5">DoughnutChart</CardTitle>
                     </CardHeader>
                     <CardBody>
                         <CardText>
@@ -271,14 +271,14 @@
                             <Validation Validator="@ValidationRule.IsEmail">
                                 <Field>
                                     <FieldLabel>Email address</FieldLabel>
-                                    <TextEdit Placeholder="Enter email" />
+                                    <TextInput Placeholder="Enter email" />
                                     <FieldHelp>We'll never share your email with anyone else.</FieldHelp>
                                 </Field>
                             </Validation>
                             <Validation Validator="@ValidatePassword">
                                 <Field>
                                     <FieldLabel>Password</FieldLabel>
-                                    <TextEdit Role="TextRole.Password" Placeholder="Password" />
+                                    <TextInput Role="TextRole.Password" Placeholder="Password" />
                                 </Field>
                             </Validation>
 
@@ -301,7 +301,7 @@
                                 <Field Horizontal>
                                     <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">Email address</FieldLabel>
                                     <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is9.OnDesktop">
-                                        <TextEdit Placeholder="Email" />
+                                        <TextInput Placeholder="Email" />
                                     </FieldBody>
                                 </Field>
                             </Validation>
@@ -309,7 +309,7 @@
                                 <Field Horizontal>
                                     <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">Password</FieldLabel>
                                     <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is9.OnDesktop">
-                                        <TextEdit Role="TextRole.Password" Placeholder="Password" @bind-Text="@password" />
+                                        <TextInput Role="TextRole.Password" Placeholder="Password" @bind-Text="@password" />
                                     </FieldBody>
                                 </Field>
                             </Validation>
@@ -317,7 +317,7 @@
                                 <Field Horizontal>
                                     <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">Re Password</FieldLabel>
                                     <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is9.OnDesktop">
-                                        <TextEdit Role="TextRole.Password" Placeholder="Retype password" />
+                                        <TextInput Role="TextRole.Password" Placeholder="Retype password" />
                                     </FieldBody>
                                 </Field>
                             </Validation>

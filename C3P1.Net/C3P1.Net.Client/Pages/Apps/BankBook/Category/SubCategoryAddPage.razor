@@ -50,11 +50,11 @@
                             <Field>
                                 <FieldLabel RequiredIndicator>SubCategory Code</FieldLabel>
                                 <FieldBody>
-                                    <TextEdit Placeholder="CAT" @bind-Text="newSubCategory!.Code">
+                                    <TextInput Placeholder="CAT" @bind-Text="newSubCategory!.Code">
                                         <Feedback>
                                             <ValidationError />
                                         </Feedback>
-                                    </TextEdit>
+                                    </TextInput>
                                 </FieldBody>
                             </Field>
                         </Validation>
@@ -63,11 +63,11 @@
                             <Field>
                                 <FieldLabel RequiredIndicator>SubCategory Name</FieldLabel>
                                 <FieldBody>
-                                    <TextEdit Placeholder="SubCategory name" @bind-Text="newSubCategory!.Name">
+                                    <TextInput Placeholder="SubCategory name" @bind-Text="newSubCategory!.Name">
                                         <Feedback>
                                             <ValidationError />
                                         </Feedback>
-                                    </TextEdit>
+                                    </TextInput>
                                 </FieldBody>
                             </Field>
                         </Validation>
@@ -76,11 +76,11 @@
                             <Field>
                                 <FieldLabel>SubCategory Description</FieldLabel>
                                 <FieldBody>
-                                    <TextEdit Placeholder="Description" @bind-Text="newSubCategory!.Description">
+                                    <TextInput Placeholder="Description" @bind-Text="newSubCategory!.Description">
                                         <Feedback>
                                             <ValidationError />
                                         </Feedback>
-                                    </TextEdit>
+                                    </TextInput>
                                 </FieldBody>
                             </Field>
                         </Validation>

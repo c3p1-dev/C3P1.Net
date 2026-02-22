@@ -7,7 +7,7 @@
             <Addon AddonType="AddonType.Body">
                 <Validations @ref="validations" Mode="ValidationMode.Manual">
                     <Validation Validator="@ValidationRule.IsNotEmpty">
-                        <TextEdit @bind-Text="@title" Placeholder="Add something todo" KeyPress="OnTitleKeyPressed"></TextEdit>
+                        <TextInput @bind-Text="@title" Placeholder="Add something todo" KeyPress="OnTitleKeyPressed"></TextInput>
                     </Validation>
                 </Validations>
             </Addon>

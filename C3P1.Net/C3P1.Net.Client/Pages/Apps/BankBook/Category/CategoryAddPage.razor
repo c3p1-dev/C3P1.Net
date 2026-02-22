@@ -22,11 +22,11 @@
                         <Field>
                             <FieldLabel RequiredIndicator>Category Code</FieldLabel>
                             <FieldBody>
-                                <TextEdit Placeholder="CAT" @bind-Text="newCategory!.Code">
+                                <TextInput Placeholder="CAT" @bind-Text="newCategory!.Code">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
-                                </TextEdit>
+                                </TextInput>
                             </FieldBody>
                         </Field>
                     </Validation>
@@ -34,11 +34,11 @@
                         <Field>
                             <FieldLabel RequiredIndicator>Category Name</FieldLabel>
                             <FieldBody>
-                                <TextEdit Placeholder="Category name" @bind-Text="newCategory!.Name">
+                                <TextInput Placeholder="Category name" @bind-Text="newCategory!.Name">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
-                                </TextEdit>
+                                </TextInput>
                             </FieldBody>
                         </Field>
                     </Validation>
@@ -46,11 +46,11 @@
                         <Field>
                             <FieldLabel>Category Description</FieldLabel>
                             <FieldBody>
-                                <TextEdit Placeholder="Description" @bind-Text="newCategory!.Description">
+                                <TextInput Placeholder="Description" @bind-Text="newCategory!.Description">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
-                                </TextEdit>
+                                </TextInput>
                             </FieldBody>
                         </Field>
                     </Validation>

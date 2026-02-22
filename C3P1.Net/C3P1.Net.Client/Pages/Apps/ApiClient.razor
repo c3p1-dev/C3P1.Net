@@ -16,7 +16,7 @@
                             <AddonLabel>Api Url</AddonLabel>
                         </Addon>
                         <Addon AddonType="AddonType.Body">
-                            <TextEdit Size="Size.Medium" @bind-Text="_apiUrl"></TextEdit>
+                            <TextInput Size="Size.Medium" @bind-Text="_apiUrl"></TextInput>
                         </Addon>
                     </Addons>
                 </Div>
@@ -40,14 +40,14 @@
                         {
                             <Div Margin="Margin.Is1.FromTop">
                                 <Label>Token</Label>
-                                <TextEdit @bind-Text="_bearerToken"></TextEdit>
+                                <TextInput @bind-Text="_bearerToken"></TextInput>
                             </Div>
                         }
                     </TabPanel>
                     <TabPanel Name="body">
                         <Div Margin="Margin.Is2.FromTop">
                             <Label>Request Body :</Label>
-                            <MemoEdit @bind-Text="_requestBody" Height="Height.Px(150)"/>
+                            <MemoInput @bind-Text="_requestBody" Height="Height.Px(150)"/>
                         </Div>
                     </TabPanel>
                 </Content>
@@ -68,7 +68,7 @@
             <Label>Response</Label>
         </CardHeader>
         <CardBody>
-            <MemoEdit @bind-Text="_response" ReadOnly="true" Height="Height.Px(150)"/>
+            <MemoInput @bind-Text="_response" ReadOnly="true" Height="Height.Px(150)"/>
         </CardBody>
     </Card>
 </CardDeck>

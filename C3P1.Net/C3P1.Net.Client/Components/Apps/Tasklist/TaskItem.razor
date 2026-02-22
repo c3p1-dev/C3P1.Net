@@ -7,7 +7,10 @@
     <ListGroupItem>
         <Field Horizontal Padding="Padding.IsAuto.OnAll">
             <FieldBody ColumnSize="ColumnSize.Is1">
-                <Check TValue="bool" Checked="@Item.Completed" CheckedChanged="@OnCheckedChanged"></Check>
+                <Check TValue="bool"
+                       Checked="@Item.Completed"
+                       CheckedChanged="@(async (bool isChecked) => await OnCheckedChanged(isChecked))">
+                </Check>
             </FieldBody>
             <FieldBody ColumnSize="ColumnSize.Is11">
                 @Item.Title
@@ -19,16 +22,17 @@
 @code {
     [Parameter]
     public TodoItem? Item { get; set; }
+
     [Parameter]
     public Func<bool, Task>? StatusChanged { get; set; }
 
-    Task OnCheckedChanged(bool isChecked)
+    async Task OnCheckedChanged(bool isChecked)
     {
         // update item in database
         Item!.Completed = isChecked;
-        TasklistService.UpdateTaskAsync(Item!);
+        await TasklistService.UpdateTaskAsync(Item!);
 
-        return StatusChanged?.Invoke(isChecked) ?? Task.CompletedTask;
+        if (StatusChanged != null)
+            await StatusChanged.Invoke(isChecked);
     }
-
 }
